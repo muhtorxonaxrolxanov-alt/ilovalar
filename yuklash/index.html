@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ilovani yuklab olish</title>
+<style>
+:root{--bg:#F6EFE3;--card:#fff;--ink:#2a1a0e;--mut:#6b5a4a;--pri:#1f6feb;--and:#1a8f3c;--ios:#111}
+@media (prefers-color-scheme:dark){:root{--bg:#141210;--card:#211d19;--ink:#f3ece4;--mut:#b5a898}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,Segoe UI,Roboto,sans-serif}
+.w{max-width:520px;margin:0 auto;padding:24px 16px 48px}
+.app{background:var(--card);border-radius:20px;padding:20px;margin-bottom:18px;box-shadow:0 2px 10px rgba(0,0,0,.08)}
+.hd{display:flex;gap:14px;align-items:center;margin-bottom:16px}.hd img{width:64px;height:64px;border-radius:16px;flex:none}
+h1{font-size:22px;margin:0}.s{color:var(--mut);font-size:14px;margin-top:4px}
+.b{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:16px;border:0;border-radius:14px;font-size:18px;font-weight:700;color:#fff;text-decoration:none;margin-top:10px;cursor:pointer}
+.ios{background:var(--ios)}.and{background:var(--and)}.pri{background:var(--pri)}
+.st{display:none;margin-top:12px;background:rgba(127,127,127,.1);border-radius:14px;padding:14px 16px;font-size:16px;line-height:1.5}
+.st.on{display:block}.st ol{margin:6px 0 0;padding-left:22px}.st li{margin:6px 0}
+.warn{background:#fff3cd;color:#5c4400;border-radius:10px;padding:10px 12px;font-size:15px;margin-bottom:8px}
+</style></head><body><div class="w" id="w"></div>
+<script>
+var S='https://muhtorxonaxrolxanov-alt.github.io/ilovalar/';
+var A={
+ 'hisob':[{n:'Hisob-kitob',s:'Hisobot ilovasi',u:'hisob/',i:'hisob/icon-192.png',apk:'hisob-kitob.apk'}],
+ 'toshkent-rahbar':[{n:'Toshkent nonvoyxona',s:'Rahbar ilovasi',u:'nonvoyxona/toshkent-rahbar/',i:'nonvoyxona/toshkent-rahbar/icon-192.png',apk:'toshkent-rahbar.apk'}],
+ 'toshkent-hodim':[{n:'Toshkent nonvoyxona',s:'Hodim ilovasi',u:'nonvoyxona/toshkent-hodim/',i:'nonvoyxona/toshkent-hodim/icon-192.png',apk:'toshkent-hodim.apk'}],
+ 'namangan-rahbar':[{n:'Namangan nonvoyxona',s:'Rahbar ilovasi',u:'nonvoyxona/namangan-rahbar/',i:'nonvoyxona/namangan-rahbar/icon-192.png',apk:'namangan-rahbar.apk'}],
+ 'namangan-hodim':[{n:'Namangan nonvoyxona',s:'Hodim ilovasi',u:'nonvoyxona/namangan-hodim/',i:'nonvoyxona/namangan-hodim/icon-192.png',apk:'namangan-hodim.apk'}],
+ 'dokon':[{n:'222 Sotuvchi',s:'Do\'kon egasi uchun',u:'dokon/sotuvchi/',i:'dokon/sotuvchi/icon-192.png',apk:'dokon-sotuvchi.apk'},
+          {n:'222',s:'Mijozlar uchun (xaridorlar)',u:'dokon/mijoz/',i:'dokon/mijoz/icon-192.png',apk:'dokon-mijoz.apk'}]
+};
+A['dokon-sotuvchi']=[A.dokon[0]];A['dokon-mijoz']=[A.dokon[1]];
+var k=(location.search.match(/[?&]a=([\w-]+)/)||[])[1],L=A[k],ua=navigator.userAgent;
+var isI=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),isA=/Android/.test(ua);
+var inApp=/Telegram|FBAN|FBAV|Instagram|Line\//.test(ua)||(isI&&!/Safari/.test(ua));
+function e(s){return String(s).replace(/[&<>"']/g,function(c){return'&#'+c.charCodeAt(0)+';'})}
+var w=document.getElementById('w');
+if(!L){var h='<h1 style="margin:8px 0 16px">Ilovalar</h1>';for(var x in A){if(x.indexOf('dokon-')==0)continue;A[x].forEach(function(a){h+='<a class="b pri" href="?a='+x+'">'+e(a.n+' — '+a.s)+'</a>'})}w.innerHTML=h}
+else{document.title=L[0].n+' — yuklab olish';w.innerHTML=L.map(function(a,j){return '<div class="app"><div class="hd"><img src="'+S+a.i+'" alt="" onerror="this.style.display=\'none\'"><div><h1>'+e(a.n)+'</h1><div class="s">'+e(a.s)+'</div></div></div>'+
+ '<button class="b ios" onclick="t(\'i'+j+'\')">&#63743; iPhone uchun</button>'+
+ '<div class="st" id="i'+j+'">'+(inApp&&isI?'<div class="warn">Bu sahifani <b>Safari</b>da oching: pastdagi tugmani bosing, keyin yuqori o\'ngdagi «⋯» → «Safari\'da ochish».</div>':'')+
+ '<ol><li>Pastdagi <b>«Ilovani ochish»</b> tugmasini bosing (Safari\'da).</li><li>Pastdagi <b>Ulashish</b> belgisini bosing (kvadrat va yuqoriga strelka ⬆).</li><li><b>«Bosh ekranga qo\'shish»</b> (На экран «Домой») ni tanlang → <b>Qo\'shish</b>.</li><li>Telefon ekranida ilova belgisi paydo bo\'ladi. Shuni bosib kiring.</li></ol>'+
+ '<a class="b pri" href="'+S+a.u+'" target="_blank">Ilovani ochish</a></div>'+
+ '<button class="b and" onclick="t(\'a'+j+'\')">&#129302; Android uchun</button>'+
+ '<div class="st" id="a'+j+'"><a class="b and" href="apk/'+a.apk+'" download>⬇ Yuklab olish (APK)</a>'+
+ '<ol><li>Yuklab olingan faylni oching.</li><li>«Noma\'lum manbadan o\'rnatish» so\'ralsa — <b>Ruxsat berish</b>ni yoqing.</li><li><b>O\'rnatish</b>ni bosing, keyin <b>Ochish</b>.</li></ol>'+
+ '<div class="s">Ilova o\'zi yangilanib turadi — qayta yuklash shart emas.</div></div></div>'}).join('');
+ if(L.length==1){if(isI)t('i0');else if(isA)t('a0')}}
+function t(id){document.getElementById(id).classList.toggle('on')}
+</script></body></html>

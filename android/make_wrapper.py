@@ -18,9 +18,27 @@ APPS = [
     ('namangan-rahbar', ND + r'\namangan-nonvoyxona.caproj', 'nonvoyxona/namangan-rahbar/', 30, '4.0', 'Android'),
     ('namangan-hodim', ND + r'\namangan-nonvoyxona-ishchi.caproj', 'nonvoyxona/namangan-hodim/', 30, '4.0', 'Android'),
     ('hisob-kitob', r'C:\Users\user\Downloads\loyiha\cap', 'hisob/', 30, '30', 'AndroidBridge'),
-    ('dokon-mijoz', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Elektr-Dokon-Mijoz.caproj', 'dokon/mijoz/', 30, '2.0', 'none'),
-    ('dokon-sotuvchi', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Dokon-Sotuvchi.caproj', 'dokon/sotuvchi/', 30, '2.0', 'none'),
+    ('dokon-mijoz', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Elektr-Dokon-Mijoz.caproj', 'dokon/mijoz/', 31, '2.1', 'none'),
+    ('dokon-sotuvchi', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Dokon-Sotuvchi.caproj', 'dokon/sotuvchi/', 31, '2.1', 'none'),
 ]
+# Telefondagi nomi va belgisi (bo'lmasa — asl nomi + " (yangi)", asl belgi)
+LABEL = {'dokon-mijoz': '222', 'dokon-sotuvchi': '222 Sotuvchi'}
+ICON = {'dokon-mijoz': os.path.join(HERE, '..', 'dokon', 'mijoz', 'icon-512.png'),
+        'dokon-sotuvchi': os.path.join(HERE, '..', 'dokon', 'sotuvchi', 'icon-512.png')}
+
+
+def set_icon(gdir, png):
+    from PIL import Image
+    res = os.path.join(gdir, 'app', 'src', 'main', 'res')
+    for d in ('mipmap', 'mipmap-anydpi-v26'):
+        for f in ('ic_launcher.xml', 'ic_launcher_round.xml'):
+            p = os.path.join(res, d, f)
+            if os.path.exists(p): os.remove(p)
+    im = Image.open(png).convert('RGB')
+    for d, n in (('mipmap-mdpi', 48), ('mipmap-hdpi', 72), ('mipmap-xhdpi', 96), ('mipmap-xxhdpi', 144), ('mipmap-xxxhdpi', 192)):
+        os.makedirs(os.path.join(res, d), exist_ok=True)
+        r = im.resize((n, n), Image.LANCZOS)
+        r.save(os.path.join(res, d, 'ic_launcher.png')); r.save(os.path.join(res, d, 'ic_launcher_round.png'))
 OFF = ("<html><head><meta name=viewport content='width=device-width,initial-scale=1'></head>"
        "<body style='font-family:sans-serif;text-align:center;padding:60px 20px;background:#F6EFE3;color:#3b2414'>"
        "<div style='font-size:56px'>&#128246;</div><h2>Internet yo'q</h2><p>Birinchi ochish uchun internet kerak. Keyin internetsiz ham ochiladi.</p>"
@@ -102,6 +120,12 @@ def build(only=None):
         g = re.sub(r'versionCode \d+', 'versionCode %d' % vc, g); g = re.sub(r"versionName '[^']*'", "versionName '%s'" % vn, g)
         open(bg, 'w', encoding='utf-8').write(g)
         patch(gdir, url, bridge)
+        if name in LABEL:
+            sx = os.path.join(gdir, 'app', 'src', 'main', 'res', 'values', 'strings.xml')
+            s = open(sx, encoding='utf-8').read()
+            s = re.sub(r'(<string name="app_name">)[^<]*(</string>)', lambda m: m.group(1) + LABEL[name] + m.group(2), s, count=1)
+            open(sx, 'w', encoding='utf-8').write(s)
+        if name in ICON: set_icon(gdir, ICON[name])
         r = subprocess.run('gradle assembleRelease --no-daemon -q', cwd=gdir, env=env, shell=True, capture_output=True, text=True)
         apk = os.path.join(gdir, 'app', 'build', 'outputs', 'apk', 'release', 'app-release.apk')
         if r.returncode or not os.path.exists(apk):
