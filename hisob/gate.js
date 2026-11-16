@@ -1,8 +1,8 @@
 /* Kirish tekshiruvi. Har sahifaning boshida ulanadi. */
 (function(){
-  var K='hk_lic';
+  var PROD=window.HK_PROD==='nv'?'nv':'hk',K=PROD==='nv'?'nv_lic':'hk_lic';
   window.HK_VER=29;
-  window.HK={VER:25,FAR:4102444800000,
+  window.HK={VER:25,FAR:4102444800000,PROD:PROD,
     lic:function(){try{return JSON.parse(localStorage.getItem(K)||'null')}catch(e){return null}},
     set:function(o){try{localStorage.setItem(K,JSON.stringify(o))}catch(e){}},
     clear:function(){try{localStorage.removeItem(K)}catch(e){}},
@@ -23,7 +23,7 @@
     return new Promise(function(ok,no){(function tick(){if(stopF)return no(new Error('stop'));
       gtok().then(function(t){return jf(dU(phone),{headers:{Authorization:'Bearer '+t}})}).then(function(j){var f=j.fields||{},r=null;try{r=JSON.parse((f.res||{}).stringValue)}catch(e){}
         if(r&&r.nonce===n&&!(skipWait&&r.st==='wait'))return ok(r);if(Date.now()-t0>maxMs)return no(new Error('Javob kelmadi. Bot ishlayotganini tekshiring.'));setTimeout(tick,Date.now()-t0>30000?4000:1500)}).catch(function(e){if(e.code===404){if(Date.now()-t0>maxMs)return no(new Error('Javob kelmadi'));return setTimeout(tick,Date.now()-t0>30000?4000:1500)}no(e)})})()})};
-  window.HK.call=function(phone,obj,maxMs){stopF=false;var n=nn();obj.nonce=n;
+  window.HK.call=function(phone,obj,maxMs){stopF=false;var n=nn();obj.nonce=n;if(PROD!=='hk')obj.prod=PROD;
     /* req bilan birga server vaqti (t) yoziladi: bot faqat yangi so'rovlarni so'raydi (bepul limit tejaladi) */
     var base='projects/'+CFG.projectId+'/databases/(default)/documents';
     return gtok().then(function(t){return jf('https://firestore.googleapis.com/v1/'+base+':commit',{method:'POST',headers:{'content-type':'application/json',Authorization:'Bearer '+t},
@@ -42,5 +42,5 @@
   window.HK.hash=function(phone,pw){return sha('hk1:'+phone+':'+pw)};
   var l=window.HK.lic();
   var ok=l&&l.ok&&l.until>Date.now();
-  if(!ok&&!/gate\.html$/.test(location.pathname)){location.replace('gate.html')}
+  if(PROD==='hk'&&!ok&&!/gate\.html$/.test(location.pathname)){location.replace('gate.html')}
 })();

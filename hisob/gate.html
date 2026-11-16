@@ -178,20 +178,25 @@ input.code{letter-spacing:8px;text-align:center;font-size:26px;font-weight:700}
 <div class="msg bad" id="er" hidden></div>
 <div class="msg" id="inf" hidden></div>
 
+<script>window.HK_PROD=/[?&]prod=nv/.test(location.search)?'nv':'hk';</script>
 <script src="gate.js"></script>
 <script>
 var CFG=HK.cfg,$=function(i){return document.getElementById(i)};
+/* Nonvoyxona rejimi (?prod=nv): soha so'ralmaydi, kirgach nonvoyxona ilovasiga qaytadi */
+var NV=HK.PROD==='nv';
+function nvBack(){var m=location.search.match(/[?&]back=([^&]+)/),b=m?decodeURIComponent(m[1]):'';return /^\/ilovalar\/nonvoyxona\/[\w\-\/]*$/.test(b)?b:'../nonvoyxona/'}
+if(NV){document.title='Nonvoyxona — kirish';$('sub').textContent='🥖 Nonvoyxona ilovasi';var bl=$('botLnk');if(bl)bl.textContent='✈️ Telegramda botni ochish (kod shu yerga keladi)'}
 var trade='',phone='',mode='login',Cc=null,Rr=null,PANELS=['pL','pT','p1','p2','p3','p4','pX','pJ'];
 function err(m){var e=$('er');e.textContent=m;e.hidden=!m}
 function info(m){var e=$('inf');e.innerHTML=m||'';e.hidden=!m}
-function show(id){PANELS.forEach(function(p){$(p).hidden=p!==id});$('tabs').hidden=(id!=='pL'&&id!=='pT'&&mode!=='x');$('toJoin').hidden=(id!=='pL');err('');info('')}
+function show(id){PANELS.forEach(function(p){$(p).hidden=p!==id});$('tabs').hidden=(id!=='pL'&&id!=='pT'&&mode!=='x');$('toJoin').hidden=(id!=='pL'||NV);err('');info('')}
 function normPh(v){var d=String(v||'').replace(/\D/g,'');if(d.length===9)d='998'+d;return d}
 function okPh(p){return p.length===12&&p.indexOf('998')===0}
 function net(e){return /Failed to fetch|NetworkError|Load failed/i.test(e.message)?'Internet yo\'q yoki sekin.':e.message}
 function lastPh(){try{return localStorage.getItem('hk_last_phone')||''}catch(e){return ''}}
 function tabs(w){$('tL').className=w==='L'?'on':'';$('tR').className=w==='R'?'on':''}
 $('tL').onclick=function(){mode='login';tabs('L');show('pL')};
-$('tR').onclick=function(){mode='reg';tabs('R');$('trL').textContent='Qaysi sohada ishlaysiz?';show('pT')};
+$('tR').onclick=function(){mode='reg';tabs('R');if(NV){$('phL').textContent='Telefon raqamingiz';$('back1').dataset.to='pL';show('p1');$('tabs').hidden=false;return}$('trL').textContent='Qaysi sohada ishlaysiz?';show('pT')};
 $('forgot').onclick=function(){mode='reset';$('tabs').hidden=true;$('phL').textContent='Parolni tiklash: telefon raqamingiz';$('ph').value=$('lph').value;show('p1');$('tabs').hidden=true;$('back1').dataset.to='pL'};
 document.querySelectorAll('#trs button').forEach(function(b){b.onclick=function(){trade=b.dataset.t;document.querySelectorAll('#trs button').forEach(function(x){x.className=x===b?'on':''})}});
 $('bT').onclick=function(){if(!trade)return err('Sohangizni tanlang.');$('phL').textContent='Telefon raqamingiz';$('back1').dataset.to='pT';show('p1');$('ph').focus()};
@@ -213,9 +218,9 @@ function signIn(r){
   return HK.jf('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+CFG.apiKey,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:'p'+phone+'@hisobkitob.app',password:r.pw,returnSecureToken:true})}).then(function(j){
     Cc={cfg:CFG,phone:phone,uid:j.localId,idt:j.idToken,rt:j.refreshToken,exp:Date.now()+(+j.expiresIn||3600)*1000,lastUpd:0,lastRemote:0,lastAt:'',msg:''};Rr=r})}
 function finish(){
-  try{localStorage.setItem('cloud_v1',JSON.stringify(Cc));localStorage.setItem('hk_last_phone',phone)}catch(e){}
+  try{localStorage.setItem(NV?'nv_cloud':'cloud_v1',JSON.stringify(Cc));localStorage.setItem('hk_last_phone',phone)}catch(e){}
   HK.set({ok:true,phone:phone,trade:Rr.trade||trade||'elektrik',until:Rr.until,at:Date.now(),role:Rr.role||'usta',usta:Rr.usta||null});
-  show('pL');info('✅ Kirdingiz!');setTimeout(function(){location.replace('index.html')},400)}
+  show('pL');info('✅ Kirdingiz!');setTimeout(function(){location.replace(NV?nvBack():'index.html')},400)}
 function after(r){
   if(r.phone)phone=r.phone;
   signIn(r).then(function(){
@@ -242,7 +247,7 @@ function showPay(pay,until){PAY=pay||{};PLAN='';IMG='';$('xPrev').hidden=true;$(
 $('xCopy').onclick=function(){var t=String((PAY&&PAY.card)||'').replace(/\s/g,'');try{navigator.clipboard.writeText(t);info('Karta raqami nusxalandi')}catch(e){info(t)}};
 $('xImg').onchange=function(){var f=this.files&&this.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,1100/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);var u=c.toDataURL('image/jpeg',.72);IMG=u.split(',')[1];$('xPrev').src=u;$('xPrev').hidden=false;$('bX').disabled=!PLAN};im.onerror=function(){err('Rasmni o\'qib bo\'lmadi.')};im.src=rd.result};rd.readAsDataURL(f)};
 $('bX').onclick=function(){if(!PLAN)return err('Tarifni tanlang.');if(!IMG)return err('Chek rasmini tanlang.');run({act:'pay',plan:PLAN,img:IMG},$('bX'),'Chekni yuborish')};
-$('backX').onclick=function(){if(/[?&]pay=1/.test(location.search))return location.replace('index.html');mode='login';tabs('L');show('pL')};
+$('backX').onclick=function(){if(/[?&]pay=1/.test(location.search))return location.replace(NV?nvBack():'index.html');mode='login';tabs('L');show('pL')};
 /* ---- Shogird: taklif bilan qo'shilish ---- */
 var TOK='',TI=null;
 function joinCheck(t){TOK=String(t||'').toUpperCase().replace(/[^A-Z0-9]/g,'');if(TOK.length!==8){$('jTxt').textContent='Taklif kodi 8 belgidan iborat.';return}
