@@ -174,19 +174,28 @@ input.code{letter-spacing:8px;text-align:center;font-size:26px;font-weight:700}
   <button class="go" id="bJ" hidden>Qo'shilish</button>
   <button class="lnk" id="backJ">← Orqaga</button>
 </div>
+<div id="pRg" hidden>
+  <div class="card">
+    <label for="rph">Telefon raqamingiz</label><input id="rph" type="tel" inputmode="numeric" value="+998 " autocomplete="tel">
+    <label for="rp1">Parol o'ylab toping (kamida 4 belgi)</label><input id="rp1" type="password" autocomplete="new-password">
+    <label for="rp2">Parolni takrorlang</label><input id="rp2" type="password" autocomplete="new-password">
+    <div class="msg" style="font-size:13px">Ro'yxatdan o'tish <b>bepul</b>. Keyingi safar raqam va shu parol bilan kirasiz.</div>
+  </div>
+  <button class="go" id="bRg">Ro'yxatdan o'tish</button>
+</div>
 <button class="lnk" id="toJoin">🤝 Ustam taklif qilgan (taklif kodi bor)</button>
 <div class="msg bad" id="er" hidden></div>
 <div class="msg" id="inf" hidden></div>
 
-<script>window.HK_PROD=(location.search.match(/[?&]prod=(nv|ed)\b/)||[])[1]||'hk';</script>
+<script>window.HK_PROD=(location.search.match(/[?&]prod=(nv|ed|em)\b/)||[])[1]||'hk';</script>
 <script src="gate.js"></script>
 <script>
 var CFG=HK.cfg,$=function(i){return document.getElementById(i)};
 /* Nonvoyxona rejimi (?prod=nv): soha so'ralmaydi, kirgach nonvoyxona ilovasiga qaytadi */
-var NV=HK.PROD!=='hk',PRN={nv:['🥖 Nonvoyxona ilovasi','Nonvoyxona — kirish','../nonvoyxona/'],ed:['💡 Elektr Do\'kon — Sotuvchi','Sotuvchi — kirish','../dokon/sotuvchi/']}[HK.PROD]||[];
+var NV=HK.PROD!=='hk',PRN={nv:['🥖 Nonvoyxona ilovasi','Nonvoyxona — kirish','../nonvoyxona/'],ed:['💡 Elektr Do\'kon — Sotuvchi','Sotuvchi — kirish','../dokon/sotuvchi/'],em:['💡 Elektr Do\'kon','Elektr Do\'kon — kirish','../dokon/mijoz/']}[HK.PROD]||[];
 function nvBack(){var m=location.search.match(/[?&]back=([^&]+)/),b=m?decodeURIComponent(m[1]):'';return /^\/ilovalar\/(nonvoyxona|dokon)\/[\w\-\/]*$/.test(b)?b:PRN[2]}
 if(NV){document.title=PRN[1];$('toJoin').hidden=true;$('sub').textContent=PRN[0];var bl=$('botLnk');if(bl)bl.textContent='✈️ Telegramda botni ochish (kod shu yerga keladi)'}
-var trade='',phone='',mode='login',Cc=null,Rr=null,PANELS=['pL','pT','p1','p2','p3','p4','pX','pJ'];
+var trade='',phone='',mode='login',Cc=null,Rr=null,PANELS=['pL','pT','p1','p2','p3','p4','pX','pJ','pRg'];
 function err(m){var e=$('er');e.textContent=m;e.hidden=!m}
 function info(m){var e=$('inf');e.innerHTML=m||'';e.hidden=!m}
 function show(id){PANELS.forEach(function(p){$(p).hidden=p!==id});$('tabs').hidden=(id!=='pL'&&id!=='pT'&&mode!=='x');$('toJoin').hidden=(id!=='pL'||NV);err('');info('')}
@@ -196,7 +205,7 @@ function net(e){return /Failed to fetch|NetworkError|Load failed/i.test(e.messag
 function lastPh(){try{return localStorage.getItem('hk_last_phone')||''}catch(e){return ''}}
 function tabs(w){$('tL').className=w==='L'?'on':'';$('tR').className=w==='R'?'on':''}
 $('tL').onclick=function(){mode='login';tabs('L');show('pL')};
-$('tR').onclick=function(){mode='reg';tabs('R');if(NV){$('phL').textContent='Telefon raqamingiz';$('back1').dataset.to='pL';show('p1');$('tabs').hidden=false;return}$('trL').textContent='Qaysi sohada ishlaysiz?';show('pT')};
+$('tR').onclick=function(){mode='reg';tabs('R');if(HK.PROD==='em'){show('pRg');$('tabs').hidden=false;return}if(NV){$('phL').textContent='Telefon raqamingiz';$('back1').dataset.to='pL';show('p1');$('tabs').hidden=false;return}$('trL').textContent='Qaysi sohada ishlaysiz?';show('pT')};
 $('forgot').onclick=function(){mode='reset';$('tabs').hidden=true;$('phL').textContent='Parolni tiklash: telefon raqamingiz';$('ph').value=$('lph').value;show('p1');$('tabs').hidden=true;$('back1').dataset.to='pL'};
 document.querySelectorAll('#trs button').forEach(function(b){b.onclick=function(){trade=b.dataset.t;document.querySelectorAll('#trs button').forEach(function(x){x.className=x===b?'on':''})}});
 $('bT').onclick=function(){if(!trade)return err('Sohangizni tanlang.');$('phL').textContent='Telefon raqamingiz';$('back1').dataset.to='pT';show('p1');$('ph').focus()};
@@ -224,7 +233,7 @@ function finish(){
 function after(r){
   if(r.phone)phone=r.phone;
   signIn(r).then(function(){
-    if(mode==='login'||r.role==='shogird')return finish();
+    if(mode==='login'||r.role==='shogird'||(mode==='reg'&&HK.PROD==='em'))return finish();
     $('pwSub').textContent=mode==='reset'?'Yangi parol o\'ylab toping.':'Ro\'yxatdan o\'tdingiz! Endi parol o\'ylab toping. Keyingi safar ilovani raqam va shu parol bilan ochasiz, kod so\'ralmaydi.';
     $('np1').value='';$('np2').value='';show('p4')
   }).catch(function(e){err('Hisobga kirib bo\'lmadi: '+net(e))})}
@@ -282,6 +291,10 @@ $('b4').onclick=function(){var a=$('np1').value,b=$('np2').value;
   HK.call(phone,{act:'setpw',idt:Cc.idt,ph:HK.hash(phone,a)}).then(function(r){$('b4').disabled=false;$('b4').textContent='Saqlash va kirish';
     if(r.st==='pwok')return finish();err(r.msg||'Parol saqlanmadi.')}).catch(function(e){$('b4').disabled=false;$('b4').textContent='Saqlash va kirish';err(net(e))})};
 var lp=lastPh();if(lp)$('lph').value='+'+lp;
+$('bRg').onclick=function(){phone=normPh($('rph').value);var a=$('rp1').value,b=$('rp2').value;
+  if(!okPh(phone))return err('Telefon raqamni to\'liq yozing.');if(a.length<4)return err('Parol kamida 4 belgi bo\'lsin.');if(a!==b)return err('Ikkala parol bir xil emas.');
+  run({act:'reg',ph:HK.hash(phone,a),dev:HK.dev()},$('bRg'),'Ro\'yxatdan o\'tish')};
+if(/[?&]tab=reg/.test(location.search))setTimeout(function(){$('tR').onclick()},0);
 /* Havola bilan ochilgan: ?taklif=KOD (shogird) yoki ?pay=1 (ilovadan to'lov) */
 (function(){var q=location.search,m=q.match(/[?&]taklif=([A-Za-z0-9]{8})/);
   if(m){showJoin(m[1]);return}

@@ -927,15 +927,36 @@ setInterval(() => {
 }, 4000);
 
 /* ---------- kirish va ro'yxatdan o'tish ---------- */
+/* Internetdagi ilovada kirish umumiy sahifada: Ro'yxatdan o'tish / Kirish / Parolni unutdim (bot kodi). Bepul. */
+const WEBGATE = location.protocol === 'https:';
+function gateUrl(tab) { return '/ilovalar/hisob/gate.html?prod=em' + (tab ? '&tab=' + tab : '') + '&back=' + encodeURIComponent(location.pathname); }
 function vAuth() {
   const sh = S.shop || {}, np = !!S.needPass;
-  return '<div class="login">' + (sh.banner ? '<img src="' + h(sh.banner) + '" alt=""' + IMGERR + ' style="width:100%;aspect-ratio:16/7;object-fit:cover;border-radius:14px">' : '') +
-    '<div><div class="lbl">Elektr mollari do\'koni</div><h1 style="margin-top:8px">' + h(sh.name || "Elektr Do'kon") + '</h1><p class="muted" style="margin:8px 0 0">Buyurtmani telefondan bering, manzilingizga olib boramiz.</p></div>' +
-    '<form data-form="phone" class="card pad"><div class="f"><label for="l_phone">Telefon raqamingiz</label><input id="l_phone" name="phone" type="tel" inputmode="numeric" placeholder="+998 90 123 45 67" required autocomplete="tel" style="font-size:22px;letter-spacing:1px" value="' + h(S.authPhone || lsGet('m_phone', '') || '+998 ') + '"></div>' +
-    (np ? '<div class="f"><label for="l_pass">Bu raqamga avval parol qo\'yilgan — parolingiz</label><input id="l_pass" name="password" type="password" required autocomplete="current-password"></div>' : '') +
-    '<button class="btn pri block" style="height:52px">Kirish</button>' +
-    '<p class="small muted" style="margin:0">' + (np ? 'Parolni unutsangiz, sotuvchiga qo\'ng\'iroq qiling.' + (sh.phone ? ' <b class="num">' + h(sh.phone) + '</b>' : '') : 'Faqat telefon raqamingizni yozing — ro\'yxatdan o\'tish bepul va bir zumda.') + '</p></form>' +
+  const top = '<div class="login">' + (sh.banner ? '<img src="' + h(sh.banner) + '" alt=""' + IMGERR + ' style="width:100%;aspect-ratio:16/7;object-fit:cover;border-radius:14px">' : '') +
+    '<div><div class="lbl">Elektr mollari do\'koni</div><h1 style="margin-top:8px">' + h(sh.name || "Elektr Do'kon") + '</h1><p class="muted" style="margin:8px 0 0">Buyurtmani telefondan bering, manzilingizga olib boramiz.</p></div>';
+  if (WEBGATE && !np) return top +
+    '<div class="card pad" style="display:flex;flex-direction:column;gap:10px"><a class="btn pri block" style="height:54px;display:flex;align-items:center;justify-content:center;text-decoration:none" href="' + gateUrl('reg') + '">Ro\'yxatdan o\'tish</a>' +
+    '<a class="btn block" style="height:54px;display:flex;align-items:center;justify-content:center;text-decoration:none" href="' + gateUrl('') + '">Kirish</a>' +
+    '<p class="small muted" style="margin:0">Birinchi marta — «Ro\'yxatdan o\'tish» (bepul). Keyingi safar — «Kirish», raqam va parol bilan.</p></div>' +
     '<button class="btn ghost" data-act="guest">Kirmasdan katalogni ko\'rish</button></div>';
+  return top +
+    '<form data-form="phone" class="card pad"><div class="f"><label for="l_phone">Telefon raqamingiz</label><input id="l_phone" name="phone" type="tel" inputmode="numeric" placeholder="+998 90 123 45 67" required autocomplete="tel" style="font-size:22px;letter-spacing:1px" value="' + h(S.authPhone || lsGet('m_phone', '') || '+998 ') + '"></div>' +
+    (np ? '<div class="f"><label for="l_pass">Bu raqamga avval do\'konda parol qo\'yilgan — o\'sha parol</label><input id="l_pass" name="password" type="password" required autocomplete="current-password"></div>' : '') +
+    '<button class="btn pri block" style="height:52px">Kirish</button>' +
+    '<p class="small muted" style="margin:0">' + (np ? 'Parolni unutsangiz, sotuvchiga qo\'ng\'iroq qiling.' + (sh.phone ? ' <b class="num">' + h(sh.phone) + '</b>' : '') : 'Faqat telefon raqamingizni yozing — ro\'yxatdan o\'tish bepul.') + '</p></form>' +
+    '<button class="btn ghost" data-act="guest">Kirmasdan katalogni ko\'rish</button></div>';
+}
+/* Umumiy sahifadan kirib kelgan bo'lsa: do'kon serveriga o'zi ulanadi (mijoz hech narsa qilmaydi) */
+async function gateLogin() {
+  if (S.token) return; let l = null; try { l = JSON.parse(localStorage.getItem('em_lic') || 'null'); } catch (e) {}
+  if (!(l && l.ok && l.phone)) return;
+  const ph = '+' + String(l.phone).replace(/\D/g, ''); lsSet('m_phone', ph); const pw = autoPass(ph);
+  try { loggedIn(await api('login', {phone: ph, password: pw})); }
+  catch (e1) {
+    if (e1.code === 'net') return;
+    try { loggedIn(await api('register', {phone: ph, password: pw, name: 'Mijoz ' + ph.slice(-4), address: '—'})); toast("Xush kelibsiz! Manzilingizni Profil bo'limida yozib qo'ying"); }
+    catch (e2) { if (e2.code === 'exists') { S.needPass = true; S.authPhone = ph; render(); } }
+  }
 }
 /* Telefon raqamdan avtomatik parol (mijoz uni bilishi shart emas) */
 function autoPass(ph) { return 'tel-' + sha256('elektrdokon|' + String(ph || '').replace(/\D/g, '').slice(-9)).slice(0, 20); }
@@ -1093,6 +1114,7 @@ function vProfile() {
     '<button class="btn ghost block" data-act="logout" data-confirm="1">' + I.out + 'Chiqish</button>';
 }
 function logout() {
+  try { localStorage.removeItem('em_lic'); localStorage.removeItem('em_cloud'); } catch (e) {}
   S.token = null; window.TOKEN = null; S.me = null; S.orders = []; S.account = null; S.tab = 'shop'; S.guest = false; S.view = null;
   ['token', 'me', 'orders', 'acc'].forEach(k => lsSet('m_' + k, null));
   S.cat = null; lsSet('m_cat', null); loadCatalog(); render();
@@ -1206,6 +1228,7 @@ document.addEventListener('submit', async ev => {
 });
 
 /* ---------- ishga tushish ---------- */
+setTimeout(gateLogin, 300);
 setupSearch({
   label: () => S.popular && S.popular.length ? 'Ko\'p qidiriladi' : 'Masalan',
   chips: () => (S.popular && S.popular.length ? S.popular : products().slice(0, 6).map(p => p.name)).slice(0, 8),
