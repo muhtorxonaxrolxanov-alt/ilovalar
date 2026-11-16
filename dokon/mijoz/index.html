@@ -934,6 +934,7 @@ function vAuth() {
   const sh = S.shop || {}, np = !!S.needPass;
   const top = '<div class="login">' + (sh.banner ? '<img src="' + h(sh.banner) + '" alt=""' + IMGERR + ' style="width:100%;aspect-ratio:16/7;object-fit:cover;border-radius:14px">' : '') +
     '<div><div class="lbl">Elektr mollari do\'koni</div><h1 style="margin-top:8px">' + h(sh.name || "Elektr Do'kon") + '</h1><p class="muted" style="margin:8px 0 0">Buyurtmani telefondan bering, manzilingizga olib boramiz.</p></div>';
+  if (WEBGATE && !np && S.gating) return top + '<div class="card pad" style="text-align:center;font-weight:700">⏳ Kirilmoqda…</div></div>';
   if (WEBGATE && !np) return top +
     '<div class="card pad" style="display:flex;flex-direction:column;gap:10px"><a class="btn pri block" style="height:54px;display:flex;align-items:center;justify-content:center;text-decoration:none" href="' + gateUrl('reg') + '">Ro\'yxatdan o\'tish</a>' +
     '<a class="btn block" style="height:54px;display:flex;align-items:center;justify-content:center;text-decoration:none" href="' + gateUrl('') + '">Kirish</a>' +
@@ -943,7 +944,7 @@ function vAuth() {
     '<form data-form="phone" class="card pad"><div class="f"><label for="l_phone">Telefon raqamingiz</label><input id="l_phone" name="phone" type="tel" inputmode="numeric" placeholder="+998 90 123 45 67" required autocomplete="tel" style="font-size:22px;letter-spacing:1px" value="' + h(S.authPhone || lsGet('m_phone', '') || '+998 ') + '"></div>' +
     (np ? '<div class="f"><label for="l_pass">Bu raqamga avval do\'konda parol qo\'yilgan — o\'sha parol</label><input id="l_pass" name="password" type="password" required autocomplete="current-password"></div>' : '') +
     '<button class="btn pri block" style="height:52px">Kirish</button>' +
-    '<p class="small muted" style="margin:0">' + (np ? 'Parolni unutsangiz, sotuvchiga qo\'ng\'iroq qiling.' + (sh.phone ? ' <b class="num">' + h(sh.phone) + '</b>' : '') : 'Faqat telefon raqamingizni yozing — ro\'yxatdan o\'tish bepul.') + '</p></form>' +
+    '<p class="small muted" style="margin:0">' + (np ? 'Bu raqam do\'konda oldin boshqa parol bilan ochilgan. O\'sha parolni bir marta yozing — keyingi safar so\'ralmaydi. Esingizda bo\'lmasa, sotuvchi «Parolni tiklash» qilib beradi.' + (sh.phone ? ' <b class="num">' + h(sh.phone) + '</b>' : '') : 'Faqat telefon raqamingizni yozing — ro\'yxatdan o\'tish bepul.') + '</p></form>' +
     '<button class="btn ghost" data-act="guest">Kirmasdan katalogni ko\'rish</button></div>';
 }
 /* Umumiy sahifadan kirib kelgan bo'lsa: do'kon serveriga o'zi ulanadi (mijoz hech narsa qilmaydi) */
@@ -951,12 +952,14 @@ async function gateLogin() {
   if (S.token) return; let l = null; try { l = JSON.parse(localStorage.getItem('em_lic') || 'null'); } catch (e) {}
   if (!(l && l.ok && l.phone)) return;
   const ph = '+' + String(l.phone).replace(/\D/g, ''); lsSet('m_phone', ph); const pw = autoPass(ph);
+  S.gating = true; render();
   try { loggedIn(await api('login', {phone: ph, password: pw})); }
   catch (e1) {
-    if (e1.code === 'net') return;
-    try { loggedIn(await api('register', {phone: ph, password: pw, name: 'Mijoz ' + ph.slice(-4), address: '—'})); toast("Xush kelibsiz! Manzilingizni Profil bo'limida yozib qo'ying"); }
-    catch (e2) { if (e2.code === 'exists') { S.needPass = true; S.authPhone = ph; render(); } }
+    if (e1.code === 'net') { toast("Internet yo'q yoki server javob bermadi. Qayta oching.", true); }
+    else try { loggedIn(await api('register', {phone: ph, password: pw, name: 'Mijoz ' + ph.slice(-4), address: '—'})); toast("Xush kelibsiz! Manzilingizni Profil bo'limida yozib qo'ying"); }
+    catch (e2) { if (e2.code === 'exists') { S.needPass = true; S.authPhone = ph; toast("Bu raqam do'konda oldin boshqa parol bilan ochilgan. O'sha parolni bir marta yozing.", true, 6000); } else toast(e2.message || 'Xatolik', true); }
   }
+  S.gating = false; render();
 }
 /* Telefon raqamdan avtomatik parol (mijoz uni bilishi shart emas) */
 function autoPass(ph) { return 'tel-' + sha256('elektrdokon|' + String(ph || '').replace(/\D/g, '').slice(-9)).slice(0, 20); }
@@ -1209,7 +1212,12 @@ document.addEventListener('submit', async ev => {
       let digits = String(d.phone || '').replace(/\D/g, ''); if (digits.length === 9) digits = '998' + digits;
       if (digits.length !== 12) throw new Error("Telefon raqamni to'liq yozing: +998 va 9 ta raqam");
       const ph = '+' + digits; lsSet('m_phone', ph);
-      if (d.password) loggedIn(await api('login', {phone: ph, password: d.password}));
+      if (d.password) {
+        let r = await api('login', {phone: ph, password: d.password});
+        /* Eski parol bir marta yozildi: keyingi safar raqamning o'zi bilan kirsin */
+        try { const ap = autoPass(ph); if (d.password !== ap) { await api('changePassword', {token: r.token, old: d.password, password: ap}); r = await api('login', {phone: ph, password: ap}); } } catch (e) {}
+        S.needPass = false; loggedIn(r);
+      }
       else {
         const pw = autoPass(ph);
         try { loggedIn(await api('login', {phone: ph, password: pw})); }
@@ -1317,10 +1325,10 @@ lockNow();
     tr: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('set'); }, gd: 'Nonvoyxona nomi, filiallar, bildirishnomalar, yangi versiya va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
     th: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('yub'); }, gd: 'Akaunt, ovoz, til va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
     'hk-i': { on: function () { return vis0('#prof'); }, set: clk('#prof'), gd: 'Profil: sohangiz, parolni o\'zgartirish va ilovadan chiqish.' },
-    'hk-h': { hide: '.top .gear', pad: '.top{padding-right:50px}', on: function () { return true; }, set: clk('[data-a="gear"]'), gd: 'Profil, ilova nomi va belgisi, ko\'rinish, zaxira nusxa. Har ekranda shu yerda turadi.' },
+    'hk-h': { hide: '.top .gear', pad: '.top{padding-right:96px}', on: function () { return true; }, set: clk('[data-a="gear"]'), gd: 'Profil, ilova nomi va belgisi, ko\'rinish, zaxira nusxa. Har ekranda shu yerda turadi.' },
     'hk-sg': { hide: '#tS', on: function () { return !!document.querySelector('#tabs') && vis0('#tO'); }, set: clk('#tS'), gd: 'Yangilash va ilovadan chiqish.' },
-    em: { pad: '#topActions{margin-right:46px}', on: function () { var s = gS(); return !!(s && s.token); }, set: function () { var s = gS(); s.tab = 'profile'; s.view = null; render(); scrollTo(0, 0); }, gd: 'Profilingiz: ism, manzil, xaritadagi joyingiz, parol.' },
-    es: { hide: '#topActions [data-k="settings"]', pad: '#topActions{margin-right:46px}', on: function () { var s = gS(); return !!(s && s.token); }, set: clk('#topActions [data-k="settings"]'), gd: 'Do\'kon nomi, logo, karta raqami, printer, Telegram xabar.' }
+    em: { pad: '#topActions{margin-right:90px}', on: function () { var s = gS(); return !!(s && s.token); }, set: function () { var s = gS(); s.tab = 'profile'; s.view = null; render(); scrollTo(0, 0); }, gd: 'Profilingiz: ism, manzil, xaritadagi joyingiz, parol.' },
+    es: { hide: '#topActions [data-k="settings"]', pad: '#topActions{margin-right:90px}', on: function () { var s = gS(); return !!(s && s.token); }, set: clk('#topActions [data-k="settings"]'), gd: 'Do\'kon nomi, logo, karta raqami, printer, Telegram xabar.' }
   };
   function key() {
     var a = window.YAPP || '';
@@ -1398,10 +1406,9 @@ lockNow();
     return all.slice(0, 18);
   }
   function screenName() { var H = document.querySelectorAll('h1,h2,h3,.title,.ttl'); for (var i = 0; i < H.length; i++) { var e = H[i]; if (shown(e) && txt(e) && txt(e).length < 50 && e.getBoundingClientRect().top < innerHeight * 0.5) return txt(e); } return ''; }
-  var css = '#yrdg,#yrdb{position:fixed;right:8px;z-index:2147482000;width:38px;height:38px;border-radius:50%;border:1px solid rgba(127,127,127,.25);padding:0;line-height:36px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}' +
-    '#yrdg{top:calc(8px + env(safe-area-inset-top,0px));background:rgba(255,255,255,.82);color:#333;font-size:20px;box-shadow:0 1px 4px rgba(0,0,0,.18)}' +
-    '#yrdb{top:calc(50px + env(safe-area-inset-top,0px));right:12px;width:30px;height:30px;line-height:28px;background:rgba(127,127,127,.12);color:rgba(110,110,110,.75);font-size:15px;font-weight:700;opacity:.5;box-shadow:none}' +
-    '@media(prefers-color-scheme:dark){#yrdg{background:rgba(40,44,52,.85);color:#ddd}#yrdb{color:rgba(200,200,200,.7)}}' +
+  var css = '#yrdg,#yrdb{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));background:rgba(255,255,255,.88);color:#333;box-shadow:0 1px 4px rgba(0,0,0,.18);z-index:2147482000;width:38px;height:38px;border-radius:50%;border:1px solid rgba(127,127,127,.25);padding:0;line-height:36px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}' +
+    '#yrdb{right:8px;font-size:19px;font-weight:800}#yrdg{right:52px;font-size:20px}' +
+    '@media(prefers-color-scheme:dark){#yrdg,#yrdb{background:rgba(40,44,52,.88);color:#ddd}}' +
     '#yrd{position:fixed;inset:0;z-index:2147483001}#yrd .sh{position:fixed;inset:0;background:rgba(0,0,0,.55)}#yrd .sp{position:fixed;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,.55);transition:all .3s;border:3px solid #fbbf24;animation:yglow 1.2s ease-in-out infinite}@keyframes yglow{50%{border-color:#fff}}' +
     '#yrd .bb{position:fixed;left:12px;right:12px;max-width:460px;margin:0 auto;background:#fff;color:#14171f;border-radius:16px;padding:14px 14px 10px;box-shadow:0 10px 30px rgba(0,0,0,.4);font:16px/1.45 system-ui,sans-serif;transition:top .3s}' +
     '#yrd .bb b{display:block;font-size:18px;margin-bottom:4px}#yrd .bb .nv{display:flex;gap:8px;margin-top:10px}#yrd .bb button{flex:1;padding:11px 6px;border-radius:12px;border:0;font-size:15px;font-weight:700;background:#e5e7eb;color:#111}#yrd .bb button.p{background:#2563eb;color:#fff}#yrd .bb small{color:#6b7280}';
@@ -1435,7 +1442,6 @@ lockNow();
     var g = document.getElementById('yrdg'), b = document.getElementById('yrdb'), on = false;
     if (C.set) { try { on = !!C.on(); } catch (e) { on = false; } }
     if (g) g.style.display = on ? '' : 'none';
-    if (b) b.style.top = on ? '' : 'calc(8px + env(safe-area-inset-top,0px))';
   }
   function init() {
     if (document.getElementById('yrdb')) return;

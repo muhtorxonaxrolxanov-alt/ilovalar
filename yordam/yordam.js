@@ -77,10 +77,10 @@
     tr: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('set'); }, gd: 'Nonvoyxona nomi, filiallar, bildirishnomalar, yangi versiya va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
     th: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('yub'); }, gd: 'Akaunt, ovoz, til va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
     'hk-i': { on: function () { return vis0('#prof'); }, set: clk('#prof'), gd: 'Profil: sohangiz, parolni o\'zgartirish va ilovadan chiqish.' },
-    'hk-h': { hide: '.top .gear', pad: '.top{padding-right:50px}', on: function () { return true; }, set: clk('[data-a="gear"]'), gd: 'Profil, ilova nomi va belgisi, ko\'rinish, zaxira nusxa. Har ekranda shu yerda turadi.' },
+    'hk-h': { hide: '.top .gear', pad: '.top{padding-right:96px}', on: function () { return true; }, set: clk('[data-a="gear"]'), gd: 'Profil, ilova nomi va belgisi, ko\'rinish, zaxira nusxa. Har ekranda shu yerda turadi.' },
     'hk-sg': { hide: '#tS', on: function () { return !!document.querySelector('#tabs') && vis0('#tO'); }, set: clk('#tS'), gd: 'Yangilash va ilovadan chiqish.' },
-    em: { pad: '#topActions{margin-right:46px}', on: function () { var s = gS(); return !!(s && s.token); }, set: function () { var s = gS(); s.tab = 'profile'; s.view = null; render(); scrollTo(0, 0); }, gd: 'Profilingiz: ism, manzil, xaritadagi joyingiz, parol.' },
-    es: { hide: '#topActions [data-k="settings"]', pad: '#topActions{margin-right:46px}', on: function () { var s = gS(); return !!(s && s.token); }, set: clk('#topActions [data-k="settings"]'), gd: 'Do\'kon nomi, logo, karta raqami, printer, Telegram xabar.' }
+    em: { pad: '#topActions{margin-right:90px}', on: function () { var s = gS(); return !!(s && s.token); }, set: function () { var s = gS(); s.tab = 'profile'; s.view = null; render(); scrollTo(0, 0); }, gd: 'Profilingiz: ism, manzil, xaritadagi joyingiz, parol.' },
+    es: { hide: '#topActions [data-k="settings"]', pad: '#topActions{margin-right:90px}', on: function () { var s = gS(); return !!(s && s.token); }, set: clk('#topActions [data-k="settings"]'), gd: 'Do\'kon nomi, logo, karta raqami, printer, Telegram xabar.' }
   };
   function key() {
     var a = window.YAPP || '';
@@ -158,10 +158,9 @@
     return all.slice(0, 18);
   }
   function screenName() { var H = document.querySelectorAll('h1,h2,h3,.title,.ttl'); for (var i = 0; i < H.length; i++) { var e = H[i]; if (shown(e) && txt(e) && txt(e).length < 50 && e.getBoundingClientRect().top < innerHeight * 0.5) return txt(e); } return ''; }
-  var css = '#yrdg,#yrdb{position:fixed;right:8px;z-index:2147482000;width:38px;height:38px;border-radius:50%;border:1px solid rgba(127,127,127,.25);padding:0;line-height:36px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}' +
-    '#yrdg{top:calc(8px + env(safe-area-inset-top,0px));background:rgba(255,255,255,.82);color:#333;font-size:20px;box-shadow:0 1px 4px rgba(0,0,0,.18)}' +
-    '#yrdb{top:calc(50px + env(safe-area-inset-top,0px));right:12px;width:30px;height:30px;line-height:28px;background:rgba(127,127,127,.12);color:rgba(110,110,110,.75);font-size:15px;font-weight:700;opacity:.5;box-shadow:none}' +
-    '@media(prefers-color-scheme:dark){#yrdg{background:rgba(40,44,52,.85);color:#ddd}#yrdb{color:rgba(200,200,200,.7)}}' +
+  var css = '#yrdg,#yrdb{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));background:rgba(255,255,255,.88);color:#333;box-shadow:0 1px 4px rgba(0,0,0,.18);z-index:2147482000;width:38px;height:38px;border-radius:50%;border:1px solid rgba(127,127,127,.25);padding:0;line-height:36px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}' +
+    '#yrdb{right:8px;font-size:19px;font-weight:800}#yrdg{right:52px;font-size:20px}' +
+    '@media(prefers-color-scheme:dark){#yrdg,#yrdb{background:rgba(40,44,52,.88);color:#ddd}}' +
     '#yrd{position:fixed;inset:0;z-index:2147483001}#yrd .sh{position:fixed;inset:0;background:rgba(0,0,0,.55)}#yrd .sp{position:fixed;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,.55);transition:all .3s;border:3px solid #fbbf24;animation:yglow 1.2s ease-in-out infinite}@keyframes yglow{50%{border-color:#fff}}' +
     '#yrd .bb{position:fixed;left:12px;right:12px;max-width:460px;margin:0 auto;background:#fff;color:#14171f;border-radius:16px;padding:14px 14px 10px;box-shadow:0 10px 30px rgba(0,0,0,.4);font:16px/1.45 system-ui,sans-serif;transition:top .3s}' +
     '#yrd .bb b{display:block;font-size:18px;margin-bottom:4px}#yrd .bb .nv{display:flex;gap:8px;margin-top:10px}#yrd .bb button{flex:1;padding:11px 6px;border-radius:12px;border:0;font-size:15px;font-weight:700;background:#e5e7eb;color:#111}#yrd .bb button.p{background:#2563eb;color:#fff}#yrd .bb small{color:#6b7280}';
@@ -195,7 +194,6 @@
     var g = document.getElementById('yrdg'), b = document.getElementById('yrdb'), on = false;
     if (C.set) { try { on = !!C.on(); } catch (e) { on = false; } }
     if (g) g.style.display = on ? '' : 'none';
-    if (b) b.style.top = on ? '' : 'calc(8px + env(safe-area-inset-top,0px))';
   }
   function init() {
     if (document.getElementById('yrdb')) return;
