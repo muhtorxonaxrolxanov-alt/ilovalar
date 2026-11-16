@@ -48,7 +48,7 @@ nav button.on{color:var(--pri);font-weight:700}
 .sheet{background:var(--bg);width:100%;max-width:560px;border-radius:22px 22px 0 0;padding:14px 16px calc(18px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto;animation:up .2s ease}
 @keyframes up{from{transform:translateY(40px);opacity:.5}}
 .sh-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.sh-h b{font-size:18px}
-.x{border:0;background:rgba(127,127,127,.15);border-radius:50%;width:34px;height:34px;font-size:18px;cursor:pointer}
+.xb{border:0;background:rgba(127,127,127,.15);border-radius:50%;width:34px;height:34px;font-size:18px;cursor:pointer}
 .seg{display:flex;background:rgba(127,127,127,.14);border-radius:12px;padding:3px;margin-bottom:12px}.seg button{flex:1;border:0;background:none;padding:9px;border-radius:10px;font-weight:600;cursor:pointer}
 .seg button.on{background:var(--card);box-shadow:var(--sh)}
 .amtin{font-size:34px!important;font-weight:800;text-align:center}
@@ -318,10 +318,10 @@ function vHome(){
   $('#fab').onclick=()=>edit();if($('#more'))$('#more').onclick=()=>{S.show+=100;render()};
   app.querySelectorAll('[data-e]').forEach(x=>x.onclick=()=>edit(x.dataset.e));
 }
-function sheet(html){const bg=document.createElement('div');bg.className='sheet-bg';bg.innerHTML=`<div class="sheet">${html}</div>`;bg.onclick=e=>{if(e.target===bg)bg.remove()};document.body.appendChild(bg);bg.querySelector('.x')&&(bg.querySelector('.x').onclick=()=>bg.remove());return bg}
+function sheet(html){const bg=document.createElement('div');bg.className='sheet-bg';bg.innerHTML=`<div class="sheet">${html}</div>`;bg.onclick=e=>{if(e.target===bg)bg.remove()};document.body.appendChild(bg);bg.querySelector('.xb')&&(bg.querySelector('.xb').onclick=()=>bg.remove());return bg}
 function edit(id){
   const o=id?S.data.e.find(x=>x.id===id):null;let t=o?o.t:'x',c=o?o.c:null;
-  const bg=sheet(`<div class="sh-h"><b>${o?'Tahrirlash':'Yangi yozuv'}</b><button class="x">✕</button></div>
+  const bg=sheet(`<div class="sh-h"><b>${o?'Tahrirlash':'Yangi yozuv'}</b><button class="xb">✕</button></div>
   <div class="seg"><button data-t="x">➖ Xarajat</button><button data-t="i">➕ Kirim</button></div>
   <div class="f"><input class="amtin" id="am" inputmode="numeric" placeholder="0" value="${o?fmt(o.a):''}"></div>
   <div class="cats" id="cats"></div>
@@ -342,7 +342,7 @@ function edit(id){
     let ent;change(D=>{if(o){ent=D.e.find(x=>x.id===o.id);if(ent)Object.assign(ent,{t,a,c:cc,n:nt.value.trim(),d:dd,ts:Date.now()})}else{ent={id:K.uid(),t,a,c:cc,n:nt.value.trim(),d:dd,ts:Date.now(),src:'app'};D.e.push(ent)}});
     bg.remove();
     const al=t==='x'?K.alerts(S.data,today(),ent):[];
-    if(al.length)sheet(`<div class="sh-h"><b>Diqqat</b><button class="x">✕</button></div>${al.map(a=>`<div class="alert ${/🔴/.test(a)?'r':''}">${esc(a)}</div>`).join('')}<button class="btn" onclick="this.closest('.sheet-bg').remove()">Tushundim</button>`);
+    if(al.length)sheet(`<div class="sh-h"><b>Diqqat</b><button class="xb">✕</button></div>${al.map(a=>`<div class="alert ${/🔴/.test(a)?'r':''}">${esc(a)}</div>`).join('')}<button class="btn" onclick="this.closest('.sheet-bg').remove()">Tushundim</button>`);
     else toast('✅ Saqlandi');
   };
   if(o)bg.querySelector('#dl').onclick=()=>{if(!confirm('O\'chirilsinmi?'))return;change(D=>{D.del[o.id]=1;D.e=D.e.filter(x=>x.id!==o.id)});bg.remove();toast('O\'chirildi')};
@@ -372,7 +372,7 @@ function vRep(){
   app.innerHTML=h;
   app.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{S.per=b.dataset.p;store();render()});
   app.querySelectorAll('.leg[data-c]').forEach(b=>b.onclick=()=>{const c=b.dataset.c,L=S.data.e.filter(e=>e.c===c&&e.t==='x'&&e.d>=R.a&&e.d<=R.b).sort((a,b2)=>a.d<b2.d?1:-1);
-    const bg=sheet(`<div class="sh-h"><b>${K.CAT[c].em} ${esc(K.CAT[c].n)}</b><button class="x">✕</button></div>`+L.map(e=>`<div class="it" data-e="${e.id}"><div class="g"><div class="t">${dname(e.d)}</div>${e.n?`<div class="n">${esc(e.n)}</div>`:''}</div><div class="amt x">−${fmt(e.a)}</div></div>`).join(''));
+    const bg=sheet(`<div class="sh-h"><b>${K.CAT[c].em} ${esc(K.CAT[c].n)}</b><button class="xb">✕</button></div>`+L.map(e=>`<div class="it" data-e="${e.id}"><div class="g"><div class="t">${dname(e.d)}</div>${e.n?`<div class="n">${esc(e.n)}</div>`:''}</div><div class="amt x">−${fmt(e.a)}</div></div>`).join(''));
     bg.querySelectorAll('[data-e]').forEach(x=>x.onclick=()=>{bg.remove();edit(x.dataset.e)})});
 }
 function vLim(){
@@ -399,7 +399,7 @@ function vDebt(){
 }
 function debt(id){
   const o=id?S.data.debts.find(x=>x.id===id):null;let dir=o?o.dir:'b';
-  const bg=sheet(`<div class="sh-h"><b>${o?'Qarz':'Yangi qarz'}</b><button class="x">✕</button></div><div class="seg"><button data-r="b">📤 Men berdim</button><button data-r="o">📥 Men oldim</button></div>
+  const bg=sheet(`<div class="sh-h"><b>${o?'Qarz':'Yangi qarz'}</b><button class="xb">✕</button></div><div class="seg"><button data-r="b">📤 Men berdim</button><button data-r="o">📥 Men oldim</button></div>
   <div class="f"><label>Kim</label><input id="wh" maxlength="40" value="${o?esc(o.who):''}" placeholder="Ism"></div><div class="f"><label>Summa</label><input id="da" inputmode="numeric" value="${o?fmt(o.a):''}"></div>
   <div class="f"><label>Qaytarish muddati (ixtiyoriy)</label><input id="du" type="date" value="${o&&o.due||''}"></div>
   <button class="btn" id="ds">Saqlash</button>${o&&!o.back?'<button class="btn g" id="db" style="margin-top:8px">✅ Qaytarildi</button>':''}${o?'<button class="btn r" id="dx" style="margin-top:8px">🗑 O\'chirish</button>':''}`);
