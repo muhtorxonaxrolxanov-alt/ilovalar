@@ -1,0 +1,10 @@
+plugins { id 'com.android.application' }
+android {
+    namespace 'com.example.myhisobot'
+    compileSdk 36
+    defaultConfig { applicationIdSuffix '.web'; applicationId 'com.example.myhisobot'; minSdk 26; targetSdk 36; versionCode 30; versionName '30' }
+    compileOptions { sourceCompatibility JavaVersion.VERSION_1_8; targetCompatibility JavaVersion.VERSION_1_8 }
+    signingConfigs { rel { storeFile file('C:/Loyihalar/keys/ilovalar.jks'); storePassword new File('C:/Loyihalar/keys/parol.txt').text.trim(); keyAlias 'ilovalar'; keyPassword new File('C:/Loyihalar/keys/parol.txt').text.trim() } }
+    buildTypes { release { minifyEnabled false; signingConfig signingConfigs.rel } }
+    lint { abortOnError false; checkReleaseBuilds false }
+}

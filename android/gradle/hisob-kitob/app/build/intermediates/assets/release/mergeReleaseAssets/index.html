@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Hisob-kitob</title><script src="gate.js"></script>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f4f5f9;--card:#fff;--text:#14171f;--muted:#636b7d;--acc:#2563eb;--ok:#15803d;--bad:#c62828;--line:#e2e5ee}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1117;--card:#171b24;--text:#eef0f6;--muted:#9aa3b5;--acc:#5b8cff;--ok:#4ade80;--bad:#ff7b7b;--line:#272c38}}
+:root[data-theme="dark"]{--bg:#0e1117;--card:#171b24;--text:#eef0f6;--muted:#9aa3b5;--acc:#5b8cff;--ok:#4ade80;--bad:#ff7b7b;--line:#272c38}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.4}
+main{max-width:600px;margin:0 auto;padding:16px 14px 90px}
+h1{font-size:20px;margin:0 0 12px}
+.sum{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.sum div,.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 12px}
+.sum small{color:var(--muted);display:block;font-size:12px}
+.sum b{font-size:15px}
+.tabs{display:flex;gap:8px;margin-bottom:12px}
+.tabs button{flex:1;padding:11px 4px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font-weight:600;font-size:15px}
+.tabs button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
+.card{margin-bottom:10px}
+.card h3{margin:0 0 6px;font-size:17px}
+.row{display:flex;justify-content:space-between;font-size:14px;padding:2px 0}
+.row span:first-child{color:var(--muted)}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+.acts{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.b{padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:14px;font-weight:600}
+.b.p{background:var(--acc);color:#fff;border-color:var(--acc)}
+.add{position:fixed;left:14px;right:14px;bottom:calc(14px + env(safe-area-inset-bottom,0px));max-width:572px;margin:0 auto;padding:14px;border-radius:14px;border:0;background:var(--acc);color:#fff;font-size:16px;font-weight:700}
+details{margin-top:8px;font-size:13px}
+summary{color:var(--muted)}
+.tx{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-top:1px solid var(--line)}
+.tx button{border:0;background:none;color:var(--bad);font-size:16px}
+dialog{border:0;border-radius:16px;padding:16px;width:min(92vw,420px);background:var(--card);color:var(--text)}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+label{display:block;font-size:13px;color:var(--muted);margin:10px 0 3px}
+input,select{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:16px}
+.tabs[hidden],.sum[hidden],.add[hidden]{display:none}.msg{padding:14px;border-radius:14px;background:var(--card);border:1px solid var(--line);margin-bottom:10px}.inv td{padding:5px 0;border-bottom:1px solid var(--line);font-size:14px}.inv{width:100%;border-collapse:collapse}.empty{text-align:center;color:var(--muted);padding:30px 10px}
+
+textarea{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:15px;font-family:inherit}
+.home{display:inline-block;margin-bottom:8px;color:var(--acc);font-weight:600;text-decoration:none}
+.sw{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px}
+.sw button{width:42px;height:42px;border-radius:50%;border:3px solid transparent;padding:0}
+.sw button.on{border-color:var(--text)}
+.click{cursor:pointer}.click h3:after{content:" ›";color:var(--muted)}
+.tabs button{font-size:13px}
+
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.top h1{margin:0}
+.tabs button{font-size:15px}
+.cv2{overflow:auto;max-width:100%;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+select,input[type=number]{width:100%}
+td input{width:110px!important}
+table{width:100%;border-collapse:collapse;font-size:14px}td,th{padding:6px 3px;border-bottom:1px solid var(--line);text-align:left}td:last-child,th:last-child{text-align:right}
+
+a.c{display:block;text-decoration:none;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:12px}
+a.c b{font-size:18px;display:block}a.c span{color:var(--muted);font-size:14px}
+
+.warn{padding:11px 13px;border-radius:12px;margin-bottom:12px;font-size:14px;border:1px solid #d9a400;background:rgba(240,190,0,.14)}
+.news{padding:12px 13px;border-radius:12px;margin-bottom:12px;font-size:14px;border:1px solid var(--acc);background:rgba(37,99,235,.1)}
+.news b{display:block;margin-bottom:3px}.news button{margin-top:8px}
+.me{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-top:18px;padding-top:12px;border-top:1px solid var(--line)}
+.me button{padding:7px 11px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:13px;font-weight:600}
+</style></head><body><main style="padding-top:28px">
+<h1 id="hd">Hisob-kitob</h1><div class="hint" id="hs" style="margin-bottom:18px"></div>
+<div id="alerts"></div><div id="mods"></div>
+<div class="me"><span id="who"></span><span style="display:flex;gap:6px"><button id="prof">👤 Profil</button></span></div>
+<dialog id="dl"><h3 style="margin:0 0 8px">Sohangiz</h3><div id="dlb"></div><div class="acts" style="margin-top:12px"><button class="b" id="dlx">Yopish</button></div></dialog>
+</main><script>
+(function(){
+var T={elektrik:['⚡ Elektrik','Elektromontaj ishlari uchun'],santexnik:['🔧 Santexnik','Santexnika va qozonxona ishlari uchun'],quruvchi:['🧱 Quruvchi','Qurilish ishlari uchun'],boshqa:['🛠 Usta','Hisob-kitob uchun']};
+var $=function(i){return document.getElementById(i)};
+var l=HK.lic()||{},tr=HK.trade();if(!T[tr])tr='boshqa';
+$('hd').textContent=T[tr][0];$('hs').textContent=T[tr][1];
+var m=[];
+if(tr==='elektrik')m.push(['sxema.html','📐 Shit sxemasi',"Haqiqiy avtomatlar bilan shit yig'ish, tekshiruv va narx"]);
+if(tr==='santexnik')m.push(['santex.html','🚿 Santexnika sxemasi',"Qozonxona, kollektor, quvur va jihozlar bilan sxema, narx"]);
+m.push(['hisob.html','🧾 Hisob-kitob','Obyektlar, shogirtlar, hisobot']);
+$('mods').innerHTML=m.map(function(x){return '<a class="c" href="'+x[0]+'"><b>'+x[1]+'</b><span>'+x[2]+'</span></a>'}).join('');
+function days(){return Math.floor(((HK.lic()||{}).until-Date.now())/864e5)}
+function paint(){var l2=HK.lic()||{},d=days(),a='';
+  if(l2.until&&l2.until<HK.FAR&&d<=5&&d>=0)a+='<div class="warn">⏰ Foydalanish muddatingiz tugashiga <b>'+(d+1)+' kun</b> qoldi. Davom etish uchun egaga murojaat qiling.</div>';
+  $('alerts').innerHTML=a+($('alerts').dataset.news||'');
+  $('who').textContent='+'+(l2.phone||'')+' · '+(HK.TRADES[l2.trade]||'')+(l2.until&&l2.until>=HK.FAR?' · muddatsiz':l2.until?' · '+Math.max(0,d+1)+' kun':'')}
+paint();
+function cc(){try{return JSON.parse(localStorage.getItem('cloud_v1')||'null')}catch(e){return null}}
+function profile(){var d=$('dl'),l2=HK.lic()||{},cur=l2.trade||'elektrik';
+  $('dlb').innerHTML='<h3 style="margin:0 0 4px">Profil</h3><div style="font-size:15px;margin-bottom:10px">+'+(l2.phone||'')+'</div>'
+  +'<label>Soha</label><div id="pt" style="display:grid;grid-template-columns:1fr 1fr;gap:6px">'+Object.keys(HK.TRADES).map(function(k){return '<button class="b'+(k===cur?' p':'')+'" data-k="'+k+'">'+HK.TRADES[k]+'</button>'}).join('')+'</div>'
+  +'<label>Parolni o\'zgartirish</label><input id="pp1" type="password" placeholder="Yangi parol (kamida 6 belgi)" autocomplete="new-password"><input id="pp2" type="password" placeholder="Takrorlang" autocomplete="new-password" style="margin-top:6px"><button class="b p" id="ppb" style="margin-top:8px;width:100%">Parolni saqlash</button>'
+  +'<div id="pm" style="font-size:13px;margin-top:8px;min-height:18px"></div>'
+  +'<button class="b" id="out2" style="margin-top:6px;width:100%;color:var(--bad)">Ilovadan chiqish</button>';
+  d.showModal();
+  var msg=function(t,bad){var e=$('pm');e.textContent=t;e.style.color=bad?'var(--bad)':'var(--ok)'};
+  $('pt').querySelectorAll('button').forEach(function(b){b.onclick=function(){var c=cc();if(!c)return msg('Qaytadan kiring.',1);msg('Saqlanmoqda…');
+    tok(c).then(function(t){return HK.call(l2.phone,{act:'trade',trade:b.dataset.k,idt:t})}).then(function(r){if(r.st!=='tradeok')return msg(r.msg||'Saqlanmadi.',1);var l3=HK.lic()||{};l3.trade=b.dataset.k;HK.set(l3);location.reload()}).catch(function(e){msg('Internet yo\'q yoki bot ishlamayapti.',1)})}});
+  $('ppb').onclick=function(){var a=$('pp1').value,b=$('pp2').value;if(a.length<6)return msg('Parol kamida 6 belgi bo\'lsin.',1);if(a!==b)return msg('Parollar bir xil emas.',1);var c=cc();if(!c)return msg('Qaytadan kiring.',1);msg('Saqlanmoqda…');
+    tok(c).then(function(t){return HK.call(l2.phone,{act:'setpw',idt:t,ph:HK.hash(l2.phone,a)})}).then(function(r){msg(r.st==='pwok'?'Parol saqlandi ✓':(r.msg||'Saqlanmadi.'),r.st!=='pwok')}).catch(function(){msg('Internet yo\'q yoki bot ishlamayapti.',1)})};
+  $('out2').onclick=function(){$('dlb').innerHTML='<div style="font-size:15px;margin-bottom:10px">Ilovadan chiqasizmi? Ma\'lumotlaringiz bulutda saqlanadi. Qayta kirsangiz telefon raqam va parol yoziladi, hammasi qaytadi.</div><button class="b p" id="yo">Ha, chiqish</button>';$('yo').onclick=function(){HK.clear();try{localStorage.removeItem('cloud_v1')}catch(e){}location.replace('gate.html')}}}
+$('prof').onclick=profile;
+$('dlx').onclick=function(){$('dl').close()};
+/* muddat va yangilikni internetdan tekshirish */
+var P='https://firestore.googleapis.com/v1/projects/elektrik-hisob/databases/(default)/documents/';
+function jf(u,o){return fetch(u,o).then(function(r){return r.json().then(function(j){if(!r.ok){var e=new Error('x');e.code=r.status;throw e}return j})})}
+function tok(c){if(Date.now()<c.exp-60000)return Promise.resolve(c.idt);
+  return jf('https://securetoken.googleapis.com/v1/token?key='+c.cfg.apiKey,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(c.rt)}).then(function(j){c.idt=j.id_token;c.rt=j.refresh_token||c.rt;c.exp=Date.now()+(+j.expires_in||3600)*1000;try{localStorage.setItem('cloud_v1',JSON.stringify(c))}catch(e){}return c.idt})}
+try{var c=JSON.parse(localStorage.getItem('cloud_v1')||'null');
+ if(c&&c.uid&&c.phone)tok(c).then(function(t){var H={headers:{Authorization:'Bearer '+t}};
+  jf(P+'lic/'+c.phone,H).then(function(j){var f=j.fields||{},u=+((f.until||{}).integerValue||0),bl=!!(f.blocked||{}).booleanValue,tr2=(f.trade||{}).stringValue;
+    var l4=HK.lic()||{};
+    if(bl||u<=Date.now()){HK.set(Object.assign(l4,{ok:false,until:u}));location.replace('gate.html');return}
+    var cl=HK.lic()||{};cl.until=u;if(tr2&&!cl.tradeLocal)cl.trade=cl.trade||tr2;HK.set(cl);paint()}).catch(function(){});
+  jf(P+'app/latest',H).then(function(j){var f=j.fields||{},v=+((f.ver||{}).integerValue||0),n=(f.notes||{}).stringValue||'';
+    var seen=+(localStorage.getItem('hk_seen')||0);
+    if(v>HK.VER||v>seen){var a=$('alerts');a.dataset.news='<div class="news"><b>🆕 Yangilanish v'+v+'</b>'+n.replace(/[<>&]/g,'')+(v>HK.VER?'<br><small>Ilovaning yangi versiyasi bor: egadan yangisini oling.</small>':'')+'<br><button class="b" id="nk">Yopish</button></div>';paint();var k=$('nk');if(k)k.onclick=function(){try{localStorage.setItem('hk_seen',v)}catch(e){}a.dataset.news='';paint()}}}).catch(function(){})
+ }).catch(function(){})}catch(e){}
+})();
+</script></body></html>

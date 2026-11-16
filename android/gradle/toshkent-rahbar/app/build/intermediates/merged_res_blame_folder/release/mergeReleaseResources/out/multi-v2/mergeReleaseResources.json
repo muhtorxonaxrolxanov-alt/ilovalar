@@ -1,0 +1,78 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.example.premiumnonvoyxona.app-release-4:/values_values.arsc.flat",
+            "map": [
+                {
+                    "source": "C:\\Loyihalar\\ilovalar-sayt\\android\\gradle\\toshkent-rahbar\\app\\src\\main\\res\\values\\strings.xml",
+                    "from": {
+                        "startLines": "2,3",
+                        "startColumns": "4,4",
+                        "startOffsets": "57,122",
+                        "endColumns": "63,53",
+                        "endOffsets": "116,171"
+                    },
+                    "to": {
+                        "startLines": "6,7",
+                        "startColumns": "4,4",
+                        "startOffsets": "248,312",
+                        "endColumns": "63,53",
+                        "endOffsets": "307,361"
+                    }
+                },
+                {
+                    "source": "C:\\Loyihalar\\ilovalar-sayt\\android\\gradle\\toshkent-rahbar\\app\\src\\main\\res\\values\\colors.xml",
+                    "from": {
+                        "startLines": "4,5,3,2",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "146,203,99,55",
+                        "endColumns": "56,44,46,43",
+                        "endOffsets": "198,243,141,94"
+                    },
+                    "to": {
+                        "startLines": "2,3,4,5",
+                        "startColumns": "4,4,4,4",
+                        "startOffsets": "55,112,157,204",
+                        "endColumns": "56,44,46,43",
+                        "endOffsets": "107,152,199,243"
+                    }
+                },
+                {
+                    "source": "C:\\Loyihalar\\ilovalar-sayt\\android\\gradle\\toshkent-rahbar\\app\\src\\main\\res\\values\\themes.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "4",
+                        "endColumns": "12",
+                        "endOffsets": "206"
+                    },
+                    "to": {
+                        "startLines": "8",
+                        "startColumns": "4",
+                        "startOffsets": "366",
+                        "endLines": "10",
+                        "endColumns": "12",
+                        "endOffsets": "517"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "com.example.premiumnonvoyxona.app-release-4:/values-night-v8_values-night-v8.arsc.flat",
+            "map": [
+                {
+                    "source": "C:\\Loyihalar\\ilovalar-sayt\\android\\gradle\\toshkent-rahbar\\app\\src\\main\\res\\values-night\\themes.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endLines": "4",
+                        "endColumns": "12",
+                        "endOffsets": "200"
+                    }
+                }
+            ]
+        }
+    ]
+}
