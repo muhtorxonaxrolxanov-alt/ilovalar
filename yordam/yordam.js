@@ -111,7 +111,8 @@
     [/excel|fayl|📎|yukla/i, 'Fayl tanlab yuklaysiz.'], [/tahrir|✏|o'zgartir/i, 'Yozuvni o\'zgartirasiz.'], [/qidir|🔍/i, 'Nom bo\'yicha tez topadi.'],
     [/ulash|telegram/i, 'Boshqalarga yuboradi (Telegram va boshqalar).'], [/chek|🧾/i, 'Chek chiqaradi yoki ko\'rsatadi.'], [/yangila|🔄|↻/i, 'Ma\'lumotni serverdan qayta oladi.'],
     [/ovoz|🎤|mikrofon/i, 'Ovoz bilan buyruq berasiz.'], [/hisobot|📊/i, 'Jami raqamlar: kun, hafta, oy bo\'yicha.'], [/sozlama|⚙/i, 'Sozlamalar.'],
-    [/berildi|berish/i, 'Berilgan narsani belgilaysiz yoki yozasiz.'], [/qaytdi|qaytar/i, 'Qaytib kelgan narsani yozasiz.'], [/narx/i, 'Narxni ko\'rsatadi yoki o\'zgartiradi.']];
+    [/berildi|berish/i, 'Berilgan narsani belgilaysiz yoki yozasiz.'], [/qaytdi|qaytar/i, 'Qaytib kelgan narsani yozasiz.'], [/narx/i, 'Narxni ko\'rsatadi yoki o\'zgartiradi.'],
+    [/📞|qo'ng'iroq/i, 'Qo\'ng\'iroq qiladi.'], [/yordamchi|🤖/i, 'Sun\'iy intellekt yordamchisi: yozing yoki gapiring, u ilovadagi ishni bajarib beradi (oldin so\'raydi).']];
   function nameOf(e) {
     if (e.labels && e.labels[0]) return txt(e.labels[0]);
     var p = e.previousElementSibling; if (p && /LABEL|SPAN|B|DIV|SMALL/.test(p.tagName) && txt(p).length < 50 && txt(p)) return txt(p);
