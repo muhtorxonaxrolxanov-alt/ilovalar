@@ -1,0 +1,476 @@
+<!DOCTYPE html><html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Sotuv serveri</title>
+<style>:root{--bg:#f4f5f9;--card:#fff;--tx:#14171f;--mu:#636b7d;--ac:#2563eb}@media(prefers-color-scheme:dark){:root{--bg:#0e1117;--card:#171b24;--tx:#eef0f6;--mu:#9aa3b5;--ac:#5b8cff}}
+body{margin:0;background:var(--bg);color:var(--tx);font:17px/1.5 system-ui,sans-serif;padding:18px 16px}.w{max-width:520px;margin:0 auto}.c{background:var(--card);border-radius:16px;padding:16px;margin-bottom:12px}
+.n{display:inline-block;width:28px;height:28px;border-radius:50%;background:var(--ac);color:#fff;text-align:center;line-height:28px;font-weight:800;margin-right:6px}
+button,a.b{display:block;width:100%;box-sizing:border-box;margin-top:10px;padding:15px;border:0;border-radius:14px;background:var(--ac);color:#fff;font-size:18px;font-weight:800;text-align:center;text-decoration:none}
+b.r{background:#fde68a;color:#111;padding:1px 6px;border-radius:6px;font-weight:700}small{color:var(--mu)}</style></head><body><div class="w">
+<h2>🥖 Nonvoyxona sotuv serveri</h2>
+<div class="c"><span class="n">1</span><b>Kodni nusxalang</b><button id="cp">📋 Kodni nusxalash</button><div id="st"></div><small>460 qator</small></div>
+<div class="c"><span class="n">2</span><b>Google Apps Script'ni oching</b><a class="b" href="https://script.google.com/home/projects/create" target="_blank" rel="noopener">➕ Yangi loyiha ochish</a>
+<small>Yangi loyiha ochiladi. Ichidagi matnni o'chirib, nusxalangan kodni joylang. Yuqoridagi 💾 (Сохранить) ni bosing.</small></div>
+<div class="c"><span class="n">3</span><b>Joylash</b><br>Yuqorida <b class="r">Начать развертывание</b> → <b class="r">Новое развертывание</b> → ⚙ turi: <b class="r">Веб-приложение</b><br>
+Выполнять как: <b class="r">Я</b> · У кого есть доступ: <b class="r">Все</b> → <b class="r">Начать развертывание</b><br><small>Google ruxsat so'rasa: o'z hisobingizni tanlang → «Дополнительно» → «Перейти…» → «Разрешить».</small></div>
+<div class="c"><span class="n">4</span><b>Havolani yuboring</b><br><b class="r">URL веб-приложения</b> ni nusxalab, Claude'ga yuboring. Qolganini Claude o'zi qiladi.</div>
+<textarea id="code" readonly style="position:absolute;left:-9999px">// Nonvoyxona server v11 (Google Apps Script) - SMS kod (Eskiz.uz) bilan kirish
+var BASEP = PropertiesService.getScriptProperties();
+var BASEC = CacheService.getScriptCache();
+var P = BASEP, C = BASEC;
+/* ===== Ko'p nonvoyxona (tenant): har rahbar raqamiga alohida jadval ===== */
+var TEN = "", TSS = null, SHARED = { GEMINI_KEY: 1, GEMINI_MODEL: 1 };
+function tenantInit(t) {
+  TEN = t;
+  var id = BASEP.getProperty("T_" + t), b = null;
+  if (id) { try { b = SpreadsheetApp.openById(id); } catch (x) {} }
+  if (!b) { b = SpreadsheetApp.create("Nonvoyxona — +" + t); BASEP.setProperty("T_" + t, b.getId()); }
+  TSS = b;
+  var s = b.getSheetByName("_sozlama"); if (!s) s = b.insertSheet("_sozlama");
+  var v = s.getDataRange().getValues(), m = {}, rows = {};
+  for (var i = 0; i &lt; v.length; i++) { var k = String(v[i][0] || ""); if (!k) continue; rows[k] = i + 1; if (v[i][1] !== "") m[k] = String(v[i][1]); }
+  P = {
+    getProperty: function (k) { return Object.prototype.hasOwnProperty.call(m, k) ? m[k] : (SHARED[k] ? BASEP.getProperty(k) : null); },
+    setProperty: function (k, val) { val = String(val); m[k] = val; if (rows[k]) s.getRange(rows[k], 2).setValue("'" + val); else { s.appendRow([k, "'" + val]); rows[k] = s.getLastRow(); } return P; },
+    deleteProperty: function (k) { delete m[k]; if (rows[k]) s.getRange(rows[k], 2).setValue(""); return P; }
+  };
+  C = { get: function (k) { return BASEC.get(t + ":" + k); }, put: function (k, v, ttl) { return BASEC.put(t + ":" + k, v, ttl); }, remove: function (k) { return BASEC.remove(t + ":" + k); } };
+}
+function gateSig(payload) {
+  var key = BASEP.getProperty("GATE_SECRET"); if (!key) return "";
+  return Utilities.base64EncodeWebSafe(Utilities.computeHmacSha256Signature(payload, key)).replace(/=+$/, "");
+}
+/* Bot bergan kalit: "telefon|muddat|amal_qilish|imzo" */
+function gateLogin(d) {
+  var g = String(d.g || "").split("|"); if (g.length != 4) return { err: "auth", m: "Kalit noto'g'ri" };
+  var payload = g[0] + "|" + g[1] + "|" + g[2];
+  if (!BASEP.getProperty("GATE_SECRET") || gateSig(payload) !== g[3]) return { err: "auth", m: "Kalit noto'g'ri" };
+  if (g[0] !== TEN) return { err: "auth", m: "Raqam mos emas" };
+  if (+g[2] &lt; Date.now()) return { err: "auth", m: "Kalit eskirgan. Ilovaga qayta kiring." };
+  P.setProperty("OWNER", TEN); P.setProperty("LIC", String(+g[1] || 0));
+  return { ok: 1, tok: newSess(TEN, "o"), lic: +g[1] };
+}
+
+function ss() {
+  if (TEN) return TSS;
+  var b = null; try { b = SpreadsheetApp.getActiveSpreadsheet(); } catch (x) {}
+  if (b) return b;
+  var id = P.getProperty("SSID");
+  if (id) { try { return SpreadsheetApp.openById(id); } catch (x) {} }
+  b = SpreadsheetApp.create("Nonvoyxona malumotlar"); P.setProperty("SSID", b.getId());
+  return b;
+}
+function sh(n, h) {
+  var b = ss(), s = b.getSheetByName(n);
+  if (!s) { s = b.insertSheet(n); if (h) s.appendRow(h); }
+  return s;
+}
+function out(o) { return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON); }
+function hash(s) { return Utilities.base64Encode(Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, "nv|" + s)); }
+function ph(p) { p = String(p || "").replace(/\D/g, ""); if (p.length == 9) p = "998" + p; return p; }
+
+function sessAll() { try { return JSON.parse(P.getProperty("SESS") || "{}"); } catch (x) { return {}; } }
+function newSess(p, r, w) {
+  var all = sessAll(), t = Utilities.getUuid().replace(/-/g, "") + Utilities.getUuid().replace(/-/g, ""), ks = Object.keys(all);
+  if (ks.length &gt;= 60) { ks.sort(function (a, b) { return all[a].t - all[b].t; }); delete all[ks[0]]; }
+  all[t] = { p: p, r: r, t: Date.now(), w: w || "" };
+  P.setProperty("SESS", JSON.stringify(all));
+  return t;
+}
+function sess(t) { if (!t) return null; var s = sessAll()[t]; if (!s || Date.now() - s.t &gt; 90 * 864e5) return null; return s; }
+function revoke(t) { var all = sessAll(); delete all[t]; P.setProperty("SESS", JSON.stringify(all)); }
+
+function eskizToken(force) {
+  var t = force ? null : C.get("ET"); if (t) return t;
+  var em = P.getProperty("ESKIZ_EMAIL"), pw = P.getProperty("ESKIZ_PASS"); if (!em || !pw) return null;
+  var r = UrlFetchApp.fetch("https://notify.eskiz.uz/api/auth/login", { method: "post", payload: { email: em, password: pw }, muteHttpExceptions: true });
+  var j = {}; try { j = JSON.parse(r.getContentText()); } catch (x) {}
+  t = j.data &amp;&amp; j.data.token; if (t) C.put("ET", t, 20000);
+  return t;
+}
+function eskiz(p, txt) {
+  var t = eskizToken(false); if (!t) return { ok: 0, m: "ESKIZ sozlanmagan" };
+  for (var k = 0; k &lt; 2; k++) {
+    var r = UrlFetchApp.fetch("https://notify.eskiz.uz/api/message/sms/send", { method: "post", headers: { Authorization: "Bearer " + t }, payload: { mobile_phone: p, message: txt, from: P.getProperty("ESKIZ_FROM") || "4546" }, muteHttpExceptions: true });
+    if (r.getResponseCode() == 401) { t = eskizToken(true); if (!t) break; continue; }
+    return r.getResponseCode() &lt; 300 ? { ok: 1 } : { ok: 0, m: r.getContentText().slice(0, 200) };
+  }
+  return { ok: 0, m: "token" };
+}
+
+function em(e) { return String(e || "").trim().toLowerCase(); }
+function emOK(e) { return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e); }
+function stList() { try { return JSON.parse(P.getProperty("STAFFLIST") || "{}"); } catch (x) { return {}; } }
+function mailCode(e) {
+  if (C.get("r_" + e)) return { err: "wait" };
+  var code = String(Math.floor(100000 + Math.random() * 900000));
+  C.put("c_" + e, hash(code), 600); C.put("r_" + e, "1", 60); C.remove("n_" + e);
+  if (P.getProperty("TEST_MODE") == "1") { sh("TestKod", ["vaqt", "raqam", "kod"]).appendRow([new Date(), e, code]); return { ok: 1, test: 1, code: code }; }
+  try { MailApp.sendEmail(e, "Nonvoyxona: tasdiqlash kodi", "Nonvoyxona ilovasiga kirish kodi: " + code + "\n\nKod 10 daqiqa amal qiladi. Siz so'ramagan bo'lsangiz, e'tibor bermang."); }
+  catch (x) { return { err: "sms", m: String(x).slice(0, 150) }; }
+  return { ok: 1, via: "email", to: e.replace(/^(.).*(@.*)$/, "$1***$2") };
+}
+function ownerEmail() { return em(P.getProperty("OWNER_EMAIL") || Session.getEffectiveUser().getEmail()); }
+function sCode(d) {
+  var e = em(d.e); if (!emOK(e)) return { err: "email" };
+  if (!stList()[e]) return { err: "nostaff" };
+  return mailCode(e);
+}
+function sVerify(d) {
+  var e = em(d.e), k = "n_" + e, n = +(C.get(k) || 0);
+  if (n &gt;= 5) return { err: "locked" };
+  var h = C.get("c_" + e), L = stList();
+  if (!h || h != hash(String(d.c || "").trim())) { C.put(k, String(n + 1), 600); return { err: "code" }; }
+  if (!L[e]) return { err: "nostaff" };
+  C.remove("c_" + e);
+  return { ok: 1, tok: newSess(e, "s"), n: L[e].n, r: L[e].r };
+}
+function stAdd(d) {
+  var e = em(d.e), n = String(d.n || "").trim().slice(0, 40), r = String(d.r || "");
+  if (!emOK(e)) return { err: "email" };
+  if (!n || "hys".indexOf(r) &lt; 0 || r.length != 1) return { err: "bad" };
+  var L = stList(); L[e] = { n: n, r: r }; P.setProperty("STAFFLIST", JSON.stringify(L));
+  return { ok: 1, list: L };
+}
+function stDel(d) {
+  var e = em(d.e), L = stList(); delete L[e]; P.setProperty("STAFFLIST", JSON.stringify(L));
+  var all = sessAll(), ch = 0; Object.keys(all).forEach(function (t) { if (all[t].p == e) { delete all[t]; ch = 1; } });
+  if (ch) P.setProperty("SESS", JSON.stringify(all));
+  return { ok: 1, list: L };
+}
+
+function sendCode(d) {
+  if (d.e) { var oe = em(d.e); if (!emOK(oe)) return { err: "email" }; if (oe != ownerEmail()) return { err: "owner" }; return mailCode(oe); }
+  var p = ph(d.p); if (p.length != 12) return { err: "phone" };
+  var own = P.getProperty("OWNER"); if (own &amp;&amp; own != p) return { err: "owner" };
+  if (C.get("r_" + p)) return { err: "wait" };
+  var code = String(Math.floor(100000 + Math.random() * 900000));
+  C.put("c_" + p, hash(code), 600); C.put("r_" + p, "1", 60); C.remove("n_" + p);
+  var txt = (P.getProperty("SMS_TEXT") || "Nonvoyxona ilovasi uchun tasdiqlash kodi: {code}").replace("{code}", code);
+  if (P.getProperty("TEST_MODE") == "1") { sh("TestKod", ["vaqt", "raqam", "kod"]).appendRow([new Date(), p, code]); return { ok: 1, test: 1, code: code }; }
+  if (!P.getProperty("ESKIZ_EMAIL")) {
+    var to = P.getProperty("OWNER_EMAIL") || Session.getEffectiveUser().getEmail();
+    if (!to) return { err: "sms", m: "email topilmadi" };
+    try { MailApp.sendEmail(to, "Nonvoyxona: tasdiqlash kodi", "Nonvoyxona ilovasiga kirish kodi: " + code + "\n\nKod 10 daqiqa amal qiladi. Siz so'ramagan bo'lsangiz, e'tibor bermang."); }
+    catch (x) { return { err: "sms", m: String(x).slice(0, 150) }; }
+    return { ok: 1, via: "email", to: to.replace(/^(.).*(@.*)$/, "$1***$2") };
+  }
+  var r = eskiz(p, txt);
+  return r.ok ? { ok: 1 } : { err: "sms", m: r.m };
+}
+function verify(d) {
+  var p = d.e ? em(d.e) : ph(d.p), k = "n_" + p, n = +(C.get(k) || 0);
+  if (n &gt;= 5) return { err: "locked" };
+  var h = C.get("c_" + p);
+  if (!h || h != hash(String(d.c || "").trim())) { C.put(k, String(n + 1), 600); return { err: "code" }; }
+  C.remove("c_" + p);
+  var own = P.getProperty("OWNER");
+  if (own &amp;&amp; own != p) { if (p.indexOf("@") &gt; 0 &amp;&amp; own.indexOf("@") &lt; 0) P.setProperty("OWNER", p); else return { err: "owner" }; }
+  if (!own) P.setProperty("OWNER", p);
+  if (d.e &amp;&amp; p != ownerEmail()) return { err: "owner" };
+  return { ok: 1, tok: newSess(p, "o") };
+}
+function wList() { try { return JSON.parse(P.getProperty("WORKERS") || "{}"); } catch (x) { return {}; } }
+function staff(d) {
+  var p = ph(d.p), k = "n_" + p, n = +(C.get(k) || 0);
+  if (n &gt;= 8) return { err: "locked" };
+  if (P.getProperty("OWNER") != p) { C.put(k, String(n + 1), 600); return { err: "code" }; }
+  var c = String(d.code || "").trim(), L = wList(), id = Object.keys(L).filter(function (i) { return L[i].c == c; })[0];
+  if (id &amp;&amp; c) return { ok: 1, tok: newSess(p, "s", id), n: L[id].n, r: L[id].r };
+  var st = P.getProperty("STAFF");
+  if (!st || st != hash(c)) { C.put(k, String(n + 1), 600); return { err: "code" }; }
+  return { ok: 1, tok: newSess(p, "s") };
+}
+function wAdd(d) {
+  var n = String(d.n || "").trim().slice(0, 40), r = String(d.r || ""), c = String(d.c || "").trim().slice(0, 20);
+  if (!n || "hys".indexOf(r) &lt; 0 || r.length != 1 || c.length &lt; 4) return { err: "bad" };
+  var L = wList();
+  for (var i in L) if (L[i].c == c) return { err: "dup" };
+  L[Utilities.getUuid().slice(0, 8)] = { n: n, r: r, c: c };
+  P.setProperty("WORKERS", JSON.stringify(L));
+  return { ok: 1, list: L };
+}
+function wDel(d) {
+  var L = wList(); delete L[d.id]; P.setProperty("WORKERS", JSON.stringify(L));
+  var all = sessAll(), ch = 0; Object.keys(all).forEach(function (t) { if (all[t].w == d.id) { delete all[t]; ch = 1; } });
+  if (ch) P.setProperty("SESS", JSON.stringify(all));
+  return { ok: 1, list: L };
+}
+
+function getItems() {
+  var v = sh("Yozuvlar", ["id", "tur", "json", "vaqt"]).getDataRange().getValues(), o = [];
+  for (var i = 1; i &lt; v.length; i++) { try { o.push(JSON.parse(v[i][2])); } catch (x) {} }
+  return o;
+}
+function put(d, s) {
+  var L = LockService.getScriptLock(); L.waitLock(15000);
+  try {
+    var sheet = sh("Yozuvlar", ["id", "tur", "json", "vaqt"]), v = sheet.getDataRange().getValues(), ids = {}, n = 0;
+    for (var i = 1; i &lt; v.length; i++) ids[v[i][0]] = 1;
+    (d.items || []).forEach(function (x) {
+      if (!x || !x.i || ids[x.i]) return;
+      if (s.r != "o" &amp;&amp; (x.k == "bread" || x.k == "ver")) return;
+      ids[x.i] = 1; sheet.appendRow([x.i, x.k, JSON.stringify(x), new Date()]); n++;
+    });
+    return { ok: 1, n: n };
+  } finally { L.releaseLock(); }
+}
+function snapPut(d) {
+  var L = LockService.getScriptLock(); L.waitLock(15000);
+  try {
+    var s = sh("Zaxira", ["qism", "matn"]), t = String(d.data || ""), ts = Date.now();
+    s.clearContents(); s.appendRow(["ts", String(ts)]);
+    for (var i = 0; i &lt; t.length; i += 40000) s.appendRow([i / 40000, "~" + t.slice(i, i + 40000)]);
+    return { ok: 1, ts: ts };
+  } finally { L.releaseLock(); }
+}
+function snapGet() {
+  var v = sh("Zaxira", ["qism", "matn"]).getDataRange().getValues();
+  if (v.length &lt; 2 || v[0][0] != "ts") return { ok: 1, ts: 0, data: "" };
+  var t = ""; for (var i = 1; i &lt; v.length; i++) t += String(v[i][1]).slice(1);
+  return { ok: 1, ts: +v[0][1], data: t };
+}
+
+
+function aiMods(key) {
+  var ck = "MODS_" + key.slice(-6), c = C.get(ck);
+  if (c) { try { return JSON.parse(c); } catch (x) {} }
+  var a = [];
+  try {
+    var r = UrlFetchApp.fetch("https://generativelanguage.googleapis.com/v1beta/models?pageSize=300", { headers: { "x-goog-api-key": key }, muteHttpExceptions: true });
+    a = (JSON.parse(r.getContentText()).models || []).filter(function (m) { return (m.supportedGenerationMethods || []).indexOf("generateContent") &gt;= 0; }).map(function (m) { return String(m.name).replace(/^models\//, ""); });
+  } catch (x) {}
+  if (a.length) C.put(ck, JSON.stringify(a), 21600);
+  return a;
+}
+function aiRank(a, web) {
+  var ver = function (n) { var m = n.match(/gemini-(\d+(?:\.\d+)?)/); return m ? parseFloat(m[1]) : (/latest/.test(n) ? 99 : 0); };
+  var pre = function (n) { return /(preview|exp)/.test(n) ? 1 : 0; }, lite = function (n) { return /lite/.test(n) ? 1 : 0; };
+  var c = a.filter(function (n) { return /flash/.test(n) &amp;&amp; !/(image|tts|audio|live|embedding|native|computer|robotics)/.test(n); });
+  c.sort(function (x, y) { return (pre(x) - pre(y)) || (ver(y) - ver(x)) || (web ? lite(x) - lite(y) : lite(y) - lite(x)) || (x.length - y.length); });
+  return c;
+}
+
+function tgApi(m, payload) {
+  var tk = P.getProperty("TG_TOKEN"); if (!tk) return { ok: false, description: "notoken" };
+  try {
+    var r = UrlFetchApp.fetch("https://api.telegram.org/bot" + tk + "/" + m, { method: "post", contentType: "application/json", payload: JSON.stringify(payload || {}), muteHttpExceptions: true });
+    return JSON.parse(r.getContentText());
+  } catch (x) { return { ok: false, description: String(x).slice(0, 120) }; }
+}
+function tgSet(d) {
+  var tk = String(d.token || "").trim(); if (!/^\d+:[\w-]{20,}$/.test(tk)) return { err: "bad", m: "Token noto'g'ri" };
+  P.setProperty("TG_TOKEN", tk); var me = tgApi("getMe");
+  if (!me.ok) { P.deleteProperty("TG_TOKEN"); return { err: "tg", m: me.description || "Token ishlamadi" }; }
+  tgApi("deleteWebhook", {}); P.setProperty("TG_BOT", me.result.username); return { ok: 1, bot: me.result.username };
+}
+function tgPoll() {
+  var L = {}; try { L = JSON.parse(P.getProperty("TG_LINKS") || "{}"); } catch (x) {}
+  if (!P.getProperty("TG_TOKEN")) return { ok: 1, bot: "", links: L };
+  var off = +(P.getProperty("TG_OFF") || 0), r = tgApi("getUpdates", { offset: off, timeout: 0, allowed_updates: ["message"] });
+  (r.result || []).forEach(function (u) {
+    off = Math.max(off, u.update_id + 1); var msg = u.message; if (!msg || !msg.text) return;
+    var m = msg.text.match(/^\/start\s+(\S+)/);
+    if (m) {
+      var nmv = [msg.from.first_name, msg.from.last_name].filter(function (x) { return x; }).join(" ");
+      L[m[1]] = { chat: msg.chat.id, name: nmv, user: msg.from.username || "", t: Date.now() };
+      tgApi("sendMessage", { chat_id: msg.chat.id, text: "✅ Assalomu alaykum, " + nmv + "! Siz nonvoyxona xabarlariga ulandingiz. Endi har safar non berilganda va to'lov qilinganda shu yerga xabar keladi." });
+    }
+  });
+  P.setProperty("TG_OFF", String(off)); P.setProperty("TG_LINKS", JSON.stringify(L));
+  return { ok: 1, bot: P.getProperty("TG_BOT") || "", links: L };
+}
+function tgSend(d) {
+  var r = tgApi("sendMessage", { chat_id: d.chat, text: String(d.text || "").slice(0, 4000) });
+  return r.ok ? { ok: 1 } : { err: "tg", m: r.description || "yuborilmadi" };
+}
+
+function aiCall(d) {
+  var key = P.getProperty("GEMINI_KEY");
+  if (!key) return { err: "nokey" };
+  var model = P.getProperty("GEMINI_MODEL") || "gemini-2.5-flash";
+  var cs = (d.msgs || []).slice(-24).map(function (m) { return { role: m.r == "m" ? "model" : "user", parts: [{ text: String(m.t || "").slice(0, 4000) }] }; });
+  while (cs.length &amp;&amp; cs[0].role != "user") cs.shift();
+  if (!cs.length) return { err: "bad" };
+  if (d.att &amp;&amp; d.att.data) cs[cs.length - 1].parts.unshift({ inline_data: { mime_type: String(d.att.mime || "image/jpeg"), data: String(d.att.data) } });
+  var body = { systemInstruction: { parts: [{ text: String(d.sys || "").slice(0, 40000) }] }, contents: cs, generationConfig: { temperature: 0.3, responseMimeType: "application/json" } };
+  function bodyFor(m) { var b = JSON.parse(JSON.stringify(body)); if (/2\.5/.test(m)) b.generationConfig.thinkingConfig = { thinkingBudget: 0 }; if (d.web) { b.tools = [{ google_search: {} }]; delete b.generationConfig.responseMimeType; } return b; }
+  var list = []; var av = aiMods(key), rk = aiRank(av, !!d.web).slice(0, 4);
+  (rk.length ? rk : (d.web ? ["gemini-flash-latest", "gemini-3.8-flash", model] : ["gemini-flash-lite-latest", "gemini-flash-latest", "gemini-3.8-flash", model])).forEach(function (m) { if (m &amp;&amp; /^[a-z0-9.\-]+$/.test(m) &amp;&amp; list.indexOf(m) &lt; 0) list.push(m); });
+  var c = 0, j = {}, em0 = "", trace = [];
+  for (var i = 0; i &lt; list.length; i++) {
+    var r = UrlFetchApp.fetch("https://generativelanguage.googleapis.com/v1beta/models/" + encodeURIComponent(list[i]) + ":generateContent", { method: "post", contentType: "application/json", headers: { "x-goog-api-key": key }, payload: JSON.stringify(bodyFor(list[i])), muteHttpExceptions: true });
+    c = r.getResponseCode(); j = {}; try { j = JSON.parse(r.getContentText()); } catch (x) {}
+    em0 = (j.error &amp;&amp; j.error.message) || "";
+    trace.push(list[i] + "=" + c);
+    if (c == 404) C.remove("MODS_" + key.slice(-6));
+    if (c == 200) break;
+    if (c == 401 || c == 403 || (c == 400 &amp;&amp; /API key/i.test(em0))) break;
+    Utilities.sleep(700);
+  }
+  if (c == 401 || c == 403 || (c == 400 &amp;&amp; /API key/i.test(em0))) return { err: "key", m: em0 };
+  if (c != 200) return { err: "ai", m: "Hammasi band/xato. " + trace.join(", ") + " | " + em0.slice(0, 120) };
+  var t = ((((j.candidates || [])[0] || {}).content || {}).parts || []).map(function (p) { return p.text || ""; }).join("");
+  if (!t) return { err: "ai", m: "Javob bo'sh" };
+  return { ok: 1, text: t };
+}
+function aiKey(d) {
+  var k = String(d.key || "").trim(), m = String(d.model || "").trim();
+  if (k) { if (k.length &lt; 20) return { err: "bad", m: "Kalit juda qisqa" }; P.setProperty("GEMINI_KEY", k); }
+  if (m) P.setProperty("GEMINI_MODEL", m);
+  return { ok: 1 };
+}
+
+
+/* ===== Olma do'koni: faqat ko'rish sahifasi ===== */
+function olmaPut(d) {
+  var L = LockService.getScriptLock(); L.waitLock(15000);
+  try {
+    var s = sh("Olma", ["qism", "matn"]), t = String(d.data || ""), ts = Date.now();
+    s.clearContents(); s.appendRow(["ts", String(ts)]);
+    for (var i = 0; i &lt; t.length; i += 40000) s.appendRow([i / 40000, "~" + t.slice(i, i + 40000)]);
+    return { ok: 1, ts: ts };
+  } finally { L.releaseLock(); }
+}
+function olmaRaw() {
+  var v = sh("Olma", ["qism", "matn"]).getDataRange().getValues();
+  if (v.length &lt; 2 || v[0][0] != "ts") return { ts: 0, data: "" };
+  var t = ""; for (var i = 1; i &lt; v.length; i++) t += String(v[i][1]).slice(1);
+  return { ts: +v[0][1], data: t };
+}
+function olmaOwn(key) {
+  var k = P.getProperty("OLMA_KEY");
+  if (!k || String(key) !== k) return null;
+  var r = olmaRaw(), o = {};
+  try { o = JSON.parse(r.data || "{}"); } catch (x) {}
+  return { ok: 1, ts: r.ts, data: o };
+}
+function olmaView(key) {
+  var me = olmaOwn(key);
+  if (!me) return JSON.stringify({ ok: 0, m: "Link noto'g'ri yoki eskirgan. Rahbardan yangi link so'rang." });
+  var L = []; try { L = JSON.parse(P.getProperty("OLMA_LINKS") || "[]"); } catch (x) {}
+  me.others = L.map(function (l) {
+    var ck = "OL_" + String(l.key).slice(0, 8), c = C.get(ck);
+    if (c) { try { return JSON.parse(c); } catch (x) {} }
+    var o = { name: l.name || "", ok: 0 };
+    try {
+      var r = UrlFetchApp.fetch(l.url, { method: "post", contentType: "text/plain", payload: JSON.stringify({ a: "olmaget", key: l.key }), muteHttpExceptions: true, followRedirects: true });
+      var j = JSON.parse(r.getContentText()); if (j &amp;&amp; j.ok) { o = { name: l.name || "", ok: 1, ts: j.ts, data: j.data }; }
+      else o.m = (j &amp;&amp; (j.m || j.err)) || "xato";
+    } catch (x) { o.m = String(x).slice(0, 100); }
+    try { var t = JSON.stringify(o); if (t.length &lt; 90000) C.put(ck, t, 60); } catch (x) {}
+    return o;
+  });
+  return JSON.stringify(me);
+}
+function olmaPage(key) {
+  var html = OLMA_HTML.replace("__KEY__", JSON.stringify(String(key)));
+  return HtmlService.createHtmlOutput(html).setTitle("Olma do'koni hisoboti").addMetaTag("viewport", "width=device-width, initial-scale=1");
+}
+var OLMA_HTML = `&lt;!doctype html&gt;&lt;html&gt;&lt;head&gt;&lt;meta charset="utf-8"&gt;&lt;meta name="viewport" content="width=device-width,initial-scale=1"&gt;&lt;title&gt;Olma do'konlari&lt;/title&gt;
+&lt;style&gt;
+:root{--bg:#f6f1e8;--sf:#fffdf8;--tx:#2a2118;--mu:#7a6a58;--bd:#e4d9ca;--ac:#a8561f;--ok:#16a34a;--bad:#d33;--wr:#d97706}
+@media (prefers-color-scheme:dark){:root{--bg:#1c1511;--sf:#271d17;--tx:#f3e9dc;--mu:#a8957f;--bd:#3a2d24;--ac:#e08a4a}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.w{max-width:1000px;margin:0 auto;padding:16px}h1{font-size:22px;margin:4px 0}h2{font-size:18px;margin:0 0 8px}h3{font-size:16px;margin:16px 0 8px}
+.mu{color:var(--mu);font-size:13px}.bar{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
+button,input{font:inherit;color:var(--tx);background:var(--sf);border:1px solid var(--bd);border-radius:10px;padding:7px 12px}button{cursor:pointer}button.on{background:var(--ac);color:#fff;border-color:var(--ac)}
+.c{background:var(--sf);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:12px}
+.tap{cursor:pointer}.tap:hover{border-color:var(--ac)}
+.big{font-size:30px;font-weight:800;line-height:1.15}.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:560px){.row2{grid-template-columns:1fr}}
+.ln{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid var(--bd)}.ln:first-child{border-top:0}
+table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:7px 8px;border-bottom:1px solid var(--bd);text-align:left;white-space:nowrap}th{color:var(--mu);font-weight:600;font-size:12px}td.r,th.r{text-align:right}
+.tw{overflow-x:auto}.ok{color:var(--ok)}.bad{color:var(--bad)}.wr{color:var(--wr)}.tag{font-size:12px;padding:2px 8px;border-radius:20px;border:1px solid var(--bd)}
+#err{color:var(--bad);margin:10px 0}.more{color:var(--ac);font-weight:600;margin-top:8px}
+&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;div class="w"&gt;
+&lt;h1&gt;📥 Olma do'konlari&lt;/h1&gt;&lt;div class="mu" id="upd"&gt;Yuklanmoqda…&lt;/div&gt;&lt;div class="mu"&gt;Faqat ko'rish uchun — o'zgartirib bo'lmaydi.&lt;/div&gt;
+&lt;div id="err"&gt;&lt;/div&gt;&lt;div id="out"&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;script&gt;
+var KEY=__KEY__,D=null,SRC=[],CI=0,PK="m",V="",OPEN=0;
+function q(s){return String(s==null?"":s).replace(/[&amp;&lt;&gt;"]/g,function(c){return{"&amp;":"&amp;amp;","&lt;":"&amp;lt;","&gt;":"&amp;gt;",'"':"&amp;quot;"}[c]})}
+function n0(x){return Math.round(+x||0).toLocaleString("ru-RU")}function p2(n){return("0"+n).slice(-2)}
+function dd(t){var d=new Date(t);return p2(d.getDate())+"."+p2(d.getMonth()+1)+"."+d.getFullYear()}function hm(t){var d=new Date(t);return p2(d.getHours())+":"+p2(d.getMinutes())}
+function iso(d){return d.getFullYear()+"-"+p2(d.getMonth()+1)+"-"+p2(d.getDate())}
+function sm(a,k){return a.reduce(function(x,d){return x+(+d[k]||0)},0)}
+function rng(){var n=new Date(),e=Date.now()+864e5,s;if(PK=="m")s=new Date(n.getFullYear(),n.getMonth(),1);else if(PK=="c"){var a=(document.getElementById("da")||{}).value,b=(document.getElementById("db")||{}).value;s=a?new Date(a+"T00:00:00"):new Date(2000,0,1);if(b)e=new Date(b+"T00:00:00").getTime()+864e5}else s=new Date(2000,0,1);return[s.getTime(),e]}
+function tday(){var n=new Date(),s=new Date(n.getFullYear(),n.getMonth(),n.getDate()).getTime();return[s,s+864e5]}
+function inR(t,R){return t&gt;=R[0]&amp;&amp;t&lt;R[1]}
+function byB(L,f){var o={},r=[];L.forEach(function(d){var b=d.b;if(!o[b]){o[b]={q:0,a:0};r.push(b)}o[b].q+=+(f?f(d):d.qty)||0;o[b].a+=+d.amt||0});return r.map(function(b){return{b:b,q:o[b].q,a:o[b].a}})}
+function debt(s){var u=D.del.filter(function(d){return d.shop==s&amp;&amp;!d.paid}),r=D.ret.filter(function(d){return d.shop==s});return Math.max(0,sm(u,"amt")-sm(r,"amt"))}
+function need(){var o={},r=[],sh={};(D.orders||[]).forEach(function(x){if(x.done)return;sh[x.shop]=1;(x.items||[]).forEach(function(i){if(!o[i.b]){o[i.b]=0;r.push(i.b)}o[i.b]+=+i.q||0})});return{L:r.map(function(b){return{b:b,q:o[b]}}),n:Object.keys(sh).length}}
+function per(){return'&lt;div class="bar"&gt;'+[["m","Oy boshidan"],["a","Hammasi"],["c","Davr"]].map(function(p){return'&lt;button class="'+(PK==p[0]?"on":"")+'" onclick="event.stopPropagation();PK=\\''+p[0]+'\\';if(PK==\\'c\\'&amp;&amp;!window.__dc){var n=new Date();window.__dc=[iso(new Date(n.getFullYear(),n.getMonth(),1)),iso(n)]}draw()"&gt;'+p[1]+'&lt;/button&gt;'}).join("")+'&lt;/div&gt;'+(PK=="c"?'&lt;div class="bar" onclick="event.stopPropagation()"&gt;&lt;label class="mu"&gt;Qachondan &lt;input type="date" id="da" value="'+((window.__dc||[])[0]||"")+'" onchange="window.__dc[0]=this.value;draw()"&gt;&lt;/label&gt;&lt;label class="mu"&gt;Qachongacha &lt;input type="date" id="db" value="'+((window.__dc||[])[1]||"")+'" onchange="window.__dc[1]=this.value;draw()"&gt;&lt;/label&gt;&lt;/div&gt;':'')}
+function main(){var R=rng(),G=D.del.filter(function(d){return inR(d.t,R)}),T=tday(),GT=D.del.filter(function(d){return inR(d.t,T)}),N=need(),B=byB(G),BT=byB(GT);
+var pl=PK=="m"?"Oy boshidan bugungacha":PK=="a"?"Boshidan hozirgacha":"Tanlangan davr";
+var h='&lt;div class="c tap" onclick="OPEN=!OPEN;draw()"&gt;&lt;h2&gt;📦 Jami berilgan nonlar &lt;span class="mu"&gt;— '+pl+'&lt;/span&gt;&lt;/h2&gt;'+per()+'&lt;div class="big"&gt;'+n0(sm(G,"qty"))+' ta&lt;/div&gt;&lt;div class="mu" style="margin-bottom:6px"&gt;'+n0(sm(G,"amt"))+" so'm · "+Object.keys(G.reduce(function(o,d){o[d.shop]=1;return o},{})).length+" ta do'kon&lt;/div&gt;"+B.map(function(x){return'&lt;div class="ln"&gt;&lt;span&gt;'+q(x.b)+'&lt;/span&gt;&lt;b&gt;'+n0(x.q)+' ta · '+n0(x.a)+" so'm&lt;/b&gt;&lt;/div&gt;"}).join("")+'&lt;div class="more"&gt;'+(OPEN?"▲ Do'konlarni yopish":"▼ Bosing — har bir do'kon chiqadi")+'&lt;/div&gt;';
+if(OPEN){var S=D.shops.slice().sort();h+='&lt;div onclick="event.stopPropagation()" style="margin-top:10px"&gt;&lt;div class="tw"&gt;&lt;table&gt;&lt;tr&gt;&lt;th&gt;Do\\'kon&lt;/th&gt;&lt;th class="r"&gt;Berilgan, ta&lt;/th&gt;&lt;th class="r"&gt;Summa&lt;/th&gt;&lt;th&gt;&lt;/th&gt;&lt;/tr&gt;'+S.map(function(s){var g=G.filter(function(d){return d.shop==s});return'&lt;tr class="tap" onclick="V=\\''+q(s).replace(/'/g,"\\\\'")+'\\';draw();scrollTo(0,0)"&gt;&lt;td&gt;&lt;b&gt;'+q(s)+'&lt;/b&gt;&lt;/td&gt;&lt;td class="r"&gt;'+n0(sm(g,"qty"))+'&lt;/td&gt;&lt;td class="r"&gt;'+n0(sm(g,"amt"))+'&lt;/td&gt;&lt;td class="r"&gt;›&lt;/td&gt;&lt;/tr&gt;'}).join("")+'&lt;/table&gt;&lt;/div&gt;&lt;/div&gt;'}
+h+='&lt;/div&gt;&lt;div class="row2"&gt;&lt;div class="c"&gt;&lt;h2&gt;🍞 Bugun berilgan&lt;/h2&gt;&lt;div class="big ok"&gt;'+n0(sm(GT,"qty"))+' ta&lt;/div&gt;&lt;div class="mu" style="margin-bottom:6px"&gt;'+n0(sm(GT,"amt"))+" so'm · "+Object.keys(GT.reduce(function(o,d){o[d.shop]=1;return o},{})).length+" ta do'kon&lt;/div&gt;"+(BT.length?BT.map(function(x){return'&lt;div class="ln"&gt;&lt;span&gt;'+q(x.b)+'&lt;/span&gt;&lt;b&gt;'+n0(x.q)+' ta&lt;/b&gt;&lt;/div&gt;'}).join(""):'&lt;div class="mu"&gt;Bugun hali berilmagan&lt;/div&gt;')+'&lt;/div&gt;';
+h+='&lt;div class="c"&gt;&lt;h2&gt;⏳ Berish kerak&lt;/h2&gt;&lt;div class="big wr"&gt;'+n0(N.L.reduce(function(a,x){return a+x.q},0))+' ta&lt;/div&gt;&lt;div class="mu" style="margin-bottom:6px"&gt;'+N.n+" ta do'konga&lt;/div&gt;"+(N.L.length?N.L.map(function(x){return'&lt;div class="ln"&gt;&lt;span&gt;'+q(x.b)+'&lt;/span&gt;&lt;b class="wr"&gt;'+n0(x.q)+' ta&lt;/b&gt;&lt;/div&gt;'}).join(""):'&lt;div class="mu ok"&gt;✅ Hammasi berilgan&lt;/div&gt;')+'&lt;/div&gt;&lt;/div&gt;';
+var DY={},dk=[];G.forEach(function(d){var k=iso(new Date(d.t));if(!DY[k]){DY[k]={q:0,a:0,s:{}};dk.push(k)}DY[k].q+=+d.qty||0;DY[k].a+=+d.amt||0;DY[k].s[d.shop]=1});dk.sort().reverse();
+if(dk.length)h+='&lt;div class="c"&gt;&lt;h2&gt;📅 Har kun jami&lt;/h2&gt;&lt;div class="tw"&gt;&lt;table&gt;&lt;tr&gt;&lt;th&gt;Kun&lt;/th&gt;&lt;th class="r"&gt;Do\\'kon&lt;/th&gt;&lt;th class="r"&gt;Non, ta&lt;/th&gt;&lt;th class="r"&gt;Summa&lt;/th&gt;&lt;/tr&gt;'+dk.map(function(k){var m=DY[k],p=k.split("-");return"&lt;tr&gt;&lt;td&gt;"+p[2]+"."+p[1]+"."+p[0]+'&lt;/td&gt;&lt;td class="r"&gt;'+Object.keys(m.s).length+'&lt;/td&gt;&lt;td class="r"&gt;'+n0(m.q)+'&lt;/td&gt;&lt;td class="r"&gt;&lt;b&gt;'+n0(m.a)+"&lt;/b&gt;&lt;/td&gt;&lt;/tr&gt;"}).join("")+"&lt;/table&gt;&lt;/div&gt;&lt;/div&gt;";
+return h}
+function shop(s){var G=D.del.filter(function(d){return d.shop==s}),RT=D.ret.filter(function(d){return d.shop==s}),O=(D.orders||[]).filter(function(x){return x.shop==s}),T=tday(),GT=G.filter(function(d){return inR(d.t,T)});
+var h='&lt;button onclick="V=\\'\\';draw()"&gt;← Hamma do\\'konlar&lt;/button&gt;&lt;h2 style="margin-top:12px"&gt;🏪 '+q(s)+'&lt;/h2&gt;';
+h+='&lt;div class="row2"&gt;&lt;div class="c"&gt;&lt;div class="mu"&gt;Jami berilgan (hammasi)&lt;/div&gt;&lt;div class="big"&gt;'+n0(sm(G,"qty"))+' ta&lt;/div&gt;&lt;div class="mu"&gt;'+n0(sm(G,"amt"))+" so'm&lt;/div&gt;&lt;/div&gt;&lt;div class=\\"c\\"&gt;&lt;div class=\\"mu\\"&gt;Bugun berilgan&lt;/div&gt;&lt;div class=\\"big ok\\"&gt;"+n0(sm(GT,"qty"))+' ta&lt;/div&gt;&lt;div class="mu"&gt;'+n0(sm(GT,"amt"))+" so'm&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;";
+h+='&lt;div class="c"&gt;&lt;h2&gt;📄 Excel ma\\'lumotlari (buyurtmalar)&lt;/h2&gt;'+(O.length?'&lt;div class="tw"&gt;&lt;table&gt;&lt;tr&gt;&lt;th&gt;Sana&lt;/th&gt;&lt;th&gt;Non&lt;/th&gt;&lt;th class="r"&gt;Soni&lt;/th&gt;&lt;th class="r"&gt;Narx&lt;/th&gt;&lt;th class="r"&gt;Summa&lt;/th&gt;&lt;th&gt;Holat&lt;/th&gt;&lt;/tr&gt;'+O.map(function(o){return(o.items||[]).map(function(i,k){return"&lt;tr&gt;&lt;td&gt;"+(k==0?q(o.date):"")+"&lt;/td&gt;&lt;td&gt;"+q(i.b)+'&lt;/td&gt;&lt;td class="r"&gt;'+n0(i.q)+'&lt;/td&gt;&lt;td class="r"&gt;'+n0(i.p)+'&lt;/td&gt;&lt;td class="r"&gt;'+n0(i.s||i.q*i.p)+"&lt;/td&gt;&lt;td&gt;"+(k==0?(o.done?'&lt;span class="tag ok"&gt;✅ berildi&lt;/span&gt;':'&lt;span class="tag wr"&gt;⏳ berilmagan&lt;/span&gt;'):"")+"&lt;/td&gt;&lt;/tr&gt;"}).join("")}).join("")+"&lt;/table&gt;&lt;/div&gt;":'&lt;div class="mu"&gt;Excel buyurtmasi yo\\'q&lt;/div&gt;')+'&lt;/div&gt;';
+var E=[];G.forEach(function(d){E.push({t:d.t,k:"🍞 Berildi",x:q(d.b)+" "+n0(d.qty)+" ta",a:d.amt,st:""})});RT.forEach(function(d){E.push({t:d.t,k:"↩ Qaytdi",x:q(d.b)+" "+n0(d.qty)+" ta",a:d.amt,st:""})});E.sort(function(a,b){return b.t-a.t});
+h+='&lt;div class="c"&gt;&lt;h2&gt;🕒 Tarix&lt;/h2&gt;'+(E.length?'&lt;div class="tw"&gt;&lt;table&gt;&lt;tr&gt;&lt;th&gt;Sana&lt;/th&gt;&lt;th&gt;Soat&lt;/th&gt;&lt;th&gt;Amal&lt;/th&gt;&lt;th&gt;Tafsilot&lt;/th&gt;&lt;th class="r"&gt;Summa&lt;/th&gt;&lt;/tr&gt;'+E.map(function(e){return"&lt;tr&gt;&lt;td&gt;"+dd(e.t)+"&lt;/td&gt;&lt;td&gt;"+hm(e.t)+"&lt;/td&gt;&lt;td&gt;"+e.k+"&lt;/td&gt;&lt;td&gt;"+e.x+'&lt;/td&gt;&lt;td class="r"&gt;'+n0(e.a)+"&lt;/td&gt;&lt;/tr&gt;"}).join("")+"&lt;/table&gt;&lt;/div&gt;":'&lt;div class="mu"&gt;Yozuv yo\\'q&lt;/div&gt;')+'&lt;/div&gt;';return h}
+function norm(x){x=x||{};x.del=x.del||[];x.ret=x.ret||[];x.shops=x.shops||[];x.orders=x.orders||[];return x}
+function tabs(){if(SRC.length&lt;2)return"";return'&lt;div class="bar" style="margin:4px 0 12px"&gt;'+SRC.map(function(s,i){return'&lt;button class="'+(CI==i?"on":"")+'" style="font-size:17px;padding:10px 16px" onclick="CI='+i+';V=\\'\\';OPEN=0;draw()"&gt;🏭 '+q(s.name||("Nonvoyxona "+(i+1)))+'&lt;/button&gt;'}).join("")+'&lt;/div&gt;'}
+function draw(){if(!SRC.length)return;var s=SRC[CI]||SRC[0];D=s.data;document.getElementById("upd").textContent=(s.name?s.name+" · ":"")+"Ma'lumot yangilangan: "+(s.ts?dd(s.ts)+" "+hm(s.ts):"—");document.getElementById("out").innerHTML=tabs()+(s.ok===0?'&lt;div class="c bad"&gt;'+q(s.name)+": ma'lumot olinmadi ("+q(s.m||"")+")&lt;/div&gt;":(V?shop(V):main()))}
+function got(r){try{var o=typeof r=="string"?JSON.parse(r):r;if(!o.ok){document.getElementById("err").textContent=o.m||"Ruxsat yo'q yoki link eskirgan";return}document.getElementById("err").textContent="";var me=norm(o.data);SRC=[{name:me.name||"",ok:1,ts:o.ts,data:me}].concat((o.others||[]).map(function(x){return{name:x.name||(x.data&amp;&amp;x.data.name)||"",ok:x.ok,m:x.m,ts:x.ts,data:norm(x.data)}}));if(CI&gt;=SRC.length)CI=0;draw()}catch(e){document.getElementById("err").textContent="Xato: "+e}}
+function load(){google.script.run.withSuccessHandler(got).withFailureHandler(function(e){document.getElementById("err").textContent="Ulanib bo'lmadi: "+e}).olmaView(KEY)}
+load();setInterval(load,120000);
+&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;
+`;
+
+function doGet(e) { if (e &amp;&amp; e.parameter &amp;&amp; e.parameter.olma) return olmaPage(e.parameter.olma); return out({ ok: 1, info: "Nonvoyxona sotuv serveri v11", multi: 1 }); }
+function doPost(e) {
+  var d; try { d = JSON.parse(e.postData.contents); } catch (x) { return out({ err: "bad" }); }
+  var a = d.a;
+  /* Bir martalik: bot imzo kalitini o'rnatadi (faqat bo'sh bo'lsa) */
+  if (a == "glinit") { if (BASEP.getProperty("GATE_SECRET")) return out({ err: "set" }); var sk = String(d.s || ""); if (sk.length &lt; 32) return out({ err: "bad" }); BASEP.setProperty("GATE_SECRET", sk); return out({ ok: 1 }); }
+  var tq = String((e.parameter &amp;&amp; e.parameter.t) || d.t || "").replace(/\D/g, "");
+  if (tq.length != 12) return out({ err: "tenant", m: "Nonvoyxona raqami ko'rsatilmagan" });
+  try {
+    var lk = LockService.getScriptLock(); lk.waitLock(20000);
+    try { tenantInit(tq); } finally { lk.releaseLock(); }
+  } catch (x) { return out({ err: "server", m: String(x) }); }
+  if (a == "ping") return out({ ok: 1, v: 11, multi: 1 });
+  if (a == "gl") { try { return out(gateLogin(d)); } catch (x) { return out({ err: "server", m: String(x) }); } }
+  if (a == "code" || a == "verify" || a == "scode" || a == "sverify") return out({ err: "gate", m: "Rahbar ilovaga raqam va parol bilan kiradi" });
+  if (+(P.getProperty("LIC") || 0) &lt; Date.now()) return out({ err: "lic", m: "Rahbarning obunasi tugagan. Ilova rahbar to'lov qilgach ochiladi." });
+  try {
+    if (a == "ping") return out({ ok: 1, v: 11 });
+    if (a == "code") return out(sendCode(d));
+    if (a == "verify") return out(verify(d));
+    if (a == "staff") return out(staff(d));
+    if (a == "scode") return out(sCode(d));
+    if (a == "sverify") return out(sVerify(d));
+    if (a == "olmaget") { var og = olmaOwn(d.key); return out(og || { err: "key" }); }
+    var s = sess(d.tok); if (!s) return out({ err: "auth" });
+    if (a == "get") return out({ ok: 1, items: getItems() });
+    if (a == "put") return out(put(d, s));
+    if (a == "out") { revoke(d.tok); return out({ ok: 1 }); }
+    if (a == "ai") return out(aiCall(d));
+    if (s.r != "o") return out({ err: "role" });
+    if (a == "aikey") return out(aiKey(d));
+    if (a == "tgset") return out(tgSet(d));
+    if (a == "tgpoll") return out(tgPoll());
+    if (a == "tgsend") return out(tgSend(d));
+    if (a == "aicfg") return out({ ok: 1, key: P.getProperty("GEMINI_KEY") || "", model: P.getProperty("GEMINI_MODEL") || "gemini-2.5-flash-lite" });
+    if (a == "wlist") return out({ ok: 1, list: wList() });
+    if (a == "wadd") return out(wAdd(d));
+    if (a == "wdel") return out(wDel(d));
+    if (a == "stlist") return out({ ok: 1, list: stList() });
+    if (a == "stadd") return out(stAdd(d));
+    if (a == "stdel") return out(stDel(d));
+    if (a == "setstaff") { P.setProperty("STAFF", hash(String(d.code || "").trim())); return out({ ok: 1 }); }
+    if (a == "snapput") return out(snapPut(d));
+    if (a == "olmaput") return out(olmaPut(d));
+    if (a == "olmalink") { P.setProperty("OLMA_LINKS", JSON.stringify((d.links || []).slice(0, 4))); return out({ ok: 1 }); }
+    if (a == "olmakey") { var ok = String(d.key || ""); if (ok.length &lt; 6) return out({ err: "bad" }); P.setProperty("OLMA_KEY", ok); return out({ ok: 1 }); }
+    if (a == "snapget") return out(snapGet());
+  } catch (x) { return out({ err: "server", m: String(x) }); }
+  return out({ err: "bad" });
+}
+</textarea>
+<script>document.getElementById('cp').onclick=function(){var t=document.getElementById('code'),d=function(){document.getElementById('st').innerHTML='<b style="color:#16a34a">✅ Nusxalandi</b>'};
+if(navigator.clipboard)navigator.clipboard.writeText(t.value).then(d,function(){t.select();document.execCommand('copy');d()});else{t.select();document.execCommand('copy');d()}};</script>
+</div></body></html>
