@@ -192,7 +192,7 @@ input.code{letter-spacing:8px;text-align:center;font-size:26px;font-weight:700}
 <script>
 var CFG=HK.cfg,$=function(i){return document.getElementById(i)};
 /* Nonvoyxona rejimi (?prod=nv): soha so'ralmaydi, kirgach nonvoyxona ilovasiga qaytadi */
-var NV=HK.PROD!=='hk',PRN={nv:['🥖 Nonvoyxona ilovasi','Nonvoyxona — kirish','../nonvoyxona/'],ed:['💡 Elektr Do\'kon — Sotuvchi','Sotuvchi — kirish','../dokon/sotuvchi/'],em:['💡 Elektr Do\'kon','Elektr Do\'kon — kirish','../dokon/mijoz/']}[HK.PROD]||[];
+var NV=HK.PROD!=='hk',PRN={nv:['🥖 Nonvoyxona ilovasi','Nonvoyxona — kirish','../nonvoyxona/'],ed:['💡 222 — Sotuvchi','222 Sotuvchi — kirish','../dokon/sotuvchi/'],em:['💡 222','222 — kirish','../dokon/mijoz/']}[HK.PROD]||[];
 function nvBack(){var m=location.search.match(/[?&]back=([^&]+)/),b=m?decodeURIComponent(m[1]):'';return /^\/ilovalar\/(nonvoyxona|dokon)\/[\w\-\/]*$/.test(b)?b:PRN[2]}
 if(NV){document.title=PRN[1];$('toJoin').hidden=true;$('sub').textContent=PRN[0];var bl=$('botLnk');if(bl)bl.textContent='✈️ Telegramda botni ochish (kod shu yerga keladi)'}
 var trade='',phone='',mode='login',Cc=null,Rr=null,PANELS=['pL','pT','p1','p2','p3','p4','pX','pJ','pRg'];
