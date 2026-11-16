@@ -12,6 +12,11 @@ $env:PYTHONUTF8 = '1'; python C:\Loyihalar\premium-xizmat\apps\web\build_web.py 
 foreach ($d in 'nonvoyxona', 'hisob') { if (Test-Path "$site\$d") { Remove-Item "$site\$d" -Recurse -Force } }
 Copy-Item C:\Loyihalar\nonvoyxona\web "$site\nonvoyxona" -Recurse
 Copy-Item C:\Users\user\Downloads\loyiha\web\out "$site\hisob" -Recurse
+# 2b) Yuklab olish sahifasi uchun eng yangi APK lar (doimiy nom bilan)
+New-Item -ItemType Directory -Force "$site\yuklash\apk" | Out-Null
+Get-ChildItem "$site\android\out\*.apk" | Group-Object { $_.Name -replace '-[\d.]+\.apk$', '' } | ForEach-Object {
+  $f = $_.Group | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+  Copy-Item $f.FullName "$site\yuklash\apk\$($_.Name).apk" -Force }
 # 3) Yuborish
 Set-Location $site
 git add -A
