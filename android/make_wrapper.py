@@ -20,7 +20,8 @@ APPS = [
     ('hisob-kitob', r'C:\Users\user\Downloads\loyiha\cap', 'hisob/', 30, '30', 'AndroidBridge'),
     ('dokon-mijoz', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Elektr-Dokon-Mijoz.caproj', 'dokon/mijoz/', 31, '2.1', 'none'),
     ('dokon-sotuvchi', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Dokon-Sotuvchi.caproj', 'dokon/sotuvchi/', 31, '2.1', 'none'),
-    ('hamyon', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Elektr-Dokon-Mijoz.caproj', 'hamyon/', 1, '1.0', 'none'),
+    # Hamyon: ovozni telefonning o'zi taniydi (Android.listen) — shuning uchun nonvoyxona Java kodi asosida
+    ('hamyon', ND + r'\premium-nonvoyxona.caproj', 'hamyon/', 2, '1.1', 'Android'),
 ]
 # Telefondagi nomi va belgisi (bo'lmasa — asl nomi + " (yangi)", asl belgi)
 LABEL = {'dokon-mijoz': '222', 'dokon-sotuvchi': '222 Sotuvchi', 'hamyon': 'Hamyon'}

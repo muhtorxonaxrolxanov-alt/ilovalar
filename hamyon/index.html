@@ -55,6 +55,12 @@ nav button.on{color:var(--pri);font-weight:700}
 .cats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
 .cat{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:8px 2px;font-size:11px;text-align:center;cursor:pointer;line-height:1.2}.cat b{display:block;font-size:24px;font-weight:400;margin-bottom:2px}
 .cat.on{border-color:var(--pri);background:rgba(20,184,166,.14);font-weight:700}
+.fab.mic{right:auto;left:max(16px,calc(50% - 264px));background:#fff;color:var(--pri);font-size:27px;box-shadow:0 6px 20px rgba(0,0,0,.18)}
+@media (prefers-color-scheme:dark){.fab.mic{background:#24302c}}
+.vbig{width:96px;height:96px;border-radius:50%;border:0;background:var(--pri);color:#fff;font-size:42px;display:block;margin:6px auto 10px;cursor:pointer;box-shadow:0 6px 20px rgba(15,118,110,.4)}
+.vbig.on{background:var(--red);animation:pulse 1.1s infinite}@keyframes pulse{50%{transform:scale(1.08);box-shadow:0 0 0 14px rgba(220,38,38,.15)}}
+.vtx{width:100%;min-height:76px;border:1px solid var(--line);border-radius:12px;padding:10px;font-size:17px;background:var(--card);resize:vertical}
+.ex{font-size:13px;color:var(--mut);margin:8px 2px}.ex i{display:block;margin-top:3px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(150px + env(safe-area-inset-bottom));background:#111;color:#fff;padding:10px 16px;border-radius:12px;z-index:40;font-size:15px;max-width:90%;text-align:center}
 .leg{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid var(--line);cursor:pointer}.leg:last-child{border:0}.dot{width:12px;height:12px;border-radius:4px;flex:none}
 .leg .g{flex:1}.cmp{font-size:14px;margin-top:6px}
@@ -84,7 +90,7 @@ const CATS = {
     ['oziq', '🛒', 'Oziq-ovqat', 'non sut gosht go\'sht meva sabzavot bozor magazin market makro korzinka havas yog un guruch shakar choy tuxum kartoshka piyoz oziq ovqat produkt suv'],
     ['kafe', '🍽', 'Kafe, tushlik', 'kafe obed tushlik nonushta kechki osh somsa lavash shashlik restoran fastfud kofe coffee burger pizza choyxona ovqat'],
     ['trans', '🚕', 'Transport', 'taksi taxi yandex metro avtobus marshrut bus yol yo\'l kira transport poyezd samolyot bilet'],
-    ['yoqilgi', '⛽', 'Yoqilg\'i, mashina', 'benzin metan propan gaz zapravka yoqilgi yoqilg\'i moy remont mashina avto shina moyka stoyanka jarima'],
+    ['yoqilgi', '⛽', 'Yoqilg\'i, mashina', 'benzin metan propan zapravka zaprafka yoqilgi yoqilg\'i moy mashina avto shina balon moyka stoyanka jarima zapchas zapchast ehtiyot akkumulyator tormoz kolodka antifriz'],
     ['uy', '🏠', 'Uy-joy, ijara', 'ijara kvartira uy remont mebel jihoz'],
     ['kom', '💡', 'Kommunal', 'svet elektr tok gaz suv kommunal musor issiqlik kvitansiya'],
     ['aloqa', '📱', 'Aloqa, internet', 'telefon internet aloqa paynet ucell beeline mobiuz uzmobile humans tarif'],
@@ -120,25 +126,61 @@ function guessCat(text, t) {
   return t === 'i' ? 'boshqai' : 'boshqa';
 }
 const INC = /(^|\s)(kirim|oylik|maosh|zarplata|avans|bonus|premiya|tushdi|tushum|foyda|daromad|sotdim)(\s|$)/;
-/* "non 5000, taksi 20 ming, oylik 5 mln" -> [{t,a,c,n}] ; tushunmasa [] */
+/* So'z bilan aytilgan sonlar: "besh yuz ming" -> 500000, "bir yarim million" -> 1500000 (ovozdan kelgan matn uchun) */
+const NW = { bir: 1, ikki: 2, uch: 3, "to'rt": 4, tort: 4, besh: 5, olti: 6, yetti: 7, sakkiz: 8, "to'qqiz": 9, toqqiz: 9, "o'n": 10,
+  yigirma: 20, "o'ttiz": 30, ottiz: 30, qirq: 40, ellik: 50, oltmish: 60, yetmish: 70, sakson: 80, "to'qson": 90, toqson: 90 };
+const SC = { yuz: 100, ming: 1e3, million: 1e6, mln: 1e6, milion: 1e6, milliard: 1e9 };
+function wordsToNum(s) {
+  const tk = s.split(/\s+/), out = []; let i = 0;
+  const base = w => { const m = w.match(/^(.*?)(ga|lik|dan|ni|gacha)?$/); for (const b of [w, m[1]]) if (NW[b] !== undefined || SC[b] !== undefined || b === 'yarim') return { b, suf: b === w ? '' : m[2] }; return null; };
+  while (i < tk.length) {
+    let j = i, tot = 0, cur = 0, any = false, suf = '';
+    for (; j < tk.length; j++) {
+      const r = base(tk[j]); if (!r) break; const w = r.b;
+      if (NW[w] !== undefined) { cur += NW[w]; any = true; }
+      else if (w === 'yarim') { cur += 0.5; any = true; }
+      else if (w === 'yuz') { cur = (cur || 1) * 100; any = true; }
+      else if (SC[w]) { if (!any && /^\d/.test(out[out.length - 1] || '')) break; tot += (cur || 1) * SC[w]; cur = 0; any = true; }
+      suf = r.suf; if (suf) { j++; break; }
+    }
+    if (any && j > i && (tot + cur) > 0) { out.push(String(tot + cur)); i = j; } else { out.push(tk[i]); i++; }
+  }
+  return out.join(' ');
+}
+const AMT = /(\d+(?:[.,]\d+)?)\s*(mln|million|milion|млн|ming|минг|тыс|k(?![a-z'])|к(?![а-яё]))?(?:\s*(?:so'm|som|сум)\w*)?/g;
+const FILL = /(^|\s)(va|yana|keyin|hamda|ham|so'mga|so'mlik|so'm|som|uchun|deb|xullas)(?=\s|$)/g;
+/* "non 5000, taksi 20 ming, oylik 5 mln" yoki ovozdan: "500 mingga zapchas oldim 200 mingga zapravka qildim" -> [{t,a,c,n}] ; tushunmasa [] */
 function parseText(text) {
   const out = [];
-  for (const part of String(text || '').split(/;|\n|,(?!\d)/)) {
-    const s = lc(part).replace(/(\d)[ .](?=\d{3}(\D|$))/g, '$1').replace(/(\d)[ .](?=\d{3}(\D|$))/g, '$1');
-    const m = s.match(/(\d+(?:[.,]\d+)?)\s*(mln|million|milion|млн|ming|минг|тыс|k|к|so'm|som|сум)?/);
-    if (!m) continue;
-    let a = parseFloat(m[1].replace(',', '.'));
-    const u = m[2] || '';
-    if (/^(mln|million|milion|млн)$/.test(u)) a *= 1e6; else if (/^(ming|минг|тыс|k|к)$/.test(u)) a *= 1e3;
-    if (!(a > 0)) continue;
-    const note = s.replace(m[0], ' ').replace(/\s+/g, ' ').trim().replace(/^[-–:]+|[-–:]+$/g, '').trim();
-    const t = INC.test(' ' + lc(note) + ' ') ? 'i' : 'x';
-    out.push({ t, a: Math.round(a), c: guessCat(note, t), n: note.slice(0, 80) });
+  for (const part of String(text || '').split(/;|\n|,(?!\d)|\.(?!\d)/)) {
+    let s = lc(part).replace(/(\d)[ .](?=\d{3}(\D|$))/g, '$1').replace(/(\d)[ .](?=\d{3}(\D|$))/g, '$1');
+    s = wordsToNum(s.replace(/\s+/g, ' ').trim());
+    const ms = [...s.matchAll(AMT)].filter(m => { const v = parseFloat(m[1].replace(',', '.')); return v > 0 && (m[2] || v >= 100); }); // birliksiz 100 dan kichik son — miqdor (2 ta, 3 kg)
+    if (!ms.length) continue;
+    const numFirst = /^\s*\d/.test(s);
+    ms.forEach((m, k) => {
+      let a = parseFloat(m[1].replace(',', '.')); const u = m[2] || '';
+      if (/^(mln|million|milion|млн)$/.test(u)) a *= 1e6; else if (/^(ming|минг|тыс|k|к)$/.test(u)) a *= 1e3;
+      const end = m.index + m[0].length, nx = ms[k + 1], pv = ms[k - 1];
+      let note = ms.length === 1 ? s.slice(0, m.index) + ' ' + s.slice(end)
+        : numFirst ? s.slice(end, nx ? nx.index : s.length) : s.slice(pv ? pv.index + pv[0].length : 0, m.index);
+      note = note.replace(/^(ga|lik|ta)(?=\s|$)/, '').replace(FILL, ' ').replace(/\s+/g, ' ').trim().replace(/^[-–:]+|[-–:]+$/g, '').trim();
+      const t = INC.test(' ' + note + ' ') ? 'i' : 'x';
+      out.push({ t, a: Math.round(a), c: guessCat(note, t), n: note.slice(0, 80) });
+    });
   }
   return out;
 }
 
-/* ---- Ma'lumot: {e:[{id,t,a,c,n,d,ts}], del:{id:1}, lim:{m,d,c:{},ts}, debts:[{id,who,a,dir,d,back,ts}], v:1} ---- */
+/* "Abdullohga qarz berdim 15 ming" / "Sodiqdan qarz oldim" -> qarz yozuvi (xarajat/kirim emas) */
+function debtOf(x) {
+  const n = lc(x && x.n); if (!/(^|\s)qarz/.test(n)) return null;
+  const dir = /oldim|olindi|berishdi/.test(n) ? 'o' : /berdim|berildi/.test(n) ? 'b' : (x.t === 'i' ? 'o' : 'b');
+  let who = n.split(/\s*qarz/)[0].replace(/(ga|dan|ning|ni)$/, '').trim();
+  who = who ? who.replace(/(^|\s)\S/g, c => c.toUpperCase()) : 'Noma\'lum';
+  return { who: who.slice(0, 40), a: x.a, dir };
+}
+/* ---- Ma'lumot:{e:[{id,t,a,c,n,d,ts}], del:{id:1}, lim:{m,d,c:{},ts}, debts:[{id,who,a,dir,d,back,ts}], v:1} ---- */
 const empty = () => ({ v: 1, e: [], del: {}, lim: { m: 0, d: 0, c: {}, ts: 0 }, debts: [] });
 function norm(d) { d = d || {}; const z = empty(); return Object.assign(z, d, { e: d.e || [], del: d.del || {}, lim: Object.assign(z.lim, d.lim || {}), debts: d.debts || [] }); }
 function merge(a, b) {
@@ -199,7 +241,7 @@ function report(data, per, today) {
   return s;
 }
 
-module.exports = { CATS, CAT, catName, dayOf, money, uid, parseText, guessCat, empty, norm, merge, range, sum, byCat, alerts, report, pct };
+module.exports = { debtOf, CATS, CAT, catName, dayOf, money, uid, parseText, guessCat, empty, norm, merge, range, sum, byCat, alerts, report, pct };
 
 var K=module.exports;
 </script>
@@ -313,9 +355,9 @@ function vHome(){
     if(e.d!==cur){cur=e.d;const s=K.sum(d,cur,cur);h+=`<div class="day"><span>${dname(cur)}</span><span>${s?'−'+fmt(s):''}</span></div>`}
     const c=K.CAT[e.c]||K.CAT.boshqa;h+=`<div class="it" data-e="${esc(e.id)}"><div class="em">${c.em}</div><div class="g"><div class="t">${esc(c.n)}</div>${e.n?`<div class="n">${esc(e.n)}</div>`:''}</div><div class="amt ${e.t}">${e.t==='i'?'+':'−'}${fmt(e.a)}</div></div>`}
   if(E.length>S.show)h+=`<button class="btn g" id="more" style="margin-top:8px">Ko'proq ko'rsatish</button>`;
-  h+=`<button class="fab" id="fab" aria-label="Qo'shish">+</button>`;
+  h+=`<button class="fab" id="fab" aria-label="Qo'shish">+</button><button class="fab mic" id="mic" aria-label="Ovoz bilan yozish">🎤</button>`;
   app.innerHTML=h;
-  $('#fab').onclick=()=>edit();if($('#more'))$('#more').onclick=()=>{S.show+=100;render()};
+  $('#fab').onclick=()=>edit();$('#mic').onclick=()=>voice(true);if($('#more'))$('#more').onclick=()=>{S.show+=100;render()};
   app.querySelectorAll('[data-e]').forEach(x=>x.onclick=()=>edit(x.dataset.e));
 }
 function sheet(html){const bg=document.createElement('div');bg.className='sheet-bg';bg.innerHTML=`<div class="sheet">${html}</div>`;bg.onclick=e=>{if(e.target===bg)bg.remove()};document.body.appendChild(bg);bg.querySelector('.xb')&&(bg.querySelector('.xb').onclick=()=>bg.remove());return bg}
@@ -346,6 +388,48 @@ function edit(id){
     else toast('✅ Saqlandi');
   };
   if(o)bg.querySelector('#dl').onclick=()=>{if(!confirm('O\'chirilsinmi?'))return;change(D=>{D.del[o.id]=1;D.e=D.e.filter(x=>x.id!==o.id)});bg.remove();toast('O\'chirildi')};
+}
+/* ---------- Ovoz yoki matn bilan yozish: "500 mingga zapchas oldim, 200 mingga zapravka qildim" ---------- */
+const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+const AND=window.Android&&typeof Android.listen==='function';
+function voice(auto){
+  const can=!!(SR||AND);let rec=null,on=false,base='';
+  const bg=sheet(`<div class="sh-h"><b>🎤 Ovoz yoki matn bilan</b><button class="xb">✕</button></div>
+  ${can?`<button class="vbig" id="vb">🎤</button><div class="center s mut" id="vs">Bosing va gapiring</div>`:`<div class="alert">Bu brauzer ovozni taniy olmaydi. Klaviaturadagi 🎤 tugmasi bilan gapiring yoki <a href="https://t.me/${BOT}" target="_blank" rel="noopener">botga ovozli xabar</a> yuboring — u ham shu yerga tushadi.</div>`}
+  <textarea class="vtx" id="vt" placeholder="Masalan: 500 mingga mashinaga zapchas oldim, 200 mingga zapravka qildim"></textarea>
+  <div class="ex">Bir gapda bir nechtasini aytsa bo'ladi:<i>«bozorga 150 ming, taksiga 30 ming»</i><i>«besh yuz mingga zapchas oldim, ikki yuz mingga zapravka qildim»</i><i>«oylik 6 million tushdi»</i></div>
+  <button class="btn" id="va">Qo'shish</button>`);
+  const vt=bg.querySelector('#vt'),vb=bg.querySelector('#vb'),vs=bg.querySelector('#vs');
+  const stat=t=>{if(vs)vs.textContent=t};
+  const stop=()=>{on=false;if(vb)vb.classList.remove('on');try{rec&&rec.stop()}catch(e){}};
+  const done=()=>{stop();if(vt.value.trim())add()};
+  function start(){
+    if(on)return done();
+    base=vt.value.trim()?vt.value.trim()+', ':'';on=true;vb.classList.add('on');stat('🔴 Eshityapman… tugatgach yana bosing');
+    if(AND){window.onVoice=a=>{vt.value=base+(a&&a[0]||'');on=false;vb.classList.remove('on');stat('Bosing va gapiring');add()};window.onVoiceErr=m=>{on=false;vb.classList.remove('on');stat(m||'Eshitilmadi')};try{Android.listen()}catch(e){stat('Ovoz ishlamadi')}return}
+    rec=new SR();rec.lang='uz-UZ';rec.interimResults=true;rec.continuous=true;rec.maxAlternatives=1;
+    rec.onresult=e=>{let s='';for(let i=0;i<e.results.length;i++)s+=e.results[i][0].transcript+' ';vt.value=base+s.trim()};
+    rec.onerror=e=>{stat(e.error==='not-allowed'?'Mikrofonga ruxsat bering':e.error==='language-not-supported'?'Bu telefon o\'zbekcha ovozni tanimaydi — botga ovozli yuboring':e.error==='no-speech'?'Ovoz eshitilmadi':'Xato: '+e.error)};
+    rec.onend=()=>{if(on)done();else stat('Bosing va gapiring')};
+    try{rec.start()}catch(e){stat('Ovoz ishlamadi')}
+  }
+  function add(){
+    const it=K.parseText(vt.value);
+    if(!it.length)return toast('Summani topmadim. Masalan: «non 5000»',3000);
+    const today0=today(),ents=[],dbs=[];
+    it.forEach(x=>{const q=K.debtOf(x);if(q)dbs.push(Object.assign({id:K.uid(),d:today0,back:0,ts:Date.now()},q));else ents.push(Object.assign({id:K.uid(),d:today0,ts:Date.now(),src:'ovoz'},x))});
+    change(D=>{D.e.push(...ents);D.debts.push(...dbs)});bg.remove();
+    const al=ents.some(e=>e.t==='x')?K.alerts(S.data,today0,ents.find(e=>e.t==='x')):[];
+    const r=sheet(`<div class="sh-h"><b>✅ ${ents.length+dbs.length} ta yozildi</b><button class="xb">✕</button></div>`+ents.map(e=>{const c=K.CAT[e.c]||K.CAT.boshqa;return `<div class="it" data-e="${e.id}"><div class="em">${c.em}</div><div class="g"><div class="t">${esc(c.n)}</div>${e.n?`<div class="n">${esc(e.n)}</div>`:''}</div><div class="amt ${e.t}">${e.t==='i'?'+':'−'}${fmt(e.a)}</div></div>`}).join('')+
+      dbs.map(q=>`<div class="it"><div class="em">${q.dir==='b'?'📤':'📥'}</div><div class="g"><div class="t">Qarz: ${esc(q.who)}</div><div class="n">${q.dir==='b'?'Men berdim':'Men oldim'}</div></div><div class="amt">${fmt(q.a)}</div></div>`).join('')+
+      al.map(a=>`<div class="alert ${/🔴/.test(a)?'r':''}">${esc(a)}</div>`).join('')+`<p class="s mut" style="margin:4px 2px 10px">Xato bo'lsa, yozuvni bosib tuzating.</p><div class="row"><button class="btn g" id="vu">↩️ Bekor qilish</button><button class="btn" id="vo">Tayyor</button></div>`);
+    r.querySelectorAll('[data-e]').forEach(x=>x.onclick=()=>{r.remove();edit(x.dataset.e)});
+    r.querySelector('#vo').onclick=()=>r.remove();
+    r.querySelector('#vu').onclick=()=>{const ids=ents.concat(dbs).map(e=>e.id);change(D=>{ids.forEach(i=>D.del[i]=1);D.e=D.e.filter(x=>!ids.includes(x.id));D.debts=D.debts.filter(x=>!ids.includes(x.id))});r.remove();toast('Bekor qilindi')};
+  }
+  if(vb)vb.onclick=start;bg.querySelector('#va').onclick=()=>{stop();add()};
+  bg.addEventListener('click',e=>{if(e.target===bg||e.target.classList.contains('xb'))stop()},true);
+  if(auto&&can)setTimeout(start,250);
 }
 function donut(list,tot){
   if(!tot)return'';let a=0,s='';const R=60,C=2*Math.PI*R;
