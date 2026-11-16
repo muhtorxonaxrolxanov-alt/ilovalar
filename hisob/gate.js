@@ -22,9 +22,12 @@
   window.HK.poll=function(phone,n,maxMs,skipWait){var t0=Date.now();maxMs=maxMs||25000;
     return new Promise(function(ok,no){(function tick(){if(stopF)return no(new Error('stop'));
       gtok().then(function(t){return jf(dU(phone),{headers:{Authorization:'Bearer '+t}})}).then(function(j){var f=j.fields||{},r=null;try{r=JSON.parse((f.res||{}).stringValue)}catch(e){}
-        if(r&&r.nonce===n&&!(skipWait&&r.st==='wait'))return ok(r);if(Date.now()-t0>maxMs)return no(new Error('Javob kelmadi. Bot ishlayotganini tekshiring.'));setTimeout(tick,1500)}).catch(function(e){if(e.code===404){if(Date.now()-t0>maxMs)return no(new Error('Javob kelmadi'));return setTimeout(tick,1500)}no(e)})})()})};
+        if(r&&r.nonce===n&&!(skipWait&&r.st==='wait'))return ok(r);if(Date.now()-t0>maxMs)return no(new Error('Javob kelmadi. Bot ishlayotganini tekshiring.'));setTimeout(tick,Date.now()-t0>30000?4000:1500)}).catch(function(e){if(e.code===404){if(Date.now()-t0>maxMs)return no(new Error('Javob kelmadi'));return setTimeout(tick,Date.now()-t0>30000?4000:1500)}no(e)})})()})};
   window.HK.call=function(phone,obj,maxMs){stopF=false;var n=nn();obj.nonce=n;
-    return gtok().then(function(t){return jf(dU(phone)+'?updateMask.fieldPaths=req',{method:'PATCH',headers:{'content-type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({fields:{req:{stringValue:JSON.stringify(obj)}}})})}).then(function(){return window.HK.poll(phone,n,maxMs)})};
+    /* req bilan birga server vaqti (t) yoziladi: bot faqat yangi so'rovlarni so'raydi (bepul limit tejaladi) */
+    var base='projects/'+CFG.projectId+'/databases/(default)/documents';
+    return gtok().then(function(t){return jf('https://firestore.googleapis.com/v1/'+base+':commit',{method:'POST',headers:{'content-type':'application/json',Authorization:'Bearer '+t},
+      body:JSON.stringify({writes:[{update:{name:base+'/gate/'+phone,fields:{req:{stringValue:JSON.stringify(obj)}}},updateMask:{fieldPaths:['req']},updateTransforms:[{fieldPath:'t',setToServerValue:'REQUEST_TIME'}]}]})})}).then(function(){return window.HK.poll(phone,n,maxMs)})};
   /* SHA-256 (parol xeshi: telefon+parol; bot uni yana alohida saqlaydi) */
   function sha(s){var u=unescape(encodeURIComponent(s)),b=[],i,K=[],H=[],w=[];for(i=0;i<u.length;i++)b[i>>2]|=u.charCodeAt(i)<<(24-8*(i%4));
     var L=u.length*8;b[L>>5]|=0x80<<(24-L%32);b[(((L+64)>>9)<<4)+15]=L;
