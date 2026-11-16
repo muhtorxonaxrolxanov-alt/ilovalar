@@ -34,7 +34,7 @@ function e(s){return String(s).replace(/[&<>"']/g,function(c){return'&#'+c.charC
 var w=document.getElementById('w');
 if(!L){var h='<h1 style="margin:8px 0 16px">Ilovalar</h1>';for(var x in A){if(x.indexOf('dokon-')==0)continue;A[x].forEach(function(a){h+='<a class="b pri" href="?a='+x+'">'+e(a.n+' — '+a.s)+'</a>'})}w.innerHTML=h}
 else{document.title=L[0].n+' — yuklab olish';w.innerHTML=L.map(function(a,j){return '<div class="app"><div class="hd"><img src="'+S+a.i+'" alt="" onerror="this.style.display=\'none\'"><div><h1>'+e(a.n)+'</h1><div class="s">'+e(a.s)+'</div></div></div>'+
- '<button class="b ios" onclick="t(\'i'+j+'\')">&#63743; iPhone uchun</button>'+
+ '<button class="b ios" onclick="t(\'i'+j+'\')">&#128241; iPhone uchun</button>'+
  '<div class="st" id="i'+j+'">'+(inApp&&isI?'<div class="warn">Bu sahifani <b>Safari</b>da oching: pastdagi tugmani bosing, keyin yuqori o\'ngdagi «⋯» → «Safari\'da ochish».</div>':'')+
  '<ol><li>Pastdagi <b>«Ilovani ochish»</b> tugmasini bosing (Safari\'da).</li><li>Pastdagi <b>Ulashish</b> belgisini bosing (kvadrat va yuqoriga strelka ⬆).</li><li><b>«Bosh ekranga qo\'shish»</b> (На экран «Домой») ni tanlang → <b>Qo\'shish</b>.</li><li>Telefon ekranida ilova belgisi paydo bo\'ladi. Shuni bosib kiring.</li></ol>'+
  '<a class="b pri" href="'+S+a.u+'" target="_blank">Ilovani ochish</a></div>'+
