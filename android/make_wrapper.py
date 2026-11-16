@@ -20,11 +20,14 @@ APPS = [
     ('hisob-kitob', r'C:\Users\user\Downloads\loyiha\cap', 'hisob/', 30, '30', 'AndroidBridge'),
     ('dokon-mijoz', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Elektr-Dokon-Mijoz.caproj', 'dokon/mijoz/', 31, '2.1', 'none'),
     ('dokon-sotuvchi', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Dokon-Sotuvchi.caproj', 'dokon/sotuvchi/', 31, '2.1', 'none'),
+    ('hamyon', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Elektr-Dokon-Mijoz.caproj', 'hamyon/', 1, '1.0', 'none'),
 ]
 # Telefondagi nomi va belgisi (bo'lmasa — asl nomi + " (yangi)", asl belgi)
-LABEL = {'dokon-mijoz': '222', 'dokon-sotuvchi': '222 Sotuvchi'}
+LABEL = {'dokon-mijoz': '222', 'dokon-sotuvchi': '222 Sotuvchi', 'hamyon': 'Hamyon'}
 ICON = {'dokon-mijoz': os.path.join(HERE, '..', 'dokon', 'mijoz', 'icon-512.png'),
-        'dokon-sotuvchi': os.path.join(HERE, '..', 'dokon', 'sotuvchi', 'icon-512.png')}
+        'dokon-sotuvchi': os.path.join(HERE, '..', 'dokon', 'sotuvchi', 'icon-512.png'),
+        'hamyon': os.path.join(HERE, '..', 'hamyon', 'icon-512.png')}
+APPID = {'hamyon': 'uz.hamyon.xarajat'}  # boshqa ilova Java kodidan foydalansa ham, alohida ilova bo'lib o'rnatilsin
 
 
 def set_icon(gdir, png):
@@ -118,6 +121,7 @@ def build(only=None):
         bg = os.path.join(gdir, 'app', 'build.gradle')
         g = open(bg, encoding='utf-8').read()
         g = re.sub(r'versionCode \d+', 'versionCode %d' % vc, g); g = re.sub(r"versionName '[^']*'", "versionName '%s'" % vn, g)
+        if name in APPID: g = re.sub(r"applicationId\s+'[^']*'", "applicationId '%s'" % APPID[name], g)
         open(bg, 'w', encoding='utf-8').write(g)
         patch(gdir, url, bridge)
         if name in LABEL:
