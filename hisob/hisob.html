@@ -47,6 +47,46 @@
     // sendTg va pinShortcut ataylab yo'q: ilova o'zining veb-yo'lini ishlatadi
   };
   try { if (tg) { tg.ready(); tg.expand(); } } catch (e) {}
+
+  /* Telegram ichida (Mini App) Telegram keshni tozalasa, telefondagi kirish ham o'chib, ma'lumot "yo'qolgandek" ko'rinardi.
+     Endi kirish (hk_lic) va bulut kaliti Telegramning o'z bulutida (CloudStorage) ham saqlanadi va kerak bo'lsa o'zi qaytadi. */
+  var CS = tg && tg.initData && tg.CloudStorage;
+  if (CS) {
+    var ls = function (k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} return null; };
+    window.HK_ONCLEAR = function () { try { CS.removeItems(['hk_lic', 'hk_cloud']); } catch (e) {} };
+    if (!ls('hk_lic')) {
+      window.HK_HOLD = 1; document.documentElement.style.visibility = 'hidden';
+      var done = false, fin = function () {
+        if (done) return; done = true; window.HK_HOLD = 0; document.documentElement.style.visibility = '';
+        var l = null; try { l = JSON.parse(ls('hk_lic') || 'null'); } catch (e) {}
+        if (!(l && l.ok && l.until > Date.now()) && !/gate\.html$/.test(location.pathname)) location.replace('gate.html');
+      };
+      try {
+        CS.getItems(['hk_lic', 'hk_cloud'], function (err, v) {
+          try {
+            if (!err && v && v.hk_lic) {
+              ls('hk_lic', v.hk_lic);
+              if (v.hk_cloud && !ls('cloud_v1')) { var c = JSON.parse(v.hk_cloud); c.exp = 0; c.lastUpd = 0; c.lastRemote = 0; ls('cloud_v1', JSON.stringify(c)); }
+              done = true; location.reload(); return;
+            }
+          } catch (e) {}
+          fin();
+        });
+      } catch (e) { fin(); }
+      setTimeout(fin, 5000);
+    }
+    var last = '';
+    var put = function () {
+      try {
+        var l = ls('hk_lic') || '', c = JSON.parse(ls('cloud_v1') || 'null');
+        var cc = c && c.uid && c.rt ? JSON.stringify({ cfg: c.cfg, phone: c.phone, uid: c.uid, rt: c.rt }) : '';
+        var k = l + '|' + cc; if (!l || k === last) return; last = k;
+        CS.setItem('hk_lic', l); if (cc) CS.setItem('hk_cloud', cc);
+      } catch (e) {}
+    };
+    setTimeout(put, 4000); setInterval(put, 30000);
+    document.addEventListener('visibilitychange', function () { if (document.hidden) put(); });
+  }
 })();
 </script><script src="gate.js"></script>
 <meta charset="utf-8">
@@ -472,6 +512,7 @@ document.addEventListener('click',e=>{
   else if(d.a==='pin'){if(!hasB('pinShortcut')){note('Faqat telefon ilovasida','Bosh ekranga belgi qo\'yish faqat telefonga o\'rnatilgan ilovada ishlaydi.');return}if(!S.logo){note('Avval rasm tanlang','«Rasm tanlash» ni bosib, belgi uchun rasm tanlang.');return}try{AndroidBridge.pinShortcut(S.home||S.title||'Hisob-kitob',S.logo.split(',')[1])}catch(x){toast('Belgi yaratib bo\'lmadi')}}
   else if(d.a==='cl_cfg')cloudSaveCfg()
   else if(d.a==='cl_cfg0')yesno('Kalitlarni almashtirasizmi?','Bulutdan chiqiladi. Ilovadagi ma\'lumot o\'chmaydi.','Ha',()=>{C.cfg=null;C.uid='';C.rt='';C.idt='';saveC()})
+  else if(d.a==='cl_gate')relogin()
   else if(d.a==='cl_in')cloudLogin('in')
   else if(d.a==='cl_up')cloudLogin('up')
   else if(d.a==='cl_now')cloudSync(true)
@@ -673,10 +714,27 @@ async function cloudLogin(kind){
 function cloudView(){
   if(!CLOUD_OK)return'<div class="card"><h3>Bulut</h3><div class="hint">Bulut faqat telefonga o\'rnatilgan ilovada ishlaydi. Bu sahifada ishlamaydi.</div></div>';
   if(!C.cfg)return'<div class="card"><h3>1. Firebase kalitlari</h3><div class="hint">Hisobingiz Google\'ning bepul bazasida saqlanadi. Bir marta Firebase loyihasi ochib, uning «firebaseConfig» matnini shu yerga qo\'yasiz. Qadamlari qo\'llanmada.</div><label for="clCfg">firebaseConfig matni</label><textarea id="clCfg" rows="7" placeholder="const firebaseConfig = { apiKey: &quot;...&quot;, projectId: &quot;...&quot; ... }"></textarea><div class="acts"><button class="b p" data-a="cl_cfg">Saqlash</button></div></div>';
+  if(!C.uid&&window.HK&&HK.lic&&HK.lic())return'<div class="card"><h3>Bulutga ulanmagan</h3><div class="hint">Ma\'lumotlaringiz bulutda saqlangan. Qaytarish va saqlab borish uchun raqamingiz bilan qayta kiring (kod Telegramga keladi yoki o\'z parolingiz).</div><div class="acts"><button class="b p" data-a="cl_gate">🔄 Qayta kirish va ma\'lumotni qaytarish</button></div></div>';
   if(!C.uid)return'<div class="card"><h3>2. Kirish</h3><div class="hint">Telefon raqamingiz va o\'zingiz o\'ylagan parol. Shu raqam va parol bilan boshqa telefonda ham kirasiz.</div><label for="clPh">Telefon raqam</label><input id="clPh" type="tel" inputmode="tel" value="'+esc(C.phone||(S.prof&&S.prof.phone)||'+998')+'"><label for="clPw">Parol (kamida 6 belgi)</label><input id="clPw" type="password" autocomplete="current-password"><div class="acts"><button class="b p" data-a="cl_in">Kirish</button><button class="b" data-a="cl_up">Yangi hisob ochish</button></div><div class="hint" style="margin-top:8px">Birinchi marta «Yangi hisob ochish», boshqa telefonda «Kirish». Parolni unutsangiz, tiklab bo\'lmaydi, shuning uchun eslab qoling.</div></div><div class="acts"><button class="b" data-a="cl_cfg0">Kalitlarni almashtirish</button></div>';
   return'<div class="card"><h3>Bulutga ulangan</h3>'+row('Raqam','<b>+'+esc(String(C.phone).replace(/\D/g,''))+'</b>')+row('Oxirgi sinxron',C.lastAt?esc(C.lastAt):'hali yo\'q')+(C.msg?'<div class="bad" style="margin-top:6px;font-size:14px">'+esc(C.msg)+'</div>':'<div class="ok" style="margin-top:6px;font-size:14px">Hammasi joyida. O\'zgarish bo\'lsa o\'zi saqlanadi.</div>')+'<div class="acts"><button class="b p" data-a="cl_now">Hozir sinxronlash</button><button class="b d" data-a="cl_out">Chiqish</button></div></div><div class="hint">Telegram botdagi shogird yozuvlari ham shu hisobga o\'zi tushadi (botda bulut yoqilgan bo\'lsa).</div>'}
 if(CLOUD_OK){setInterval(()=>{if(!document.hidden)cloudSync()},120000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)cloudSync()})}
 setTimeout(()=>cloudSync(),1200);
+/* Bulut bilan aloqa yo'qolsa (Telegram keshi tozalangan, ilova qayta o'rnatilgan, kirish muddati o'tgan) — ma'lumot "yo'qolgandek" ko'rinmasin:
+   telefonda ma'lumot bo'sh bo'lsa, o'zi qayta kirishga olib boradi (kirgach bulutdan hammasi qaytadi); bo'lmasa ogohlantiradi. */
+const AUTHBAD=/INVALID_REFRESH_TOKEN|TOKEN_EXPIRED|USER_NOT_FOUND|USER_DISABLED|INVALID_ID_TOKEN|INVALID_GRANT|PROJECT_NUMBER_MISMATCH|PERMISSION_DENIED|insufficient permissions|ruxsat bermadi/i;
+function relogin(){try{sessionStorage.setItem('hk_relog',String(Date.now()));if(window.HK)HK.clear();localStorage.removeItem('cloud_v1')}catch(e){}location.replace('gate.html')}
+function cloudGuard(){
+  if(!CLOUD_OK||!(window.HK&&HK.lic&&HK.lic()))return;
+  if(C.uid&&C.msg&&AUTHBAD.test(C.msg+' '+(C.err||''))){C.uid='';C.rt='';C.idt='';saveC()}
+  if(C.uid){const b=document.getElementById('clWarn');if(b)b.remove();return}
+  const empty=!S.objects.length&&!S.workers.length;let t=0;try{t=+sessionStorage.getItem('hk_relog')||0}catch(e){}
+  if(empty&&Date.now()-t>10*60000)return relogin();
+  if(document.getElementById('clWarn'))return;
+  const w=document.createElement('div');w.id='clWarn';w.style.cssText='position:fixed;left:8px;right:8px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:50;background:#b45309;color:#fff;border-radius:14px;padding:10px 12px;font-size:14px;display:flex;gap:10px;align-items:center;box-shadow:0 6px 18px rgba(0,0,0,.25)';
+  w.innerHTML='<span style="flex:1">⚠️ Bulutga ulanmagan — yangi yozuvlar faqat shu telefonda qoladi.</span><button style="border:0;border-radius:10px;padding:8px 12px;font-weight:700;background:#fff;color:#b45309">Ulash</button>';
+  w.querySelector('button').onclick=relogin;document.body.appendChild(w);
+}
+setTimeout(cloudGuard,6000);setInterval(cloudGuard,60000);
 /* Ma'lumot bo'sh bo'lsa va telefonda zaxira fayl bo'lsa, qaytarishni taklif qilish */
 setTimeout(()=>{try{if(!S.objects.length&&!S.workers.length&&hasB('readBackup')){const t=AndroidBridge.readBackup();if(t&&parseBackup(t))restoreFrom(t,'Zaxira topildi. Qaytarasizmi?')}}catch(e){}},500);
 </script>

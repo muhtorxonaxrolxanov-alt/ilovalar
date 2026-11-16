@@ -5,7 +5,7 @@
   window.HK={VER:25,FAR:4102444800000,PROD:PROD,
     lic:function(){try{return JSON.parse(localStorage.getItem(K)||'null')}catch(e){return null}},
     set:function(o){try{localStorage.setItem(K,JSON.stringify(o))}catch(e){}},
-    clear:function(){try{localStorage.removeItem(K)}catch(e){}},
+    clear:function(){try{localStorage.removeItem(K)}catch(e){}try{if(window.HK_ONCLEAR)window.HK_ONCLEAR()}catch(e){}},
     trade:function(){var l=window.HK.lic();return(l&&l.trade)||'elektrik'},
     TRADES:{elektrik:'Elektrik',santexnik:'Santexnik',quruvchi:'Quruvchi',boshqa:'Boshqa soha'}};
 
@@ -55,5 +55,5 @@
   window.HK.hash=function(phone,pw){return sha('hk1:'+phone+':'+pw)};
   var l=window.HK.lic();
   var ok=l&&l.ok&&l.until>Date.now();
-  if(PROD==='hk'&&!ok&&!/gate\.html$/.test(location.pathname)){location.replace('gate.html')}
+  if(PROD==='hk'&&!ok&&!window.HK_HOLD&&!/gate\.html$/.test(location.pathname)){location.replace('gate.html')}
 })();

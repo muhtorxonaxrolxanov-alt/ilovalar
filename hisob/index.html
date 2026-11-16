@@ -46,6 +46,46 @@
     // sendTg va pinShortcut ataylab yo'q: ilova o'zining veb-yo'lini ishlatadi
   };
   try { if (tg) { tg.ready(); tg.expand(); } } catch (e) {}
+
+  /* Telegram ichida (Mini App) Telegram keshni tozalasa, telefondagi kirish ham o'chib, ma'lumot "yo'qolgandek" ko'rinardi.
+     Endi kirish (hk_lic) va bulut kaliti Telegramning o'z bulutida (CloudStorage) ham saqlanadi va kerak bo'lsa o'zi qaytadi. */
+  var CS = tg && tg.initData && tg.CloudStorage;
+  if (CS) {
+    var ls = function (k, v) { try { if (v === undefined) return localStorage.getItem(k); if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, v); } catch (e) {} return null; };
+    window.HK_ONCLEAR = function () { try { CS.removeItems(['hk_lic', 'hk_cloud']); } catch (e) {} };
+    if (!ls('hk_lic')) {
+      window.HK_HOLD = 1; document.documentElement.style.visibility = 'hidden';
+      var done = false, fin = function () {
+        if (done) return; done = true; window.HK_HOLD = 0; document.documentElement.style.visibility = '';
+        var l = null; try { l = JSON.parse(ls('hk_lic') || 'null'); } catch (e) {}
+        if (!(l && l.ok && l.until > Date.now()) && !/gate\.html$/.test(location.pathname)) location.replace('gate.html');
+      };
+      try {
+        CS.getItems(['hk_lic', 'hk_cloud'], function (err, v) {
+          try {
+            if (!err && v && v.hk_lic) {
+              ls('hk_lic', v.hk_lic);
+              if (v.hk_cloud && !ls('cloud_v1')) { var c = JSON.parse(v.hk_cloud); c.exp = 0; c.lastUpd = 0; c.lastRemote = 0; ls('cloud_v1', JSON.stringify(c)); }
+              done = true; location.reload(); return;
+            }
+          } catch (e) {}
+          fin();
+        });
+      } catch (e) { fin(); }
+      setTimeout(fin, 5000);
+    }
+    var last = '';
+    var put = function () {
+      try {
+        var l = ls('hk_lic') || '', c = JSON.parse(ls('cloud_v1') || 'null');
+        var cc = c && c.uid && c.rt ? JSON.stringify({ cfg: c.cfg, phone: c.phone, uid: c.uid, rt: c.rt }) : '';
+        var k = l + '|' + cc; if (!l || k === last) return; last = k;
+        CS.setItem('hk_lic', l); if (cc) CS.setItem('hk_cloud', cc);
+      } catch (e) {}
+    };
+    setTimeout(put, 4000); setInterval(put, 30000);
+    document.addEventListener('visibilitychange', function () { if (document.hidden) put(); });
+  }
 })();
 </script><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Hisob-kitob</title><script src="gate.js"></script>
 <style>
