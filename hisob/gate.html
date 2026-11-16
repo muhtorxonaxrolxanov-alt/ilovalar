@@ -185,7 +185,7 @@ var CFG=HK.cfg,$=function(i){return document.getElementById(i)};
 /* Nonvoyxona rejimi (?prod=nv): soha so'ralmaydi, kirgach nonvoyxona ilovasiga qaytadi */
 var NV=HK.PROD==='nv';
 function nvBack(){var m=location.search.match(/[?&]back=([^&]+)/),b=m?decodeURIComponent(m[1]):'';return /^\/ilovalar\/nonvoyxona\/[\w\-\/]*$/.test(b)?b:'../nonvoyxona/'}
-if(NV){document.title='Nonvoyxona — kirish';$('sub').textContent='🥖 Nonvoyxona ilovasi';var bl=$('botLnk');if(bl)bl.textContent='✈️ Telegramda botni ochish (kod shu yerga keladi)'}
+if(NV){document.title='Nonvoyxona — kirish';$('toJoin').hidden=true;$('sub').textContent='🥖 Nonvoyxona ilovasi';var bl=$('botLnk');if(bl)bl.textContent='✈️ Telegramda botni ochish (kod shu yerga keladi)'}
 var trade='',phone='',mode='login',Cc=null,Rr=null,PANELS=['pL','pT','p1','p2','p3','p4','pX','pJ'];
 function err(m){var e=$('er');e.textContent=m;e.hidden=!m}
 function info(m){var e=$('inf');e.innerHTML=m||'';e.hidden=!m}
