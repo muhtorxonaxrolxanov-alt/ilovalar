@@ -1,5 +1,5 @@
-/* Nonvoyxona veb-ilovasi: internet yo'qda ham ochilishi uchun. nh va 1794816439 ni build_web.py qo'yadi. */
-const C = 'nv-nh-1794816439';
+/* Nonvoyxona veb-ilovasi: internet yo'qda ham ochilishi uchun. nh va 1794818910 ni build_web.py qo'yadi. */
+const C = 'nv-nh-1794818910';
 const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(C).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));

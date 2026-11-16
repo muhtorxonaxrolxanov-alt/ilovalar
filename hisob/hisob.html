@@ -164,6 +164,13 @@ function migrate(){try{const o=JSON.parse(localStorage.getItem('hisob_local_db_v
   S.objects=Object.keys(o.objects||{}).map(id=>Object.assign({id},o.objects[id]));
   S.workers=Object.keys(o.wd||{}).map(id=>{const w=o.wd[id],fi=(o.fin||{})[id]||{};return{id,name:w.name,phone:'',rate:+fi.rate||0,entries:w.entries||[],pays:(fi.pays||[]).map(p=>({id:p.id,a:p.a,date:p.date}))}})}catch(e){}}
 try{const r=localStorage.getItem(KEY);if(r)Object.assign(S,JSON.parse(r));else migrate()}catch(e){}
+/* Ma'lumot qaysi raqamniki: boshqa raqam bilan kirilsa, oldingisi alohida saqlanadi va ilova bo'sh ochiladi */
+(function(){try{const me=String(((window.HK&&HK.lic())||{}).phone||'');if(!me)return;
+  if(S.own&&S.own!==me){localStorage.setItem(KEY+'@'+S.own,JSON.stringify(S));
+    const keep={accent:S.accent};S={objects:[],workers:[],secret:'',accent:keep.accent||'#2563eb',title:'',prof:{name:'',role:'',phone:''},last:null,logo:'',home:'',del:{}};
+    const sv=localStorage.getItem(KEY+'@'+me);if(sv){try{Object.assign(S,JSON.parse(sv))}catch(e){}}
+    try{const c=JSON.parse(localStorage.getItem('cloud_v1')||'null');if(c){c.lastUpd=0;c.lastRemote=0;localStorage.setItem('cloud_v1',JSON.stringify(c))}}catch(e){}}
+  S.own=me;localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}})();
 if(!S.secret)S.secret=Math.random().toString(36).slice(2,10);
 if(!S.prof)S.prof={name:'',role:'',phone:''};
 /* Mijoz maydoniga telefon raqam yozilgan eski obyektlar: raqamni telefon joyiga ko'chirish */
@@ -579,6 +586,8 @@ async function cloudSync(manual){
     for(let k=0;k<4;k++){
       const R=await fsGet(),L=dataOf();
       if(!R){if(!(S.objects.length||S.workers.length))break;const u=Date.now();try{await fsPut(L,u,null)}catch(e){if(/precondition|ABORTED|ALREADY_EXISTS|exists/i.test(e.message))continue;throw e}S.upd=u;C.lastUpd=u;C.lastRemote=u;break}
+      /* Server "tozalash" buyrug'i: bulutdagi holat telefondagini to'liq almashtiradi (birlashtirilmaydi) */
+      if(R.data&&R.data.reset&&R.data.reset!==S.reset){const own=S.own;S={objects:[],workers:[],secret:'',accent:S.accent||'#2563eb',title:'',prof:{name:'',role:'',phone:''},last:null,logo:'',home:'',del:{}};applyData(R.data);S.own=own;S.reset=R.data.reset;S.upd=R.upd;C.lastUpd=R.upd;C.lastRemote=R.upd;changed=true;break}
       const dirty=(S.upd||0)>(C.lastUpd||0),fresh=R.upd!==C.lastRemote;
       if(!dirty&&!fresh)break;
       const M=mergeData(L,R.data,S.upd||0,R.upd);

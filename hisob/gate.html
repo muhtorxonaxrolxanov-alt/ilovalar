@@ -233,20 +233,21 @@ function waitOwner(r){show('p3');$('waitTxt').textContent=r.msg||'Ega tasdiqlash
     if(r2.st==='paid'){mode='login';tabs('L');show('pL');$('lph').value='+'+phone;info('✅ '+(r2.msg||'To\'lov tasdiqlandi.')+' Endi «Kirish» ni bosing.');return}
     show(mode==='login'?'pL':'p1');err(r2.msg||'Ruxsat berilmadi.')}).catch(function(e){if(e.message!=='stop')err(net(e))})}
 /* ---- To'lov (obuna) ---- */
-var PAY=null,PLAN='',IMG='';
+var PAY=null,PLAN='',IMG='',TKT='';
 var PN={w:'Haftalik',m:'Oylik',y:'Yillik'};
 function fm(n){return Math.round(+n||0).toLocaleString('ru-RU').replace(/ /g,' ')+" so'm"}
-function showPay(pay,until){PAY=pay||{};PLAN='';IMG='';$('xPrev').hidden=true;$('xImg').value='';$('bX').disabled=true;
-  $('xUntil').textContent=until?(until>Date.now()?'Hozirgi muddat: '+new Date(until).toLocaleDateString('ru-RU')+' gacha':'Muddat tugagan: '+new Date(until).toLocaleDateString('ru-RU')):'Tarifni tanlab, to\'lov qiling.';
+function showPay(pay,until,tkt){PAY=pay||{};PLAN='';IMG='';TKT=tkt||'';$('bX').textContent='Chekni yuborish';$('xPrev').hidden=true;$('xImg').value='';$('bX').disabled=true;
+  $('xUntil').textContent=TKT?'Xush kelibsiz! Tarifni tanlang:':until?(until>Date.now()?'Hozirgi muddat: '+new Date(until).toLocaleDateString('ru-RU')+' gacha':'Muddat tugagan: '+new Date(until).toLocaleDateString('ru-RU')):'Tarifni tanlab, to\'lov qiling.';
   var ks=['w','m','y'].filter(function(k){return +PAY[k]>0});
-  $('xNone').hidden=!!(ks.length&&PAY.card);$('xCardBox').hidden=true;
-  $('xPlans').innerHTML=ks.map(function(k){return '<button data-p="'+k+'">'+PN[k]+'<br><b>'+fm(PAY[k])+'</b></button>'}).join('');
+  var tr=TKT&&+PAY.trial>0;$('xNone').hidden=!!((ks.length&&PAY.card)||tr);$('xCardBox').hidden=true;
+  $('xPlans').innerHTML=(tr?'<button data-p="trial">🎁 Bepul sinov<br><b>'+PAY.trial+' kun</b></button>':'')+ks.map(function(k){return '<button data-p="'+k+'">'+PN[k]+'<br><b>'+fm(PAY[k])+'</b></button>'}).join('');
   $('xPlans').querySelectorAll('button').forEach(function(b){b.onclick=function(){PLAN=b.dataset.p;$('xPlans').querySelectorAll('button').forEach(function(x){x.className=x===b?'on':''});
-    $('xCardBox').hidden=!PAY.card;$('xCard').textContent=PAY.card||'';$('xName').textContent=PAY.cname||'';$('xSum').textContent=fm(PAY[PLAN]);$('bX').disabled=!IMG}});
+    if(PLAN==='trial'){$('xCardBox').hidden=true;$('bX').textContent='🎁 Bepul sinovni boshlash';$('bX').disabled=false;return}
+    $('bX').textContent='Chekni yuborish';$('xCardBox').hidden=!PAY.card;$('xCard').textContent=PAY.card||'';$('xName').textContent=PAY.cname||'';$('xSum').textContent=fm(PAY[PLAN]);$('bX').disabled=!IMG}});
   show('pX');$('tabs').hidden=true}
 $('xCopy').onclick=function(){var t=String((PAY&&PAY.card)||'').replace(/\s/g,'');try{navigator.clipboard.writeText(t);info('Karta raqami nusxalandi')}catch(e){info(t)}};
 $('xImg').onchange=function(){var f=this.files&&this.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,1100/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);var u=c.toDataURL('image/jpeg',.72);IMG=u.split(',')[1];$('xPrev').src=u;$('xPrev').hidden=false;$('bX').disabled=!PLAN};im.onerror=function(){err('Rasmni o\'qib bo\'lmadi.')};im.src=rd.result};rd.readAsDataURL(f)};
-$('bX').onclick=function(){if(!PLAN)return err('Tarifni tanlang.');if(!IMG)return err('Chek rasmini tanlang.');run({act:'pay',plan:PLAN,img:IMG},$('bX'),'Chekni yuborish')};
+$('bX').onclick=function(){if(!PLAN)return err('Tarifni tanlang.');if(PLAN==='trial')return run({act:'trial',tkt:TKT,dev:HK.dev()},$('bX'),'🎁 Bepul sinovni boshlash');if(!IMG)return err('Chek rasmini tanlang.');run({act:'pay',plan:PLAN,img:IMG},$('bX'),'Chekni yuborish')};
 $('backX').onclick=function(){if(/[?&]pay=1/.test(location.search))return location.replace(NV?nvBack():'index.html');mode='login';tabs('L');show('pL')};
 /* ---- Shogird: taklif bilan qo'shilish ---- */
 var TOK='',TI=null;
@@ -265,6 +266,7 @@ function run(cmd,btn,label){
   btn.disabled=true;btn.textContent='Tekshirilmoqda…';
   return HK.call(phone,cmd).then(function(r){btn.disabled=false;btn.textContent=label;
     if(r.st==='ok')return after(r);
+    if(r.st==='choose')return showPay(r.pay,0,r.tkt);
     if(r.st==='exp'){if(r.who==='me')return showPay(r.pay,r.until);return err(r.msg)}
     if(r.st==='wait')return waitOwner(r);
     err(r.msg||(r.st==='blocked'?'Bu raqam bloklangan.':'Ruxsat berilmadi.'))
