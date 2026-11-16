@@ -228,7 +228,7 @@ function signIn(r){
     Cc={cfg:CFG,phone:phone,uid:j.localId,idt:j.idToken,rt:j.refreshToken,exp:Date.now()+(+j.expiresIn||3600)*1000,lastUpd:0,lastRemote:0,lastAt:'',msg:''};Rr=r})}
 function finish(){
   try{localStorage.setItem(NV?HK.PROD+'_cloud':'cloud_v1',JSON.stringify(Cc));localStorage.setItem('hk_last_phone',phone)}catch(e){}
-  HK.set({ok:true,phone:phone,trade:Rr.trade||trade||'elektrik',until:Rr.until,at:Date.now(),role:Rr.role||'usta',usta:Rr.usta||null,g:Rr.g||''});
+  HK.set({ok:true,phone:phone,trade:Rr.trade||trade||'elektrik',until:Rr.until,at:Date.now(),role:Rr.role||'usta',usta:Rr.usta||null,g:Rr.g||'',k:(HK.PROD==='em'&&Rr.pw)?HK.hash('em-dokon',Rr.pw).slice(0,32):''});
   show('pL');info('✅ Kirdingiz!');setTimeout(function(){location.replace(NV?nvBack():'index.html')},400)}
 function after(r){
   if(r.phone)phone=r.phone;

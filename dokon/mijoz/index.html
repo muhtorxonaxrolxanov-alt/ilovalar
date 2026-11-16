@@ -781,7 +781,7 @@ window.TOKEN = S.token;
 /* Kirish muddati tugasa: saqlangan raqam bilan o'zi qayta kiradi (mijoz hech narsa qilmaydi) */
 window.onAuthLost = async () => {
   const ph = lsGet('m_phone', '') || (S.me && S.me.phone);
-  if (ph && !S.reAuth) { S.reAuth = true; try { const r = await api('login', {phone: ph, password: autoPass(ph)}); S.token = r.token; window.TOKEN = r.token; S.me = r.me; save('token'); save('me'); S.reAuth = false; refreshAll(); render(); return; } catch (e) { S.reAuth = false; } }
+  if (ph && !S.reAuth) { S.reAuth = true; try { const r = await api('login', {phone: ph, password: storePass(ph)}); S.token = r.token; window.TOKEN = r.token; S.me = r.me; save('token'); save('me'); S.reAuth = false; refreshAll(); render(); return; } catch (e) { S.reAuth = false; } }
   logout(); toast('Qaytadan kiring', true);
 };
 window.onPinForgot = () => logout();
@@ -950,17 +950,28 @@ function vAuth() {
 async function gateLogin() {
   if (S.token) return; let l = null; try { l = JSON.parse(localStorage.getItem('em_lic') || 'null'); } catch (e) {}
   if (!(l && l.ok && l.phone)) return;
-  const ph = '+' + String(l.phone).replace(/\D/g, ''); lsSet('m_phone', ph); const pw = autoPass(ph);
+  if (WEBGATE && !l.k) { try { localStorage.removeItem('em_lic'); } catch (e) {} render(); return; } // eski kirish: xavfsiz kalit yo'q — bir marta qayta kirsin
+  const ph = '+' + String(l.phone).replace(/\D/g, ''); lsSet('m_phone', ph); const pw = storePass(ph);
   S.gating = true; render();
   try { loggedIn(await api('login', {phone: ph, password: pw})); }
   catch (e1) {
     if (e1.code === 'net') { toast("Internet yo'q yoki server javob bermadi. Qayta oching.", true); }
+    else if (pw !== autoPass(ph) && await migratePass(ph, autoPass(ph), pw)) { /* eski oson parol maxfiy parolga almashtirildi */ }
     else try { loggedIn(await api('register', {phone: ph, password: pw, name: 'Mijoz ' + ph.slice(-4), address: '—'})); toast("Xush kelibsiz! Manzilingizni Profil bo'limida yozib qo'ying"); }
     catch (e2) { if (e2.code === 'exists') { S.needPass = true; S.authPhone = ph; toast("Bu raqam do'konda oldin boshqa parol bilan ochilgan. O'sha parolni bir marta yozing.", true, 6000); } else toast(e2.message || 'Xatolik', true); }
   }
   S.gating = false; render();
 }
-/* Telefon raqamdan avtomatik parol (mijoz uni bilishi shart emas) */
+/* Do'kon paroli: Telegram bot orqali tasdiqlangan kirishdan keladigan maxfiy kalit (em_lic.k). Uni hech kim raqamdan hisoblay olmaydi. */
+function storePass(ph) { let l = null; try { l = JSON.parse(localStorage.getItem('em_lic') || 'null'); } catch (e) {}
+  const p = String(ph || '').replace(/\D/g, '').slice(-9);
+  return (l && l.k && String(l.phone || '').replace(/\D/g, '').slice(-9) === p) ? 'k-' + l.k : autoPass(ph); }
+/* Eski parol bilan kirib, parolni maxfiysiga almashtiradi (bir marta) */
+async function migratePass(ph, oldP, newP) {
+  try { let r = await api('login', {phone: ph, password: oldP}); await api('changePassword', {token: r.token, old: oldP, password: newP}); r = await api('login', {phone: ph, password: newP}); loggedIn(r); return true; }
+  catch (e) { return false; }
+}
+/* Eski usul: telefon raqamdan hisoblangan parol (faqat eski mijozlarni ko'chirish uchun) */
 function autoPass(ph) { return 'tel-' + sha256('elektrdokon|' + String(ph || '').replace(/\D/g, '').slice(-9)).slice(0, 20); }
 function profileFields(p, withPass) {
   p = p || {};
@@ -1214,11 +1225,11 @@ document.addEventListener('submit', async ev => {
       if (d.password) {
         let r = await api('login', {phone: ph, password: d.password});
         /* Eski parol bir marta yozildi: keyingi safar raqamning o'zi bilan kirsin */
-        try { const ap = autoPass(ph); if (d.password !== ap) { await api('changePassword', {token: r.token, old: d.password, password: ap}); r = await api('login', {phone: ph, password: ap}); } } catch (e) {}
+        try { const ap = storePass(ph); if (d.password !== ap) { await api('changePassword', {token: r.token, old: d.password, password: ap}); r = await api('login', {phone: ph, password: ap}); } } catch (e) {}
         S.needPass = false; loggedIn(r);
       }
       else {
-        const pw = autoPass(ph);
+        const pw = storePass(ph);
         try { loggedIn(await api('login', {phone: ph, password: pw})); }
         catch (e1) {
           if (e1.code === 'net' || e1.code === 'limit') throw e1;

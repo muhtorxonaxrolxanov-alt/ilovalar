@@ -1,8 +1,0 @@
-com.example.myhisobot.app-pngs-0 C:\Loyihalar\ilovalar-sayt\android\gradle\hisob-kitob\app\build\generated\res\pngs\release
-com.example.myhisobot.app-resValues-1 C:\Loyihalar\ilovalar-sayt\android\gradle\hisob-kitob\app\build\generated\res\resValues\release
-com.example.myhisobot.app-updated_navigation_xml-2 C:\Loyihalar\ilovalar-sayt\android\gradle\hisob-kitob\app\build\generated\updated_navigation_xml\release
-com.example.myhisobot.app-packageReleaseResources-3 C:\Loyihalar\ilovalar-sayt\android\gradle\hisob-kitob\app\build\intermediates\incremental\release\packageReleaseResources\merged.dir
-com.example.myhisobot.app-packageReleaseResources-4 C:\Loyihalar\ilovalar-sayt\android\gradle\hisob-kitob\app\build\intermediates\incremental\release\packageReleaseResources\stripped.dir
-com.example.myhisobot.app-release-5 C:\Loyihalar\ilovalar-sayt\android\gradle\hisob-kitob\app\build\intermediates\merged_res\release\mergeReleaseResources
-com.example.myhisobot.app-main-6 C:\Loyihalar\ilovalar-sayt\android\gradle\hisob-kitob\app\src\main\res
-com.example.myhisobot.app-release-7 C:\Loyihalar\ilovalar-sayt\android\gradle\hisob-kitob\app\src\release\res

@@ -1,0 +1,6 @@
+
+android/gradle/
+android/**/build/
+*.jks
+*.env
+parol.txt
