@@ -521,7 +521,7 @@ let C={cfg:null,phone:'',uid:'',rt:'',idt:'',exp:0,lastUpd:0,lastRemote:0,lastAt
 try{Object.assign(C,JSON.parse(localStorage.getItem(CKEY)||'{}'))}catch(e){}
 if(!C.cfg)C.cfg={apiKey:'AIzaSyDENPKhLmgEFNOW13lCIlHkXF6loJ87UuU',projectId:'elektrik-hisob'};
 const saveC=()=>{try{localStorage.setItem(CKEY,JSON.stringify(C))}catch(e){}};
-const CLOUD_OK=location.protocol==='file:';
+const CLOUD_OK=location.protocol==='file:'||/(^|\.)github\.io$/.test(location.hostname)||location.hostname==='localhost';
 const clone=x=>JSON.parse(JSON.stringify(x));
 const sid=x=>String(x.id);
 function canon(x){if(Array.isArray(x)){const a=x.map(canon);return x.length&&x[0]&&typeof x[0]==='object'&&'id' in x[0]?a.sort((p,q)=>String(p.id)<String(q.id)?-1:1):a}
