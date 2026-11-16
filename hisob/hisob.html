@@ -681,7 +681,7 @@ setTimeout(()=>cloudSync(),1200);
 setTimeout(()=>{try{if(!S.objects.length&&!S.workers.length&&hasB('readBackup')){const t=AndroidBridge.readBackup();if(t&&parseBackup(t))restoreFrom(t,'Zaxira topildi. Qaytarasizmi?')}}catch(e){}},500);
 </script>
 
-<script>if("serviceWorker"in navigator&&(location.protocol=="https:"||location.hostname=="localhost"))window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});</script><script>window.YAPP="hk";</script><script>/* ❓ Yordam: har bir ekrandagi tugmalarni birma-bir ko'rsatib tushuntiradi (video ko'rgandek).
+<script>if("serviceWorker"in navigator&&(location.protocol=="https:"||location.hostname=="localhost"))window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});</script><script>window.YAPP="hk";</script><script>/* Yordam: o'ng tepada doimiy sozlamalar va ? tugmasi; ? har bir ekrandagi joylarni birma-bir ko'rsatib tushuntiradi.
  * Ilova yig'ilganda: window.YAPP="tr" + shu fayl. Tugmalar matni yoki selektori bo'yicha topiladi;
  * ekranda yo'q tugma o'tkazib yuboriladi. */
 (function () {
@@ -752,53 +752,146 @@ setTimeout(()=>{try{if(!S.objects.length&&!S.workers.length&&hasB('readBackup'))
       { x: 'Yangi', h: '🆕 Buyurtma holatlari', d: 'Yangi → Qabul qilingan → Yo\'lda → Yetkazilgan. Bosib, shu holatdagi buyurtmalarni ko\'rasiz.' },
       { sel: '[data-act*="set"],[aria-label*="ozlama"]', h: '⚙ Sozlamalar', d: 'Do\'kon nomi, logo, karta raqami, printer, Telegram xabar.' }] }
   };
+  /* Har ilova: sozlamalar qanday ochiladi, kirilganmi, ilovaning o'z ⚙ tugmasi (yashiriladi) */
+  function gS() { try { return S; } catch (e) { return null; } }
+  function clk(sel) { return function () { var e = document.querySelector(sel); if (e) e.click(); }; }
+  function vis0(sel) { var e = document.querySelector(sel); return !!(e && e.getBoundingClientRect().width > 0); }
+  var CFG = {
+    tr: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('set'); }, gd: 'Nonvoyxona nomi, filiallar, bildirishnomalar, yangi versiya va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
+    th: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('yub'); }, gd: 'Akaunt, ovoz, til va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
+    'hk-i': { on: function () { return vis0('#prof'); }, set: clk('#prof'), gd: 'Profil: sohangiz, parolni o\'zgartirish va ilovadan chiqish.' },
+    'hk-h': { hide: '.top .gear', pad: '.top{padding-right:50px}', on: function () { return true; }, set: clk('[data-a="gear"]'), gd: 'Profil, ilova nomi va belgisi, ko\'rinish, zaxira nusxa. Har ekranda shu yerda turadi.' },
+    'hk-sg': { hide: '#tS', on: function () { return !!document.querySelector('#tabs') && vis0('#tO'); }, set: clk('#tS'), gd: 'Yangilash va ilovadan chiqish.' },
+    em: { pad: '#topActions{margin-right:46px}', on: function () { var s = gS(); return !!(s && s.token); }, set: function () { var s = gS(); s.tab = 'profile'; s.view = null; render(); scrollTo(0, 0); }, gd: 'Profilingiz: ism, manzil, xaritadagi joyingiz, parol.' },
+    es: { hide: '#topActions [data-k="settings"]', pad: '#topActions{margin-right:46px}', on: function () { var s = gS(); return !!(s && s.token); }, set: clk('#topActions [data-k="settings"]'), gd: 'Do\'kon nomi, logo, karta raqami, printer, Telegram xabar.' }
+  };
   function key() {
     var a = window.YAPP || '';
     if (a === 'nr') return 'tr'; if (a === 'nh') return 'th';
-    if (a === 'hk') { var p = location.pathname; if (/shogird/.test(p)) return 'hk-sg'; if (/gate/.test(p)) return 'gate'; if (/hisob\.html/.test(p)) return 'hk-h'; if (/(\/|index\.html)$/.test(p)) return 'hk-i'; return ''; }
+    if (a === 'hk') { var p = location.pathname; if (/shogird/.test(p)) return 'hk-sg'; if (/gate/.test(p)) return 'gate'; if (/hisob\.html/.test(p)) return 'hk-h'; if (/(\/|index\.html)$/.test(p)) return 'hk-i'; return 'hk-x'; }
     return a;
   }
-  function vis(e) { if (!e) return false; var r = e.getBoundingClientRect(), s = getComputedStyle(e); return r.width > 4 && r.height > 4 && s.visibility !== 'hidden' && s.display !== 'none' && !e.closest('#yrd'); }
-  function find(st) {
-    if (st.sel) { var L = document.querySelectorAll(st.sel); for (var i = 0; i < L.length; i++) if (vis(L[i])) return L[i]; return null; }
-    var best = null, A = document.querySelectorAll('button,a,[role=button],[data-act],[data-a],[onclick],.tile,.c,label,h2,h3');
-    for (var j = 0; j < A.length; j++) { var e = A[j]; if (!vis(e)) continue; var tx = (e.textContent || '').replace(/\s+/g, ' ');
-      if (tx.indexOf(st.x) >= 0 && tx.length < 160) { if (!best || tx.length < (best.textContent || '').length) best = e; } }
-    return best;
+  var K = key(), A = D[K] || { t: '❓ ' + (document.title || 'Yordam'), i: '', s: [] }, C = CFG[K] || {};
+  var OWN = '#yrdb,#yrdg,#yrd';
+  function shown(e) { if (!e || e.closest(OWN)) return false; var r = e.getBoundingClientRect(); if (r.width < 6 || r.height < 6) return false;
+    var s = getComputedStyle(e); if (s.visibility === 'hidden' || s.opacity === '0') return false;
+    for (var p = e; p && p !== document.body; p = p.parentElement) { var q = getComputedStyle(p); if (q.display === 'none') return false; } return true; }
+  function txt(e) { return (e.getAttribute('aria-label') || e.textContent || e.placeholder || e.title || e.value || '').replace(/\s+/g, ' ').trim(); }
+  /* Ma'lum tugmalar (aniq tushuntirish) */
+  function known() { var out = [];
+    A.s.forEach(function (st) { var hit = null;
+      if (st.sel) { var L = document.querySelectorAll(st.sel); for (var i = 0; i < L.length; i++) if (shown(L[i])) { hit = L[i]; break; } }
+      else { var Q = document.querySelectorAll('button,a,[role=button],[data-act],[data-a],[onclick],.tile,label');
+        for (var j = 0; j < Q.length; j++) { var e = Q[j]; if (!shown(e)) continue; var t = txt(e); if (t.indexOf(st.x) >= 0 && t.length < 90 && (!hit || t.length < txt(hit).length)) hit = e; } }
+      if (hit) { out.push({ e: hit, h: st.h, d: st.d }); if (st.sel) [].forEach.call(document.querySelectorAll(st.sel), function (z) { if (z !== hit) out.push({ e: z, skip: 1 }); }); } }); return out; }
+  /* Qolgan hamma joy: yozuvi va turiga qarab o'zi tushuntiradi */
+  var KW = [
+    [/saqla|^✓|^ok$|tasdiq/i, 'Yozganlaringizni saqlaydi.'], [/o'chir|o‘chir|🗑|^✕|^×/i, 'O\'chiradi. Oldin «Rostdan o\'chirasizmi?» deb so\'raladi.'],
+    [/orqaga|^‹|^←|^⬅|^❮/i, 'Oldingi ekranga qaytaradi.'], [/qo'sh|qo‘sh|➕|^\+/i, 'Yangi yozuv qo\'shadi. Ochilgan oynani to\'ldirib, saqlaysiz.'],
+    [/yubor|📤/i, 'Ma\'lumotni yuboradi.'], [/bekor|yopish/i, 'Hech narsani o\'zgartirmay yopadi.'], [/^kirish|kirish$/i, 'Ilovaga kiradi.'], [/chiqish/i, 'Ilovadan chiqadi.'],
+    [/^(bugun|kecha|hafta|oy|o'tgan oy|yil|hammasi|davr)$/i, 'Qaysi kunlar hisobini ko\'rishni tanlaysiz. Pastdagi raqamlar shu davr bo\'yicha o\'zgaradi.'],
+    [/nasiya|qarz/i, 'Qarzga berilgan, hali to\'lanmagan summa.'], [/to'l|to‘l|pul|so'm|kassa/i, 'Pul bilan bog\'liq: olingan, berilgan yoki to\'langan summa.'],
+    [/excel|fayl|📎|yukla/i, 'Fayl tanlab yuklaysiz.'], [/tahrir|✏|o'zgartir/i, 'Yozuvni o\'zgartirasiz.'], [/qidir|🔍/i, 'Nom bo\'yicha tez topadi.'],
+    [/ulash|telegram/i, 'Boshqalarga yuboradi (Telegram va boshqalar).'], [/chek|🧾/i, 'Chek chiqaradi yoki ko\'rsatadi.'], [/yangila|🔄|↻/i, 'Ma\'lumotni serverdan qayta oladi.'],
+    [/ovoz|🎤|mikrofon/i, 'Ovoz bilan buyruq berasiz.'], [/hisobot|📊/i, 'Jami raqamlar: kun, hafta, oy bo\'yicha.'], [/sozlama|⚙/i, 'Sozlamalar.'],
+    [/berildi|berish/i, 'Berilgan narsani belgilaysiz yoki yozasiz.'], [/qaytdi|qaytar/i, 'Qaytib kelgan narsani yozasiz.'], [/narx/i, 'Narxni ko\'rsatadi yoki o\'zgartiradi.']];
+  function nameOf(e) {
+    if (e.labels && e.labels[0]) return txt(e.labels[0]);
+    var p = e.previousElementSibling; if (p && /LABEL|SPAN|B|DIV|SMALL/.test(p.tagName) && txt(p).length < 50 && txt(p)) return txt(p);
+    var par = e.parentElement; if (par && par.tagName === 'LABEL') { var t = (par.textContent || '').replace(/\s+/g, ' ').trim(); if (t && t.length < 60) return t; }
+    return e.placeholder || e.getAttribute('aria-label') || e.title || e.name || '';
   }
-  var css = '#yrdb{position:fixed;left:10px;bottom:calc(92px + env(safe-area-inset-bottom,0px));z-index:2147483000;width:44px;height:44px;border-radius:50%;border:0;background:#f59e0b;color:#111;font-size:22px;font-weight:900;box-shadow:0 4px 14px rgba(0,0,0,.35);opacity:.92}' +
-    '#yrdb.pul{animation:ypul 1.4s ease-in-out 4}@keyframes ypul{50%{transform:scale(1.25)}}' +
-    '#yrd{position:fixed;inset:0;z-index:2147483001}#yrd .sp{position:fixed;border-radius:14px;box-shadow:0 0 0 9999px rgba(0,0,0,.62);transition:all .35s;border:3px solid #fbbf24;animation:yglow 1.2s ease-in-out infinite}@keyframes yglow{50%{border-color:#fff}}' +
-    '#yrd .bb{position:fixed;left:12px;right:12px;max-width:460px;margin:0 auto;background:#fff;color:#14171f;border-radius:16px;padding:14px 14px 10px;box-shadow:0 10px 30px rgba(0,0,0,.4);font:16px/1.45 system-ui,sans-serif;transition:top .35s}' +
-    '#yrd .bb b{display:block;font-size:18px;margin-bottom:4px}#yrd .bb .nv{display:flex;gap:8px;margin-top:10px;align-items:center}#yrd .bb button{flex:1;padding:11px;border-radius:12px;border:0;font-size:16px;font-weight:700;background:#e5e7eb;color:#111}#yrd .bb button.p{background:#2563eb;color:#fff}#yrd .bb small{color:#6b7280}';
-  function start() {
-    var A = D[key()]; if (!A) return;
-    var S = A.s.map(function (s) { return { s: s, e: find(s) }; }).filter(function (x) { return x.e; });
-    var o = document.createElement('div'); o.id = 'yrd'; o.innerHTML = '<div class="sp" hidden></div><div class="bb"></div>'; document.body.appendChild(o);
-    var sp = o.querySelector('.sp'), bb = o.querySelector('.bb'), k = -1;
-    function close() { o.remove(); }
-    function draw() {
-      if (k < 0) { sp.hidden = true; bb.style.top = '30%'; bb.innerHTML = '<b>' + A.t + '</b>' + A.i + '<div class="nv"><button data-y="x">Yopish</button>' + (S.length ? '<button class="p" data-y="n">Ko\'rsatish ›</button>' : '') + '</div><small>' + (S.length ? S.length + ' ta joyni birma-bir ko\'rsataman' : '') + '</small>'; return; }
-      var it = S[k]; it.e.scrollIntoView({ block: 'center', behavior: 'smooth' });
-      setTimeout(function () {
-        var r = it.e.getBoundingClientRect(), pad = 6; sp.hidden = false;
-        sp.style.left = (r.left - pad) + 'px'; sp.style.top = (r.top - pad) + 'px'; sp.style.width = (r.width + pad * 2) + 'px'; sp.style.height = (r.height + pad * 2) + 'px';
-        var below = r.bottom + 14, hh = innerHeight; bb.style.top = (below + 170 < hh ? below : Math.max(10, r.top - 190)) + 'px';
-        bb.innerHTML = '<b>' + it.s.h + '</b>' + it.s.d + '<div class="nv"><button data-y="b">‹</button><button data-y="x">✕</button><button class="p" data-y="n">' + (k < S.length - 1 ? 'Keyingi ›' : 'Tushundim ✓') + '</button></div><small>' + (k + 1) + ' / ' + S.length + '</small>';
-      }, 320);
+  function describe(e) {
+    var tg = e.tagName, ty = (e.type || '').toLowerCase();
+    if (tg === 'SELECT') { var n = nameOf(e) || 'Tanlash'; return { h: '🔽 ' + n, d: 'Ro\'yxatdan birini tanlaysiz' + (e.options && e.options.length ? ': ' + [].slice.call(e.options, 0, 4).map(function (o) { return '«' + o.text.trim() + '»'; }).join(', ') + (e.options.length > 4 ? '…' : '') : '') + '.' }; }
+    if (tg === 'TEXTAREA' || tg === 'INPUT') {
+      var n2 = nameOf(e) || 'Katak';
+      if (ty === 'checkbox' || ty === 'radio') return { h: '☑ ' + n2, d: 'Bossangiz belgilanadi (yoqiladi), yana bossangiz olib tashlanadi.' };
+      if (ty === 'file') return { h: '📎 ' + n2, d: 'Telefoningizdan fayl yoki rasm tanlaysiz.' };
+      if (ty === 'date' || ty === 'month') return { h: '📅 ' + n2, d: 'Sanani tanlaysiz.' };
+      var ex = e.placeholder && e.placeholder !== n2 ? ' Masalan: «' + e.placeholder + '».' : '';
+      var num = (ty === 'number' || ty === 'tel' || e.inputMode === 'numeric' || e.inputMode === 'decimal') ? ' Faqat raqam yoziladi.' : '';
+      return { h: '✏️ ' + n2, d: 'Bu katakka «' + n2 + '» yoziladi.' + num + ex };
     }
-    o.addEventListener('click', function (ev) { var b = ev.target.closest('[data-y]'); if (!b) return; var y = b.dataset.y;
-      if (y === 'x') return close(); if (y === 'b') k = Math.max(-1, k - 1); if (y === 'n') { if (k >= S.length - 1) return close(); k++; } draw(); });
+    var t = txt(e), short = t.length > 40 ? t.slice(0, 40) + '…' : t, d = '';
+    for (var i = 0; i < KW.length; i++) if (KW[i][0].test(t)) { d = KW[i][1]; break; }
+    if (e.closest('nav,.nav,#nav,#navIn,.tabs,[role=tablist]')) d = 'Bo\'lim: «' + short + '». Bossangiz shu bo\'limga o\'tadi.' + (d ? ' ' + d : '');
+    else if (!d) d = t.length > 40 ? 'Bu qator ma\'lumoti. Bossangiz batafsili ochiladi.' : 'Bossangiz «' + short + '» ochiladi yoki bajariladi.';
+    return { h: short || '•', d: d };
+  }
+  function auto(skip) {
+    var Q = document.querySelectorAll('button,a[href],input:not([type=hidden]),select,textarea,[data-act],[data-a],[onclick],[role=button],[role=tab]');
+    var out = [], seen = {}, grp = {};
+    for (var i = 0; i < Q.length && out.length < 40; i++) { var e = Q[i]; if (!shown(e)) continue;
+      if (skip.some(function (k) { return k === e || k.contains(e) || e.contains(k); })) continue;
+      if (out.some(function (o) { return o.e.contains(e) || e.contains(o.e); })) continue;
+      if (!/INPUT|SELECT|TEXTAREA/.test(e.tagName) && !txt(e)) continue;
+      var x = describe(e), sig = x.h.slice(0, 30); if (seen[sig]) continue; seen[sig] = 1;
+      var g = (e.parentElement ? e.parentElement.tagName + e.parentElement.className : '') + '|' + e.tagName + e.className;
+      grp[g] = (grp[g] || 0) + 1; if (grp[g] > 3 && !/INPUT|SELECT|TEXTAREA/.test(e.tagName)) continue;
+      out.push({ e: e, h: x.h, d: x.d }); }
+    return out;
+  }
+  function steps() {
+    var K1 = known(), S1 = K1.filter(function (x) { return !x.skip; }), all = S1.concat(auto(K1.map(function (x) { return x.e; })));
+    var g = document.getElementById('yrdg'); if (g && g.style.display !== 'none') all.push({ e: g, h: '⚙ Sozlamalar', d: C.gd || 'Sozlamalar.' });
+    all.forEach(function (x) { var r = x.e.getBoundingClientRect(); x.y = x.e === g ? -1 : r.top + scrollY; x.x = r.left; });
+    all.sort(function (a, b) { return Math.abs(a.y - b.y) < 8 ? a.x - b.x : a.y - b.y; });
+    return all.slice(0, 18);
+  }
+  function screenName() { var H = document.querySelectorAll('h1,h2,h3,.title,.ttl'); for (var i = 0; i < H.length; i++) { var e = H[i]; if (shown(e) && txt(e) && txt(e).length < 50 && e.getBoundingClientRect().top < innerHeight * 0.5) return txt(e); } return ''; }
+  var css = '#yrdg,#yrdb{position:fixed;right:8px;z-index:2147482000;width:38px;height:38px;border-radius:50%;border:1px solid rgba(127,127,127,.25);padding:0;line-height:36px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}' +
+    '#yrdg{top:calc(8px + env(safe-area-inset-top,0px));background:rgba(255,255,255,.82);color:#333;font-size:20px;box-shadow:0 1px 4px rgba(0,0,0,.18)}' +
+    '#yrdb{top:calc(50px + env(safe-area-inset-top,0px));right:12px;width:30px;height:30px;line-height:28px;background:rgba(127,127,127,.12);color:rgba(110,110,110,.75);font-size:15px;font-weight:700;opacity:.5;box-shadow:none}' +
+    '@media(prefers-color-scheme:dark){#yrdg{background:rgba(40,44,52,.85);color:#ddd}#yrdb{color:rgba(200,200,200,.7)}}' +
+    '#yrd{position:fixed;inset:0;z-index:2147483001}#yrd .sh{position:fixed;inset:0;background:rgba(0,0,0,.55)}#yrd .sp{position:fixed;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,.55);transition:all .3s;border:3px solid #fbbf24;animation:yglow 1.2s ease-in-out infinite}@keyframes yglow{50%{border-color:#fff}}' +
+    '#yrd .bb{position:fixed;left:12px;right:12px;max-width:460px;margin:0 auto;background:#fff;color:#14171f;border-radius:16px;padding:14px 14px 10px;box-shadow:0 10px 30px rgba(0,0,0,.4);font:16px/1.45 system-ui,sans-serif;transition:top .3s}' +
+    '#yrd .bb b{display:block;font-size:18px;margin-bottom:4px}#yrd .bb .nv{display:flex;gap:8px;margin-top:10px}#yrd .bb button{flex:1;padding:11px 6px;border-radius:12px;border:0;font-size:15px;font-weight:700;background:#e5e7eb;color:#111}#yrd .bb button.p{background:#2563eb;color:#fff}#yrd .bb small{color:#6b7280}';
+  var O = null;
+  function close() { if (O) { O.remove(); O = null; } }
+  function start() {
+    close();
+    var L = steps(), o = document.createElement('div'); O = o; o.id = 'yrd';
+    o.innerHTML = '<div class="sh"></div><div class="sp" hidden></div><div class="bb" role="dialog"></div>'; document.body.appendChild(o);
+    var sh = o.querySelector('.sh'), sp = o.querySelector('.sp'), bb = o.querySelector('.bb'), k = -1, nm = screenName();
+    function nav(last) { return '<div class="nv"><button data-y="b">‹ Orqaga</button><button data-y="x">Yopish</button><button class="p" data-y="n">' + (last ? 'Tushundim' : 'Keyingi ›') + '</button></div>'; }
+    function draw() {
+      if (k < 0) { sh.hidden = false; sp.hidden = true; bb.style.top = '22%';
+        bb.innerHTML = '<b>' + (nm ? '📍 ' + nm : A.t) + '</b>' + (nm ? A.t + '. ' : '') + (A.i || '') + '<br><br>' + (L.length ? 'Shu ekrandagi ' + L.length + ' ta joyni birma-bir ko\'rsatib, nima qilishini aytaman.' : 'Bu ekranda tugma yo\'q.') +
+          '<div class="nv"><button data-y="x">Yopish</button>' + (L.length ? '<button class="p" data-y="n">Ko\'rsatish ›</button>' : '') + '</div>'; return; }
+      var it = L[k]; sh.hidden = true; if (it.e !== document.getElementById('yrdg')) { var r0 = it.e.getBoundingClientRect(); if (r0.top < 60 || r0.bottom > innerHeight - 60) it.e.scrollIntoView({ block: 'center' }); }
+      bb.innerHTML = '<b>' + it.h + '</b>' + it.d + nav(k >= L.length - 1) + '<small>' + (k + 1) + ' / ' + L.length + '</small>';
+      setTimeout(function () { if (!O) return;
+        var r = it.e.getBoundingClientRect(), pad = 5; sp.hidden = false;
+        sp.style.left = (r.left - pad) + 'px'; sp.style.top = (r.top - pad) + 'px'; sp.style.width = (r.width + pad * 2) + 'px'; sp.style.height = (r.height + pad * 2) + 'px';
+        var bh = bb.offsetHeight + 14, below = r.bottom + 12; bb.style.top = (below + bh < innerHeight ? below : Math.max(8, r.top - bh)) + 'px'; }, 60);
+    }
+    /* Ilovaning o'z tugma tutqichlariga (o'chirish tasdig'i va h.k.) bosish yetib bormasin */
+    function h(ev) { ev.stopPropagation(); var b = ev.target.closest && ev.target.closest('[data-y]'); if (ev.type !== 'click') return; ev.preventDefault();
+      if (!b) return; var y = b.getAttribute('data-y');
+      if (y === 'x') return close(); if (y === 'b') k = Math.max(-1, k - 1); if (y === 'n') { if (k >= L.length - 1) return close(); k++; } draw(); }
+    ['click', 'pointerdown', 'pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend'].forEach(function (t) { o.addEventListener(t, h, true); });
     draw();
   }
-  function init() {
-    if (!D[key()] || document.getElementById('yrdb')) return;
-    var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
-    var b = document.createElement('button'); b.id = 'yrdb'; b.type = 'button'; b.textContent = '?'; b.setAttribute('aria-label', 'Yordam: bu ekran qanday ishlaydi'); b.onclick = start;
-    document.body.appendChild(b);
-    try { var f = 'yrd_seen_' + key(); if (!window.localStorage.getItem(f)) { b.classList.add('pul'); window.localStorage.setItem(f, '1'); } } catch (e) {}
+  function tick() {
+    var g = document.getElementById('yrdg'), b = document.getElementById('yrdb'), on = false;
+    if (C.set) { try { on = !!C.on(); } catch (e) { on = false; } }
+    if (g) g.style.display = on ? '' : 'none';
+    if (b) b.style.top = on ? '' : 'calc(8px + env(safe-area-inset-top,0px))';
   }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 400); }); else setTimeout(init, 400);
+  function init() {
+    if (document.getElementById('yrdb')) return;
+    var st = document.createElement('style'); st.textContent = css + (C.hide ? C.hide + '{display:none!important}' : '') + (C.pad || ''); document.head.appendChild(st);
+    var g = document.createElement('button'); g.id = 'yrdg'; g.type = 'button'; g.textContent = '⚙'; g.setAttribute('aria-label', 'Sozlamalar'); g.style.display = 'none';
+    g.addEventListener('click', function (ev) { ev.stopPropagation(); try { C.set(); } catch (e) {} }, true);
+    var b = document.createElement('button'); b.id = 'yrdb'; b.type = 'button'; b.textContent = '?'; b.setAttribute('aria-label', 'Yordam: bu ekran qanday ishlaydi');
+    b.addEventListener('click', function (ev) { ev.stopPropagation(); start(); }, true);
+    document.body.appendChild(g); document.body.appendChild(b);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && O) close(); });
+    tick(); setInterval(tick, 800);
+  }
+  window.yordamStart = function () { start(); };
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 300); }); else setTimeout(init, 300);
 })();
 </script></body>
 </html>
