@@ -358,6 +358,49 @@ document.addEventListener('visibilitychange',function(){if(!document.hidden)sync
     tick(); setInterval(tick, 800);
   }
   window.yordamStart = function () { start(); };
+
+  /* ---------- ORQAGA tugmasi: ilovadan chiqib ketmasin, bir qadam orqaga qaytsin ---------- */
+  function tst(m) { try { if (typeof toast === 'function') return toast(m); } catch (e) {} var d = document.createElement('div'); d.textContent = m; d.style.cssText = 'position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:20px;z-index:2147483002;font:15px system-ui'; document.body.appendChild(d); setTimeout(function () { d.remove(); }, 1800); }
+  var NV = (K === 'tr' || K === 'th'), STK = [], LAST = null, REST = false;
+  var NVV = ['tab', 'SS', 'IW', 'ZKV', 'ZKE', 'EK', 'REB'];
+  function nvSnap() { var o = {}; NVV.forEach(function (k) { if (typeof window[k] !== 'undefined' && typeof window[k] !== 'function') o[k] = window[k]; }); return o; }
+  function nvTrack() { if (!NV) return; var s = nvSnap(), j = JSON.stringify(s); if (LAST === null) { LAST = j; return; } if (j === LAST) return;
+    if (!REST) { if (s.tab === 'bosh') STK = []; else { STK.push(LAST); if (STK.length > 40) STK.shift(); } } REST = false; LAST = j; }
+  function nvOverlay() { if (document.getElementById('ask_n') || document.getElementById('di_o') || document.getElementById('at_n')) return true; try { if (window.AIO) return true; } catch (e) {}
+    return [].slice.call(document.body.children).some(function (e) { return /position:\s*fixed;\s*inset:\s*0/.test(e.style.cssText || '') && e.id != 'errbox' && e.id != 'upd'; }); }
+  var ORIG = window.onBack, ORIGH = window.__back;
+  function doBack() {
+    if (O) { close(); return true; }
+    var dl = document.querySelector('dialog[open]'); if (dl && !ORIGH) { try { dl.close(); } catch (e) {} return true; }
+    if (NV) {
+      if (nvOverlay()) return ORIG ? !!ORIG() : false;
+      if (STK.length) { var s = JSON.parse(STK.pop()); REST = true; NVV.forEach(function (k) { if (k in s) window[k] = s[k]; }); try { render(); } catch (e) {} LAST = JSON.stringify(nvSnap()); return true; }
+      return ORIG ? !!ORIG() : false;
+    }
+    if (ORIGH) return !!ORIGH();
+    if (K === 'em' || K === 'es') {
+      var sh = document.getElementById('sheet'); if (sh && !sh.hidden) { try { closeSheet(); } catch (e) { sh.hidden = true; } return true; }
+      var b = document.querySelector('button.back:not([data-act="openCust"])'); if (b && b.getBoundingClientRect().width) { b.click(); return true; }
+      var st = gS(), home = K === 'em' ? 'shop' : 'orders';
+      if (st && st.tab && st.tab !== home) { var t = document.querySelector('[data-act="tab"][data-k="' + home + '"]'); if (t) t.click(); else { st.tab = home; render(); } return true; }
+      return false;
+    }
+    return false;
+  }
+  var BACK_OK = { tr: 1, th: 1, 'hk-h': 1, 'hk-i': 1, 'hk-sg': 1, em: 1, es: 1 };
+  if (BACK_OK[K]) {
+    if (NV) setInterval(nvTrack, 250);
+    window.onBack = doBack; if (ORIGH) window.__back = doBack;
+    /* Brauzer / o'rnatilgan veb-ilova: tarixga bitta "qo'riqchi" qadam qo'yiladi */
+    var lastEx = 0;
+    var guard = function () { try { history.pushState({ yb: 1 }, ''); } catch (e) {} };
+    setTimeout(guard, 500);
+    window.addEventListener('popstate', function () {
+      if (doBack()) return guard();
+      if (Date.now() - lastEx < 2500) { try { history.back(); } catch (e) {} return; }
+      lastEx = Date.now(); tst('Chiqish uchun yana bir marta «Orqaga» ni bosing'); guard();
+    });
+  }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 300); }); else setTimeout(init, 300);
 })();
 </script></body></html>
