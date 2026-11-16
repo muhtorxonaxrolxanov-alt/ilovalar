@@ -140,16 +140,51 @@ input.code{letter-spacing:8px;text-align:center;font-size:26px;font-weight:700}
   </div>
   <button class="go" id="b4">Saqlash va kirish</button>
 </div>
+<div id="pX" hidden>
+  <div class="card">
+    <h2 style="margin:0 0 4px">💳 Obuna</h2>
+    <div class="sub" style="margin:0 0 6px" id="xUntil"></div>
+    <label>Tarifni tanlang</label>
+    <div class="tr" id="xPlans"></div>
+    <div id="xCardBox" hidden>
+      <label>Shu kartaga o'tkazing</label>
+      <div class="msg" style="margin-top:0"><div style="font-size:22px;font-weight:800;letter-spacing:1px" id="xCard"></div><div id="xName" class="sub" style="margin:2px 0 0"></div><div style="margin-top:6px">Summa: <b id="xSum"></b></div></div>
+      <button class="lnk" id="xCopy">📋 Karta raqamini nusxalash</button>
+      <label for="xImg">To'lov cheki (rasm yoki skrinshot)</label>
+      <input id="xImg" type="file" accept="image/*">
+      <img id="xPrev" alt="Chek" style="max-width:100%;border-radius:12px;margin-top:8px" hidden>
+    </div>
+    <div class="msg" id="xNone" hidden>To'lov hali sozlanmagan. Ega bilan bog'laning.</div>
+  </div>
+  <button class="go" id="bX" disabled>Chekni yuborish</button>
+  <button class="lnk" id="backX">← Orqaga</button>
+</div>
+
+<div id="pJ" hidden>
+  <div class="card">
+    <h2 style="margin:0 0 4px">🤝 Jamoaga taklif</h2>
+    <div class="sub" style="margin:0 0 6px" id="jTxt">Taklif tekshirilmoqda…</div>
+    <div id="jCodeBox" hidden><label for="jCode">Ustangiz bergan taklif kodi</label><input id="jCode" class="code" style="letter-spacing:4px" maxlength="8" autocapitalize="characters" placeholder="ABCD2345"><button class="go" id="bJc">Tekshirish</button></div>
+    <div id="jPwBox" hidden>
+      <label for="jp1">Parol o'ylab toping (kamida 6 belgi)</label><input id="jp1" type="password" autocomplete="new-password">
+      <label for="jp2">Parolni takrorlang</label><input id="jp2" type="password" autocomplete="new-password">
+      <div class="msg" style="font-size:13px">Keyingi safar ilovani <b>telefon raqamingiz va shu parol</b> bilan ochasiz.</div>
+    </div>
+  </div>
+  <button class="go" id="bJ" hidden>Qo'shilish</button>
+  <button class="lnk" id="backJ">← Orqaga</button>
+</div>
+<button class="lnk" id="toJoin">🤝 Ustam taklif qilgan (taklif kodi bor)</button>
 <div class="msg bad" id="er" hidden></div>
 <div class="msg" id="inf" hidden></div>
 
 <script src="gate.js"></script>
 <script>
 var CFG=HK.cfg,$=function(i){return document.getElementById(i)};
-var trade='',phone='',mode='login',Cc=null,Rr=null,PANELS=['pL','pT','p1','p2','p3','p4'];
+var trade='',phone='',mode='login',Cc=null,Rr=null,PANELS=['pL','pT','p1','p2','p3','p4','pX','pJ'];
 function err(m){var e=$('er');e.textContent=m;e.hidden=!m}
 function info(m){var e=$('inf');e.innerHTML=m||'';e.hidden=!m}
-function show(id){PANELS.forEach(function(p){$(p).hidden=p!==id});$('tabs').hidden=(id!=='pL'&&id!=='pT'&&mode!=='x');err('');info('')}
+function show(id){PANELS.forEach(function(p){$(p).hidden=p!==id});$('tabs').hidden=(id!=='pL'&&id!=='pT'&&mode!=='x');$('toJoin').hidden=(id!=='pL');err('');info('')}
 function normPh(v){var d=String(v||'').replace(/\D/g,'');if(d.length===9)d='998'+d;return d}
 function okPh(p){return p.length===12&&p.indexOf('998')===0}
 function net(e){return /Failed to fetch|NetworkError|Load failed/i.test(e.message)?'Internet yo\'q yoki sekin.':e.message}
@@ -179,20 +214,53 @@ function signIn(r){
     Cc={cfg:CFG,phone:phone,uid:j.localId,idt:j.idToken,rt:j.refreshToken,exp:Date.now()+(+j.expiresIn||3600)*1000,lastUpd:0,lastRemote:0,lastAt:'',msg:''};Rr=r})}
 function finish(){
   try{localStorage.setItem('cloud_v1',JSON.stringify(Cc));localStorage.setItem('hk_last_phone',phone)}catch(e){}
-  HK.set({ok:true,phone:phone,trade:Rr.trade||trade||'elektrik',until:Rr.until,at:Date.now()});
+  HK.set({ok:true,phone:phone,trade:Rr.trade||trade||'elektrik',until:Rr.until,at:Date.now(),role:Rr.role||'usta',usta:Rr.usta||null});
   show('pL');info('✅ Kirdingiz!');setTimeout(function(){location.replace('index.html')},400)}
 function after(r){
+  if(r.phone)phone=r.phone;
   signIn(r).then(function(){
-    if(mode==='login')return finish();
+    if(mode==='login'||r.role==='shogird')return finish();
     $('pwSub').textContent=mode==='reset'?'Yangi parol o\'ylab toping.':'Ro\'yxatdan o\'tdingiz! Endi parol o\'ylab toping. Keyingi safar ilovani raqam va shu parol bilan ochasiz, kod so\'ralmaydi.';
     $('np1').value='';$('np2').value='';show('p4')
   }).catch(function(e){err('Hisobga kirib bo\'lmadi: '+net(e))})}
 function waitOwner(r){show('p3');$('waitTxt').textContent=r.msg||'Ega tasdiqlashini kuting.';
-  return HK.poll(phone,r.nonce,1800000,true).then(function(r2){if(r2.st==='ok')return after(r2);show(mode==='login'?'pL':'p1');err(r2.msg||'Ruxsat berilmadi.')}).catch(function(e){if(e.message!=='stop')err(net(e))})}
+  return HK.poll(phone,r.nonce,1800000,true).then(function(r2){if(r2.st==='ok')return after(r2);
+    if(r2.st==='paid'){mode='login';tabs('L');show('pL');$('lph').value='+'+phone;info('✅ '+(r2.msg||'To\'lov tasdiqlandi.')+' Endi «Kirish» ni bosing.');return}
+    show(mode==='login'?'pL':'p1');err(r2.msg||'Ruxsat berilmadi.')}).catch(function(e){if(e.message!=='stop')err(net(e))})}
+/* ---- To'lov (obuna) ---- */
+var PAY=null,PLAN='',IMG='';
+var PN={w:'Haftalik',m:'Oylik',y:'Yillik'};
+function fm(n){return Math.round(+n||0).toLocaleString('ru-RU').replace(/ /g,' ')+" so'm"}
+function showPay(pay,until){PAY=pay||{};PLAN='';IMG='';$('xPrev').hidden=true;$('xImg').value='';$('bX').disabled=true;
+  $('xUntil').textContent=until?(until>Date.now()?'Hozirgi muddat: '+new Date(until).toLocaleDateString('ru-RU')+' gacha':'Muddat tugagan: '+new Date(until).toLocaleDateString('ru-RU')):'Tarifni tanlab, to\'lov qiling.';
+  var ks=['w','m','y'].filter(function(k){return +PAY[k]>0});
+  $('xNone').hidden=!!(ks.length&&PAY.card);$('xCardBox').hidden=true;
+  $('xPlans').innerHTML=ks.map(function(k){return '<button data-p="'+k+'">'+PN[k]+'<br><b>'+fm(PAY[k])+'</b></button>'}).join('');
+  $('xPlans').querySelectorAll('button').forEach(function(b){b.onclick=function(){PLAN=b.dataset.p;$('xPlans').querySelectorAll('button').forEach(function(x){x.className=x===b?'on':''});
+    $('xCardBox').hidden=!PAY.card;$('xCard').textContent=PAY.card||'';$('xName').textContent=PAY.cname||'';$('xSum').textContent=fm(PAY[PLAN]);$('bX').disabled=!IMG}});
+  show('pX');$('tabs').hidden=true}
+$('xCopy').onclick=function(){var t=String((PAY&&PAY.card)||'').replace(/\s/g,'');try{navigator.clipboard.writeText(t);info('Karta raqami nusxalandi')}catch(e){info(t)}};
+$('xImg').onchange=function(){var f=this.files&&this.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,1100/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);var u=c.toDataURL('image/jpeg',.72);IMG=u.split(',')[1];$('xPrev').src=u;$('xPrev').hidden=false;$('bX').disabled=!PLAN};im.onerror=function(){err('Rasmni o\'qib bo\'lmadi.')};im.src=rd.result};rd.readAsDataURL(f)};
+$('bX').onclick=function(){if(!PLAN)return err('Tarifni tanlang.');if(!IMG)return err('Chek rasmini tanlang.');run({act:'pay',plan:PLAN,img:IMG},$('bX'),'Chekni yuborish')};
+$('backX').onclick=function(){if(/[?&]pay=1/.test(location.search))return location.replace('index.html');mode='login';tabs('L');show('pL')};
+/* ---- Shogird: taklif bilan qo'shilish ---- */
+var TOK='',TI=null;
+function joinCheck(t){TOK=String(t||'').toUpperCase().replace(/[^A-Z0-9]/g,'');if(TOK.length!==8){$('jTxt').textContent='Taklif kodi 8 belgidan iborat.';return}
+  $('jTxt').textContent='Taklif tekshirilmoqda…';$('jCodeBox').hidden=true;
+  HK.call('t'+TOK,{act:'tinfo'}).then(function(r){if(r.st!=='tinfo'){$('jTxt').textContent=r.msg||'Taklif topilmadi.';$('jCodeBox').hidden=false;return}
+    TI=r;$('jTxt').innerHTML='<b>'+String(r.un||'Ustangiz').replace(/[<>&]/g,'')+'</b> sizni o\'z jamoasiga qo\'shmoqda.<br>Sizning raqamingiz: <b>+'+r.sp+'</b>';$('jPwBox').hidden=false;$('bJ').hidden=false}).catch(function(e){$('jTxt').textContent=net(e);$('jCodeBox').hidden=false})}
+function showJoin(t){show('pJ');$('tabs').hidden=true;$('jPwBox').hidden=true;$('bJ').hidden=true;if(t)joinCheck(t);else{$('jTxt').textContent='Ustangiz bergan havolani oching yoki taklif kodini yozing.';$('jCodeBox').hidden=false}}
+$('toJoin').onclick=function(){showJoin('')};
+$('bJc').onclick=function(){joinCheck($('jCode').value)};
+$('backJ').onclick=function(){mode='login';tabs('L');show('pL')};
+$('bJ').onclick=function(){var a=$('jp1').value,b=$('jp2').value;if(a.length<6)return err('Parol kamida 6 belgi bo\'lsin.');if(a!==b)return err('Ikkala parol bir xil emas.');if(!TI)return;
+  var bt=$('bJ');bt.disabled=true;bt.textContent='Ulanmoqda…';phone=TI.sp;
+  HK.call('t'+TOK,{act:'join',ph:HK.hash(TI.sp,a),dev:HK.dev()},40000).then(function(r){bt.disabled=false;bt.textContent='Qo\'shilish';if(r.st==='ok')return after(r);err(r.msg||'Ulanib bo\'lmadi.')}).catch(function(e){bt.disabled=false;bt.textContent='Qo\'shilish';err(net(e))})};
 function run(cmd,btn,label){
   btn.disabled=true;btn.textContent='Tekshirilmoqda…';
   return HK.call(phone,cmd).then(function(r){btn.disabled=false;btn.textContent=label;
     if(r.st==='ok')return after(r);
+    if(r.st==='exp'){if(r.who==='me')return showPay(r.pay,r.until);return err(r.msg)}
     if(r.st==='wait')return waitOwner(r);
     err(r.msg||(r.st==='blocked'?'Bu raqam bloklangan.':'Ruxsat berilmadi.'))
   }).catch(function(e){btn.disabled=false;btn.textContent=label;err(e.message==='stop'?'':net(e))})}
@@ -207,5 +275,10 @@ $('b4').onclick=function(){var a=$('np1').value,b=$('np2').value;
   HK.call(phone,{act:'setpw',idt:Cc.idt,ph:HK.hash(phone,a)}).then(function(r){$('b4').disabled=false;$('b4').textContent='Saqlash va kirish';
     if(r.st==='pwok')return finish();err(r.msg||'Parol saqlanmadi.')}).catch(function(e){$('b4').disabled=false;$('b4').textContent='Saqlash va kirish';err(net(e))})};
 var lp=lastPh();if(lp)$('lph').value='+'+lp;
+/* Havola bilan ochilgan: ?taklif=KOD (shogird) yoki ?pay=1 (ilovadan to'lov) */
+(function(){var q=location.search,m=q.match(/[?&]taklif=([A-Za-z0-9]{8})/);
+  if(m){showJoin(m[1]);return}
+  if(/[?&]pay=1/.test(q)){var l=HK.lic()||{};if(!l.phone)return;phone=l.phone;show('pX');$('tabs').hidden=true;$('xUntil').textContent='Yuklanmoqda…';
+    HK.call(phone,{act:'payinfo'}).then(function(r){showPay(r.pay,r.until)}).catch(function(e){err(net(e))})}})();
 try{var l=HK.lic();if(l&&l.ok&&l.until<=Date.now()){err('Foydalanish muddatingiz tugagan. Parol bilan kiring va egadan ruxsat so\'rang.')}}catch(e){}
 </script></main><script>if("serviceWorker"in navigator&&(location.protocol=="https:"||location.hostname=="localhost"))window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});</script></body></html>

@@ -361,14 +361,14 @@ function objView(){
   return'<div class="acts" style="margin-bottom:10px"><button class="b" data-a="back">← Obyektlar</button><button class="b p" data-a="client">Mijozga ko\'rsatish</button></div><div class="card">'+head+row('Jami narx',f(c.total))+row('Olingan pul',f(c.got),'ok')+'<div class="row"><b>Qolgan pul</b><b class="'+(c.left>0?'bad':'ok')+'">'+f(c.left)+'</b></div>'+
   
   (c.it.length?'<details open><summary>Qilingan ishlar</summary>'+c.it.map((i,n)=>tx(esc(i.d)+' · '+i.q+' x '+f(i.p),f(i.q*i.p),xb('data-ri="'+n+'"',i.d))).join('')+'</details>':'')+
-  (c.rc.length?'<details open><summary>Olingan pullar</summary>'+c.rc.map((x,n)=>tx(esc(x.date),f(x.a),xb('data-rr="'+n+'"',x.date))).join('')+'</details>':'')+'</div>';
+  (c.rc.length?'<details open><summary>Olingan pullar</summary>'+c.rc.map((x,n)=>tx(esc(x.date),f(x.a),xb('data-rr="'+n+'"',x.date))).join('')+'</details>':'')+objWorkers(o)+'</div>';
 }
 function workView(){
   let h='<div class="acts" style="margin:0 0 10px"><button class="b" data-a="import">Telegram yoki shogird xabarini kiritish</button></div>';
   if(!S.workers.length)return h+'<div class="empty">Hali shogird yo\'q.<br>Pastdagi tugma bilan qo\'shing.</div>';
   return h+S.workers.map(w=>{const s=ws(w);
-    return'<div class="card"><h3>'+esc(w.name)+'</h3>'+(w.phone?row('Telefon',esc(w.phone)):'')+row('Kunlik haqi',w.rate?f(w.rate):'Sozlamadan belgilang')+row('Ishlagan kunlar',s.days)+row('Hisoblangan',f(s.earned))+row('To\'langan',f(s.paid),'ok')+'<div class="row"><b>Qarz</b><b class="'+(s.debt>0?'bad':'ok')+'">'+f(s.debt)+'</b></div>'+
-    '<div class="acts"><button class="b p" data-day="'+w.id+'">+ Ish kuni</button><button class="b" data-pay="'+w.id+'">+ To\'lov berdim</button><button class="b d" data-delw="'+w.id+'">O\'chirish</button></div>'+
+    return'<div class="card"><h3>'+esc(w.name)+'</h3>'+(w.phone?row('Telefon',esc(w.phone)):'')+row('Kunlik haqi',w.rate?f(w.rate):'Sozlamadan belgilang')+(w.sid?row('Ilova','<span class="ok">вњ… ulangan</span>'):'')+row('Ishlagan kunlar',s.days)+row('Hisoblangan',f(s.earned))+row('To\'langan',f(s.paid),'ok')+'<div class="row"><b>Qarz</b><b class="'+(s.debt>0?'bad':'ok')+'">'+f(s.debt)+'</b></div>'+
+    '<div class="acts"><button class="b p" data-day="'+w.id+'">+ Ish kuni</button><button class="b" data-pay="'+w.id+'">+ To\'lov berdim</button><button class="b d" data-delw="'+w.id+'">O\'chirish</button></div>'+(w.phone&&!w.sid?'<div class="acts"><button class="b p" data-cinv="'+w.id+'" style="flex:1">рџ“¤ Ilovaga taklif yuborish</button></div>':'')+
     ((w.entries||[]).length?'<details><summary>Ishlagan kunlar</summary>'+w.entries.slice().sort(byDate).map(e=>tx(esc(e.date)+' · '+esc(e.place)+' · '+e.days+' kun',f((+e.days||0)*(e.r!=null?+e.r:(+w.rate||0))),xb('data-de="'+w.id+'" data-e="'+e.id+'"',e.date))).join('')+'</details>':'')+
     ((w.pays||[]).length?'<details><summary>Berilgan pullar</summary>'+w.pays.slice().sort(byDate).map(p=>tx(esc(p.date),f(p.a),xb('data-dp="'+w.id+'" data-p="'+p.id+'"',p.date))).join('')+'</details>':'')+'</div>'}).join('');
 }
@@ -380,11 +380,13 @@ function repView(){
   if(rep==='left')return back+'<div class="card"><h3>Mijozlardan qolgan pullar</h3>'+row('Jami',f(gt-gi),gt-gi>0?'bad':'ok')+(S.objects.length?S.objects.map(o=>{const c=oc(o);return tx(esc(o.name)+'<br><small style="color:var(--muted)">Jami '+f(c.total)+' · olingan '+f(c.got)+'</small>','<b class="'+(c.left>0?'bad':'ok')+'">'+f(c.left)+'</b>')}).join(''):'<div class="hint">Hali obyekt yo\'q</div>')+'</div>';
   if(rep==='out'){const L=[];S.workers.forEach(w=>(w.pays||[]).forEach(p=>L.push({date:p.date,n:w.name,a:+p.a||0})));L.sort(byDate);
     return back+'<div class="card"><h3>Shogirtlarga berilgan pullar</h3>'+row('Jami',f(gp))+(L.length?L.map(x=>tx(esc(x.date)+' · '+esc(x.n),f(x.a))).join(''):'<div class="hint">Hali yozuv yo\'q</div>')+'</div>'}
+  if(rep==='wobj')return back+repWobj();
   if(rep==='debt')return back+'<div class="card"><h3>Shogirtlarga qarz</h3>'+row('Jami',f(gd),gd>0?'bad':'ok')+(S.workers.length?S.workers.map(w=>{const s=ws(w);return tx(esc(w.name)+'<br><small style="color:var(--muted)">'+s.days+' kun · hisoblangan '+f(s.earned)+' · berilgan '+f(s.paid)+'</small>','<b class="'+(s.debt>0?'bad':'ok')+'">'+f(s.debt)+'</b>')}).join(''):'<div class="hint">Hali shogird yo\'q</div>')+'</div>';
   return'<div class="card click" data-rep="in"><h3>Olingan pullar</h3><b class="ok" style="font-size:18px">'+f(gi)+'</b></div>'+
   '<div class="card click" data-rep="left"><h3>Qolgan pullar (mijozlardan)</h3><b class="'+(gt-gi>0?'bad':'')+'" style="font-size:18px">'+f(gt-gi)+'</b></div>'+
   '<div class="card click" data-rep="out"><h3>Berilgan pullar (shogirtlarga)</h3><b style="font-size:18px">'+f(gp)+'</b></div>'+
   '<div class="card click" data-rep="debt"><h3>Shogirtlarga qarz</h3><b class="'+(gd>0?'bad':'')+'" style="font-size:18px">'+f(gd)+'</b></div>'+
+  '<div class="card click" data-rep="wobj"><h3>Shogirdlar вЂ” obyektlar bo\'yicha</h3><div class="hint">Kim qaysi obyektda necha kun ishladi, qancha hisoblandi</div></div>'+
   '<div class="card"><h3>O\'zimga qolgan</h3><div class="hint">Olingan pul minus shogirtlarga berilgan pul</div><b class="'+(gi-gp>=0?'ok':'bad')+'" style="font-size:18px">'+f(gi-gp)+'</b></div>';
 }
 
@@ -444,12 +446,13 @@ function render(){
 }
 for(let n=1;n<=3;n++)$('t'+n).onclick=()=>nav(()=>{tab=n;rep=null;cl=false;set=false;sec=''});
 $('addBtn').onclick=()=>tab==2?
-  ask('Yangi shogird',[{k:'n',l:'Shogird ismi',req:1},{k:'r',l:'Lavozimi (Shogird, Usta, Yordamchi...)',v:'Shogird'},{k:'p',l:'Telefon raqami (kirish kodi uchun)',t:'tel',v:'+998'}],v=>S.workers.push({id:uid(),name:v.n,role:v.r||'Shogird',phone:v.p.length>5?v.p:'',rate:0,entries:[],pays:[]})):
+  ask('Yangi shogird',[{k:'n',l:'Shogird ismi',req:1},{k:'p',l:'Telefon raqami (ilovaga taklif yuboriladi)',t:'tel',v:'+998'},{k:'k',l:'Kunlik haqi (so\'m)',t:'number'},{k:'r',l:'Lavozimi (Shogird, Usta, Yordamchi...)',v:'Shogird'}],v=>{const w={id:uid(),name:v.n,role:v.r||'Shogird',phone:v.p.length>5?v.p:'',rate:+v.k||0,entries:[],pays:[]};S.workers.push(w);if(w.phone)setTimeout(()=>crewInvite(w),300)}):
   ask('Yangi obyekt',[{k:'n',l:'Obyekt nomi',req:1},{k:'c',l:'Mijoz ismi (ixtiyoriy)'},{k:'p',l:'Mijoz telefon raqami (hisobni yuborish uchun)',t:'tel',v:'+998'}],v=>{const o={id:uid(),name:v.n,client:v.c,phone:v.p.length>5?v.p:'',items:[],recv:[]};S.objects.push(o);NAVSTACK.push(getState());cur=o.id;cl=false});
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-a],[data-open],[data-rep],[data-ri],[data-rr],[data-day],[data-pay],[data-delw],[data-de],[data-dp],[data-rate],[data-phone],[data-role],[data-invite],[data-sec]');
+  const t=e.target.closest('[data-a],[data-open],[data-rep],[data-ri],[data-rr],[data-day],[data-pay],[data-delw],[data-de],[data-dp],[data-rate],[data-phone],[data-role],[data-invite],[data-sec],[data-cinv]');
   if(!t)return;const d=t.dataset,o=S.objects.find(x=>x.id===cur);
   const W=id=>S.workers.find(x=>x.id===id);
+  if(d.cinv){const w=W(d.cinv);if(w)crewInvite(w);return}
   if(d.open)nav(()=>{cur=d.open;cl=false})
   else if(d.sec)nav(()=>{sec=d.sec})
   else if(d.rep)nav(()=>{rep=d.rep})
@@ -486,7 +489,7 @@ document.addEventListener('click',e=>{
   else if(d.rr!==undefined){const x=o.recv[+d.rr];delAsk('Olingan pul: '+esc(x.date)+'<br>'+f(x.a),()=>{tomb(x.id);o.recv.splice(+d.rr,1)})}
   else if(d.a==='import')ask('Xabarni kiritish',[{k:'t',l:'Botdan yoki shogirddan kelgan satrlarni shu yerga qo\'ying (BOT| yoki HISOB| bilan boshlanadi)',area:1,req:1}],v=>{const r=processImport(v.t);setTimeout(()=>note('Natija',importMsg(r)),50)},'Qo\'shish');
   else if(d.a==='botimp'){const v=($('botTxt')||{}).value||'';if(!v.trim()){toast('Avval satrlarni qo\'ying');return}const r=processImport(v);render();note('Natija',importMsg(r))}
-  else if(d.day){const w=W(d.day);ask('Ish kuni: '+esc(w.name),[{k:'p',l:'Qayerda ishladi',req:1},{k:'n',l:'Necha kun',opts:['0.5','0.75','1','1.5','2'],v:'1'},{k:'d',l:'Sana',t:'date',v:today()}],v=>{(w.entries=w.entries||[]).push({id:uid(),date:v.d,place:v.p,days:+v.n})})}
+  else if(d.day){const w=W(d.day),on=S.objects.map(x=>x.name);ask('Ish kuni: '+esc(w.name),[on.length?{k:'p',l:'Qaysi obyektda ishladi',opts:on.concat(['Boshqa joy']),v:on[0]}:{k:'p',l:'Qayerda ishladi',req:1},{k:'n',l:'Necha kun',opts:['0.5','0.75','1','1.5','2'],v:'1'},{k:'d',l:'Sana',t:'date',v:today()}],v=>{const ob=S.objects.find(x=>x.name===v.p);(w.entries=w.entries||[]).push({id:uid(),date:v.d,place:v.p,days:+v.n,oid:ob?ob.id:undefined})})}
   else if(d.pay){const w=W(d.pay);ask('To\'lov: '+esc(w.name),[{k:'a',l:'Berilgan summa (so\'m)',t:'number',req:1},{k:'d',l:'Sana',t:'date',v:today()}],v=>{(w.pays=w.pays||[]).push({id:uid(),a:+v.a||0,date:v.d})})}
   else if(d.delw){const w=W(d.delw);delAsk('Shogird «'+esc(w.name)+'» va uning hamma yozuvlari o\'chadi.',()=>{tomb(d.delw);S.workers=S.workers.filter(x=>x.id!==d.delw)})}
   else if(d.de){const w=W(d.de),id=t.dataset.e,e=w.entries.filter(x=>x.id===id)[0]||{};delAsk(esc(w.name)+': '+esc(e.date)+' · '+esc(e.place)+' · '+e.days+' kun',()=>{tomb(id);w.entries=w.entries.filter(x=>x.id!==id)})}
@@ -588,8 +591,65 @@ async function cloudSync(manual){
     C.msg='';try{const sz=JSON.stringify(dataOf()).length;if(sz>750000)C.msg='Bulutdagi joy '+Math.round(sz/10486)+'% to\'ldi. Ega bilan bog\'laning.'}catch(e){}C.lastAt=new Date().toLocaleTimeString('ru-RU');try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
     if(manual)toast('Sinxronlandi');
   }catch(e){C.msg=nice(e.message);if(manual)toast(C.msg)}
-  finally{syncing=false;saveC();const d=$('dlg');if((changed||manual||sec==='cloud')&&!(d&&d.open)&&!(document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)))render()}
+  finally{syncing=false;saveC();if(C.uid)crewSync().catch(()=>{});const d=$('dlg');if((changed||manual||sec==='cloud')&&!(d&&d.open)&&!(document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)))render()}
 }
+/* ---- Shogirdlar ilovasi bilan bog'lanish (crew/{ustaUid}) ---- */
+const SITE_HISOB='https://muhtorxonaxrolxanov-alt.github.io/ilovalar/hisob/';
+const FSB=()=>'https://firestore.googleapis.com/v1/projects/'+C.cfg.projectId+'/databases/(default)/documents/';
+let crewBusy=false;
+async function crewSync(){
+  if(!CLOUD_OK||!C.uid||!C.cfg||crewBusy)return;crewBusy=true;
+  try{
+    const t=await tok(),H={headers:{Authorization:'Bearer '+t}},U=FSB()+'crew/'+C.uid,PH={'content-type':'application/json',Authorization:'Bearer '+t};
+    const O=JSON.stringify(S.objects.map(o=>({id:o.id,name:o.name})));
+    if(localStorage.getItem('crew_o_'+C.uid)!==O){await jf(U+'?updateMask.fieldPaths=o',{method:'PATCH',headers:PH,body:JSON.stringify({fields:{o:{stringValue:O}}})});try{localStorage.setItem('crew_o_'+C.uid,O)}catch(e){}}
+    let cd=null;try{cd=await jf(U,H)}catch(e){if(e.code!==404)throw e}
+    let W={};try{W=JSON.parse(((cd&&cd.fields&&cd.fields.w)||{}).stringValue||'{}')}catch(e){}
+    let ch=false;
+    S.workers.forEach(w=>{const x=W[w.id];if(x&&x.sid&&w.sid!==x.sid){w.sid=x.sid;ch=true}});
+    for(const w of S.workers){if(!w.sid)continue;
+      let L=null;try{const j=await jf(U+'/log/'+w.sid,H);L=JSON.parse(((j.fields||{}).e||{}).stringValue||'[]')}catch(e){if(e.code===404)L=[]}
+      if(L){w.entries=w.entries||[];const ids=new Set(L.map(e=>'sg'+e.id)),n0=w.entries.length;
+        w.entries=w.entries.filter(e=>!String(e.id).startsWith('sg')||ids.has(String(e.id)));if(w.entries.length!==n0)ch=true;
+        for(const e of L){const id='sg'+e.id;if((S.del||{})[id]||w.entries.some(x=>x.id===id))continue;const ob=S.objects.find(o=>o.id===e.oid);w.entries.push({id,date:e.date,place:ob?ob.name:(e.on||'—'),days:+e.days||0,oid:e.oid,sg:1});ch=true}}
+      const P=JSON.stringify({rate:+w.rate||0,pays:(w.pays||[]).map(p=>({a:+p.a||0,date:p.date})),name:w.name,un:(S.prof&&S.prof.name)||S.title||''});
+      if(localStorage.getItem('crew_p_'+w.sid)!==P){try{await jf(U+'/pay/'+w.sid,{method:'PATCH',headers:PH,body:JSON.stringify({fields:{p:{stringValue:P}}})});localStorage.setItem('crew_p_'+w.sid,P)}catch(e){}}
+    }
+    if(ch){save();const d=$('dlg');if(!(d&&d.open)&&!(document.activeElement&&/INPUT|TEXTAREA|SELECT/.test(document.activeElement.tagName)))render()}
+  }catch(e){}finally{crewBusy=false}
+}
+async function crewInvite(w){
+  if(!w.phone){note('Telefon kerak','Avval shogirdning telefon raqamini kiriting.');return}
+  const l=(window.HK&&HK.lic())||{};
+  if(!CLOUD_OK||!C.uid||!l.phone){note('Bulutga ulanmagan','Taklif yuborish uchun ilovaga telefon raqam va parol bilan kiring.');return}
+  toast('Taklif tayyorlanmoqda…');
+  try{const t=await tok();const r=await HK.call(l.phone,{act:'invite',idt:t,sp:w.phone,name:w.name,wid:w.id,un:(S.prof&&S.prof.name)||S.title||''},40000);
+    if(r.st!=='inv'){note('Bo\'lmadi',esc(r.msg||'Taklif yaratilmadi'));return}
+    crewShare(w,r.token)}catch(e){note('Bo\'lmadi','Internet yo\'q yoki bot ishlamayapti. Birozdan keyin qayta urinib ko\'ring.')}
+}
+function crewShare(w,tk){
+  const link=SITE_HISOB+'gate.html?taklif='+tk,msg='Assalomu alaykum, '+w.name+'! Sizni «Hisob-kitob» ilovasidagi jamoamga qo\'shdim. Havolani oching va parol o\'ylab topib kiring:',txt=msg+'\n'+link+'\nTaklif kodi: '+tk;
+  const d=$('dlg');d.innerHTML='<h3 style="margin:0 0 6px">📤 '+esc(w.name)+' uchun taklif</h3><div class="hint">Havolani shogirdga yuboring. U havolani ochadi, parol qo\'yadi va ilovaga kiradi. Kod: <b style="font-size:18px;letter-spacing:2px">'+tk+'</b> (14 kun amal qiladi)</div>'+
+    '<button class="b p opt" id="sh_tg">✈️ Telegram orqali yuborish</button><button class="b opt" id="sh_sms">💬 SMS orqali yuborish</button><button class="b opt" id="sh_cp">📋 Nusxalash</button><button class="b opt" id="sh_x">Yopish</button>';
+  d.showModal();
+  const go=u=>{try{if(window.AndroidBridge&&AndroidBridge.open){AndroidBridge.open(u);return}}catch(e){}location.href=u};
+  $('sh_tg').onclick=()=>go('https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent(msg+'\nTaklif kodi: '+tk));
+  $('sh_sms').onclick=()=>go('sms:'+String(w.phone).replace(/[^\d+]/g,'')+'?body='+encodeURIComponent(txt));
+  $('sh_cp').onclick=()=>copy(txt).then(ok=>toast(ok?'Nusxalandi. Shogirdga yuboring':'Nusxalab bo\'lmadi'));
+  $('sh_x').onclick=()=>d.close();
+}
+const onObj=(e,o)=>e.oid===o.id||(!e.oid&&lc(e.place)===lc(o.name));
+const eSum=(w,E)=>sm(E.map(e=>(+e.days||0)*(e.r!=null?+e.r:(+w.rate||0))));
+function objWorkers(o){const rows=[];let td=0,tm=0;
+  S.workers.forEach(w=>{const E=(w.entries||[]).filter(e=>onObj(e,o));if(!E.length)return;const d=sm(E.map(e=>+e.days||0)),m=eSum(w,E);td+=d;tm+=m;rows.push(tx(esc(w.name)+' · '+d+' kun',f(m)))});
+  return rows.length?'<details open><summary>Shogirdlar bu obyektda ('+td+' kun · '+f(tm)+')</summary>'+rows.join('')+'</details>':''}
+function repWobj(){let h='<div class="card"><h3>Shogirdlar — obyektlar bo\'yicha</h3>',any=false;
+  S.objects.forEach(o=>{const x=objWorkers(o);if(x){any=true;h+='<div style="margin-top:8px"><b>'+esc(o.name)+'</b>'+x+'</div>'}});
+  const other=[];S.workers.forEach(w=>{const E=(w.entries||[]).filter(e=>!S.objects.some(o=>onObj(e,o)));if(E.length)other.push(tx(esc(w.name)+' · '+sm(E.map(e=>+e.days||0))+' kun',f(eSum(w,E))))});
+  if(other.length){any=true;h+='<div style="margin-top:8px"><b>Boshqa joylar</b>'+other.join('')+'</div>'}
+  if(!any)h+='<div class="hint">Hali yozuv yo\'q</div>';
+  return h+'</div><div class="card"><h3>Har bir shogird</h3>'+(S.workers.length?S.workers.map(w=>{const s=ws(w);return tx(esc(w.name)+'<br><small style="color:var(--muted)">'+s.days+' kun · hisoblangan '+f(s.earned)+' · berilgan '+f(s.paid)+'</small>','<b class="'+(s.debt>0?'bad':'ok')+'">'+f(s.debt)+'</b>')}).join(''):'<div class="hint">Hali shogird yo\'q</div>')+'</div>'}
+
 function cloudPush(){if(!CLOUD_OK||!C.uid)return;clearTimeout(pushT);pushT=setTimeout(()=>cloudSync(),3000)}
 function cfgFromText(t){const g=k=>{const m=String(t).match(new RegExp('["\']?'+k+'["\']?\\s*:\\s*["\']([^"\']+)["\']'));return m?m[1]:''};const apiKey=g('apiKey'),projectId=g('projectId');return apiKey&&projectId?{apiKey,projectId}:null}
 function cloudSaveCfg(){const c=cfgFromText(($('clCfg')||{}).value||'');if(!c){note('Kalit topilmadi','Firebase\'dagi «firebaseConfig» matnini to\'liq nusxalab qo\'ying. Ichida apiKey va projectId bo\'lishi kerak.');return}C.cfg=c;saveC();toast('Kalitlar saqlandi');render()}

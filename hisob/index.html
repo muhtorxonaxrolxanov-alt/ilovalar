@@ -110,13 +110,14 @@ a.c b{font-size:18px;display:block}a.c span{color:var(--muted);font-size:14px}
 </style></head><body><main style="padding-top:28px">
 <h1 id="hd">Hisob-kitob</h1><div class="hint" id="hs" style="margin-bottom:18px"></div>
 <div id="alerts"></div><div id="mods"></div>
-<div class="me"><span id="who"></span><span style="display:flex;gap:6px"><button id="prof">👤 Profil</button></span></div>
+<div class="me"><span id="who"></span><span style="display:flex;gap:6px"><button id="payb" onclick="location.href='gate.html?pay=1'">💳 To'lov</button><button id="prof">👤 Profil</button></span></div>
 <dialog id="dl"><h3 style="margin:0 0 8px">Sohangiz</h3><div id="dlb"></div><div class="acts" style="margin-top:12px"><button class="b" id="dlx">Yopish</button></div></dialog>
 </main><script>
 (function(){
 var T={elektrik:['⚡ Elektrik','Elektromontaj ishlari uchun'],santexnik:['🔧 Santexnik','Santexnika va qozonxona ishlari uchun'],quruvchi:['🧱 Quruvchi','Qurilish ishlari uchun'],boshqa:['🛠 Usta','Hisob-kitob uchun']};
 var $=function(i){return document.getElementById(i)};
 var l=HK.lic()||{},tr=HK.trade();if(!T[tr])tr='boshqa';
+if(l.role==='shogird'){location.replace('shogird.html');return}
 $('hd').textContent=T[tr][0];$('hs').textContent=T[tr][1];
 var m=[];
 if(tr==='elektrik')m.push(['sxema.html','📐 Shit sxemasi',"Haqiqiy avtomatlar bilan shit yig'ish, tekshiruv va narx"]);
@@ -125,7 +126,8 @@ m.push(['hisob.html','🧾 Hisob-kitob','Obyektlar, shogirtlar, hisobot']);
 $('mods').innerHTML=m.map(function(x){return '<a class="c" href="'+x[0]+'"><b>'+x[1]+'</b><span>'+x[2]+'</span></a>'}).join('');
 function days(){return Math.floor(((HK.lic()||{}).until-Date.now())/864e5)}
 function paint(){var l2=HK.lic()||{},d=days(),a='';
-  if(l2.until&&l2.until<HK.FAR&&d<=5&&d>=0)a+='<div class="warn">⏰ Foydalanish muddatingiz tugashiga <b>'+(d+1)+' kun</b> qoldi. Davom etish uchun egaga murojaat qiling.</div>';
+  if(l2.until&&l2.until<HK.FAR&&d<=5&&d>=0)a+='<div class="warn">⏰ Foydalanish muddatingiz tugashiga <b>'+(d+1)+' kun</b> qoldi. <a href="gate.html?pay=1" style="font-weight:700">💳 To\'lov qilish</a></div>';
+  $('payb').hidden=!!(l2.until&&l2.until>=HK.FAR);
   $('alerts').innerHTML=a+($('alerts').dataset.news||'');
   $('who').textContent='+'+(l2.phone||'')+' · '+(HK.TRADES[l2.trade]||'')+(l2.until&&l2.until>=HK.FAR?' · muddatsiz':l2.until?' · '+Math.max(0,d+1)+' kun':'')}
 paint();
