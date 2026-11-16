@@ -825,6 +825,22 @@ window.onNativeEvent = (name, val) => {
   if (name === 'shortcut') toast(val === 'pinned' || val === 'requested' ? 'Bosh ekranga qo\'shildi ✓' : val === 'updated' ? 'Belgi yangilandi ✓' : 'Bosh ekranga qo\'shib bo\'lmadi', val === 'error' || val === 'unsupported');
 };
 
+/* Yangi zakaz → do'kon egasiga Telegram xabar (Hisob-kitob boti orqali, Firestore gate/{mijoz raqami}) */
+async function ordNotify(o) {
+  try {
+    if (location.protocol !== 'https:') return;
+    const ph = String((S.me && S.me.phone) || lsGet('m_phone', '') || o.phone || '').replace(/\D/g, ''); if (ph.length < 9) return;
+    const p = ph.length === 9 ? '998' + ph : ph, j = (u, b) => fetch(u, {method: 'POST', headers: Object.assign({'content-type': 'application/json'}, b.h || {}), body: JSON.stringify(b.d)}).then(r => r.json());
+    const a = await j('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyDENPKhLmgEFNOW13lCIlHkXF6loJ87UuU', {d: {email: 'gate@hisobkitob.app', password: 'hk-gate-7421', returnSecureToken: true}});
+    const base = 'projects/elektrik-hisob/databases/(default)/documents';
+    const req = {act: 'ord', prod: 'em', nonce: Date.now().toString(36) + Math.random().toString(36).slice(2, 8), shop: (S.shop || {}).name || '',
+      o: {code: o.code, cname: o.cname, phone: o.phone, address: o.address, landmark: o.landmark, pay: o.pay, note: o.note, total: o.total,
+        items: (o.items || []).slice(0, 40).map(i => ({n: i.name, q: i.qty, u: i.unit, p: i.price}))}};
+    await j('https://firestore.googleapis.com/v1/' + base + ':commit', {h: {Authorization: 'Bearer ' + a.idToken},
+      d: {writes: [{update: {name: base + '/gate/' + p, fields: {req: {stringValue: JSON.stringify(req)}}}, updateMask: {fieldPaths: ['req']}, updateTransforms: [{fieldPath: 't', setToServerValue: 'REQUEST_TIME'}]}]}});
+  } catch (e) { /* xabar ketmasa ham zakaz serverda bor */ }
+}
+
 /* ---------- internetsiz buyurtma navbati ---------- */
 let flushing = false;
 async function flushQueue() {
@@ -838,6 +854,7 @@ async function flushQueue() {
       S.orders = [r.order].concat(S.orders.filter(o => o.id !== r.order.id));
       save('queue'); save('orders');
       toast('Buyurtma yuborildi! № ' + r.order.code);
+      if (!r.takror) ordNotify(r.order);
     } catch (e) {
       if (e.code === 'net' || e.code === 'auth' || e.code === 'busy') break;
       q.error = e.message; save('queue');
