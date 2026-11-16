@@ -7,6 +7,7 @@ $site = $PSScriptRoot
 # 1) Yig'ish
 Push-Location C:\Loyihalar\nonvoyxona\src; python build_web.py; Pop-Location
 Push-Location C:\Users\user\Downloads\loyiha\web; python build_web.py; Pop-Location
+$env:PYTHONUTF8 = '1'; python C:\Loyihalar\premium-xizmat\apps\web\build_web.py "$site\dokon"
 # 2) Nusxalash
 foreach ($d in 'nonvoyxona', 'hisob') { if (Test-Path "$site\$d") { Remove-Item "$site\$d" -Recurse -Force } }
 Copy-Item C:\Loyihalar\nonvoyxona\web "$site\nonvoyxona" -Recurse

@@ -1,6 +1,6 @@
 /* Kirish tekshiruvi. Har sahifaning boshida ulanadi. */
 (function(){
-  var PROD=window.HK_PROD==='nv'?'nv':'hk',K=PROD==='nv'?'nv_lic':'hk_lic';
+  var PROD=(window.HK_PROD==='nv'||window.HK_PROD==='ed')?window.HK_PROD:'hk',K=PROD==='hk'?'hk_lic':PROD+'_lic';
   window.HK_VER=29;
   window.HK={VER:25,FAR:4102444800000,PROD:PROD,
     lic:function(){try{return JSON.parse(localStorage.getItem(K)||'null')}catch(e){return null}},

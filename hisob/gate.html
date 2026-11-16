@@ -178,14 +178,14 @@ input.code{letter-spacing:8px;text-align:center;font-size:26px;font-weight:700}
 <div class="msg bad" id="er" hidden></div>
 <div class="msg" id="inf" hidden></div>
 
-<script>window.HK_PROD=/[?&]prod=nv/.test(location.search)?'nv':'hk';</script>
+<script>window.HK_PROD=(location.search.match(/[?&]prod=(nv|ed)\b/)||[])[1]||'hk';</script>
 <script src="gate.js"></script>
 <script>
 var CFG=HK.cfg,$=function(i){return document.getElementById(i)};
 /* Nonvoyxona rejimi (?prod=nv): soha so'ralmaydi, kirgach nonvoyxona ilovasiga qaytadi */
-var NV=HK.PROD==='nv';
-function nvBack(){var m=location.search.match(/[?&]back=([^&]+)/),b=m?decodeURIComponent(m[1]):'';return /^\/ilovalar\/nonvoyxona\/[\w\-\/]*$/.test(b)?b:'../nonvoyxona/'}
-if(NV){document.title='Nonvoyxona — kirish';$('toJoin').hidden=true;$('sub').textContent='🥖 Nonvoyxona ilovasi';var bl=$('botLnk');if(bl)bl.textContent='✈️ Telegramda botni ochish (kod shu yerga keladi)'}
+var NV=HK.PROD!=='hk',PRN={nv:['🥖 Nonvoyxona ilovasi','Nonvoyxona — kirish','../nonvoyxona/'],ed:['💡 Elektr Do\'kon — Sotuvchi','Sotuvchi — kirish','../dokon/sotuvchi/']}[HK.PROD]||[];
+function nvBack(){var m=location.search.match(/[?&]back=([^&]+)/),b=m?decodeURIComponent(m[1]):'';return /^\/ilovalar\/(nonvoyxona|dokon)\/[\w\-\/]*$/.test(b)?b:PRN[2]}
+if(NV){document.title=PRN[1];$('toJoin').hidden=true;$('sub').textContent=PRN[0];var bl=$('botLnk');if(bl)bl.textContent='✈️ Telegramda botni ochish (kod shu yerga keladi)'}
 var trade='',phone='',mode='login',Cc=null,Rr=null,PANELS=['pL','pT','p1','p2','p3','p4','pX','pJ'];
 function err(m){var e=$('er');e.textContent=m;e.hidden=!m}
 function info(m){var e=$('inf');e.innerHTML=m||'';e.hidden=!m}
@@ -218,7 +218,7 @@ function signIn(r){
   return HK.jf('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+CFG.apiKey,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:'p'+phone+'@hisobkitob.app',password:r.pw,returnSecureToken:true})}).then(function(j){
     Cc={cfg:CFG,phone:phone,uid:j.localId,idt:j.idToken,rt:j.refreshToken,exp:Date.now()+(+j.expiresIn||3600)*1000,lastUpd:0,lastRemote:0,lastAt:'',msg:''};Rr=r})}
 function finish(){
-  try{localStorage.setItem(NV?'nv_cloud':'cloud_v1',JSON.stringify(Cc));localStorage.setItem('hk_last_phone',phone)}catch(e){}
+  try{localStorage.setItem(NV?HK.PROD+'_cloud':'cloud_v1',JSON.stringify(Cc));localStorage.setItem('hk_last_phone',phone)}catch(e){}
   HK.set({ok:true,phone:phone,trade:Rr.trade||trade||'elektrik',until:Rr.until,at:Date.now(),role:Rr.role||'usta',usta:Rr.usta||null});
   show('pL');info('✅ Kirdingiz!');setTimeout(function(){location.replace(NV?nvBack():'index.html')},400)}
 function after(r){
