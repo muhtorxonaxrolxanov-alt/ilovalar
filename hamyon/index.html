@@ -5,9 +5,23 @@
 <meta name="theme-color" content="#0f766e"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Hamyon"><meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" href="icon-192.png">
+<script>/* Kirish: umumiy darvoza (kod Telegram botga keladi → parol → sinov/to'lov). Muddati yo'q bo'lsa — darvozaga. */
+(function(){if(location.protocol==='file:'||window.HAMYON_TEST)return;var l=null;try{l=JSON.parse(localStorage.getItem('rx_lic')||'null')}catch(e){}
+if(!(l&&l.ok&&l.until>Date.now()))location.replace('/ilovalar/hisob/gate.html?prod=rx&back='+encodeURIComponent(location.pathname)+(l&&l.ok&&l.phone?'&pay=1':''))})();
+/* Ko'rinish: kunduzgi / tungi / avto, rang, fon — sahifa chizilishidan oldin */
+window.UI=(function(){var u={th:'auto',ac:'#0f766e',bg:'none'};try{Object.assign(u,JSON.parse(localStorage.getItem('hamyon_ui')||'{}'))}catch(e){}return u})();
+window.applyUI=function(){var u=window.UI,h=new Date().getHours(),dark=u.th==='dark'||(u.th==='auto'&&((window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)||h>=20||h<6));
+ var r=document.documentElement;r.setAttribute('data-th',dark?'dark':'light');r.style.setProperty('--pri',u.ac);r.style.setProperty('--pri2',u.ac2||'#14b8a6');
+ var m=document.querySelector('meta[name=theme-color]');if(m)m.content=u.ac;
+ var B={none:'',g1:'linear-gradient(160deg,#e0f2fe,#f0fdf4)',g2:'linear-gradient(160deg,#fef3c7,#fde68a 60%,#fcd34d)',g3:'linear-gradient(160deg,#ede9fe,#fce7f3)',g4:'linear-gradient(160deg,#0f172a,#1e3a8a)',g5:'linear-gradient(160deg,#052e16,#14532d)'};
+ var b=document.body;if(!b)return;var img='';try{img=u.bg==='img'?localStorage.getItem('hamyon_bg')||'':''}catch(e){}
+ b.style.backgroundImage=img?'url('+img+')':(B[u.bg]||'');b.classList.toggle('fon',!!(img||B[u.bg]))};
+window.applyUI();document.addEventListener('DOMContentLoaded',applyUI);setInterval(function(){if(window.UI.th==='auto')applyUI()},600000);</script>
 <style>
 :root{--bg:#f3f5f4;--card:#fff;--ink:#14201c;--mut:#66756f;--line:#e3e8e6;--pri:#0f766e;--pri2:#14b8a6;--red:#dc2626;--ora:#ea8a0c;--grn:#16a34a;--sh:0 1px 3px rgba(0,0,0,.06),0 4px 14px rgba(0,0,0,.05)}
-@media (prefers-color-scheme:dark){:root{--bg:#0d1412;--card:#16201d;--ink:#e8efec;--mut:#93a49d;--line:#24302c;--pri:#2dd4bf;--pri2:#0f766e;--sh:none}}
+:root[data-th=dark]{--bg:#0d1412;--card:#16201d;--ink:#e8efec;--mut:#93a49d;--line:#24302c;--sh:none}
+body.fon{background-size:cover;background-attachment:fixed;background-position:center}
+body.fon .card:not(.hero),body.fon .it{background:color-mix(in srgb,var(--card) 88%,transparent);backdrop-filter:blur(6px)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
 button,input,select{font:inherit;color:inherit}
@@ -15,7 +29,7 @@ button,input,select{font:inherit;color:inherit}
 h1{font-size:24px;margin:6px 0 14px}h2{font-size:18px;margin:18px 0 10px}
 .top{display:flex;align-items:center;justify-content:space-between}
 .card{background:var(--card);border-radius:18px;padding:16px;box-shadow:var(--sh);margin-bottom:14px}
-.hero{background:linear-gradient(135deg,#0f766e,#14b8a6);color:#fff}
+.hero{background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff}
 .hero .l{opacity:.85;font-size:14px}.hero .big{font-size:32px;font-weight:800;letter-spacing:-.5px;margin:2px 0 10px}
 .row{display:flex;gap:10px}.row>*{flex:1}
 .mini{background:rgba(255,255,255,.16);border-radius:12px;padding:8px 10px;font-size:13px}.mini b{display:block;font-size:16px}
@@ -24,7 +38,7 @@ h1{font-size:24px;margin:6px 0 14px}h2{font-size:18px;margin:18px 0 10px}
 .mut{color:var(--mut)}.s{font-size:13px}
 .alert{border-radius:14px;padding:10px 12px;margin-bottom:10px;font-size:14px;background:#fff4e5;color:#7a4300}
 .alert.r{background:#fde8e8;color:#8a1111}
-@media (prefers-color-scheme:dark){.alert{background:#3a2a10;color:#ffd8a0}.alert.r{background:#3d1717;color:#ffc4c4}}
+:root[data-th=dark] .alert{background:#3a2a10;color:#ffd8a0}:root[data-th=dark] .alert.r{background:#3d1717;color:#ffc4c4}
 .day{font-size:13px;color:var(--mut);margin:14px 4px 6px;display:flex;justify-content:space-between}
 .it{display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--card);border-radius:14px;margin-bottom:6px;box-shadow:var(--sh);cursor:pointer}
 .em{width:40px;height:40px;border-radius:12px;background:rgba(20,184,166,.13);display:grid;place-items:center;font-size:21px;flex:none}
@@ -56,7 +70,7 @@ nav button.on{color:var(--pri);font-weight:700}
 .cat{border:1px solid var(--line);background:var(--card);border-radius:14px;padding:8px 2px;font-size:11px;text-align:center;cursor:pointer;line-height:1.2}.cat b{display:block;font-size:24px;font-weight:400;margin-bottom:2px}
 .cat.on{border-color:var(--pri);background:rgba(20,184,166,.14);font-weight:700}
 .fab.mic{right:auto;left:max(16px,calc(50% - 264px));background:#fff;color:var(--pri);font-size:27px;box-shadow:0 6px 20px rgba(0,0,0,.18)}
-@media (prefers-color-scheme:dark){.fab.mic{background:#24302c}}
+:root[data-th=dark] .fab.mic{background:#24302c}
 .vbig{width:96px;height:96px;border-radius:50%;border:0;background:var(--pri);color:#fff;font-size:42px;display:block;margin:6px auto 10px;cursor:pointer;box-shadow:0 6px 20px rgba(15,118,110,.4)}
 .vbig.on{background:var(--red);animation:pulse 1.1s infinite}@keyframes pulse{50%{transform:scale(1.08);box-shadow:0 0 0 14px rgba(220,38,38,.15)}}
 .vtx{width:100%;min-height:76px;border:1px solid var(--line);border-radius:12px;padding:10px;font-size:17px;background:var(--card);resize:vertical}
@@ -261,57 +275,35 @@ const store=()=>{try{localStorage.setItem('hamyon_v1',JSON.stringify({phone:S.ph
 function toast(t,ms){const d=document.createElement('div');d.className='toast';d.textContent=t;document.body.appendChild(d);setTimeout(()=>d.remove(),ms||2200)}
 async function jf(u,o){const r=await fetch(u,o);let j={};try{j=await r.json()}catch(e){}if(!r.ok){const e=new Error((j.error&&(j.error.message||j.error.status))||('HTTP '+r.status));e.code=r.status;throw e}return j}
 
-/* ---------- kirish ---------- */
+/* ---------- kirish: umumiy darvoza (hisob/gate.html?prod=rx) bergan bulut hisobi ---------- */
+const GATE='/ilovalar/hisob/gate.html?prod=rx&back='+encodeURIComponent(location.pathname);
+const lsj=k=>{try{return JSON.parse(localStorage.getItem(k)||'null')}catch(e){return null}};
+const RC=lsj('rx_cloud'),LIC=lsj('rx_lic');
+if(RC&&RC.rt){if(S.phone&&S.phone!==RC.phone){S.data=K.empty();S.time='';S.dirty=false}S.phone=RC.phone;S.rt=RC.rt;S.idt=RC.idt||'';S.exp=RC.exp||0;S.uid=RC.uid}
+function relogin(pay){try{if(!pay){localStorage.removeItem('rx_lic');localStorage.removeItem('rx_cloud')}}catch(e){}if(!window.HAMYON_TEST)location.replace(GATE+(pay?'&pay=1':''))}
 async function idt(){
   if(S.idt&&Date.now()<S.exp-60000)return S.idt;
-  const j=await jf('https://securetoken.googleapis.com/v1/token?key='+API,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(S.rt)});
-  S.idt=j.id_token;S.rt=j.refresh_token||S.rt;S.exp=Date.now()+(+j.expires_in||3600)*1000;store();return S.idt}
-let G={t:'',exp:0};
-async function gtok(){if(G.t&&Date.now()<G.exp-60000)return G.t;const j=await jf('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:'gate@hisobkitob.app',password:'hk-gate-7421',returnSecureToken:true})});G={t:j.idToken,exp:Date.now()+(+j.expiresIn||3600)*1000};return G.t}
-const b64u=a=>btoa(String.fromCharCode(...a)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
-const ub=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
-const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
-let LG=null;
-function vLogin(){
-  $('#nav').hidden=true;
-  app.innerHTML=`<div class="login"><img class="logo" src="icon-192.png" alt=""><h1 class="center" style="margin:0">Hamyon</h1><p class="center mut" style="margin:6px 0 22px">Kunlik xarajat va kirimlaringiz hisobi</p>
-  <div class="card"><div class="feat"><b>✍️</b><span>Xarajatni yozing: <i>«non 5000»</i> — turkumni o'zi aniqlaydi</span></div><div class="feat"><b>📊</b><span>Kunlik, oylik, yillik hisobot va grafiklar</span></div><div class="feat"><b>🎯</b><span>Limit qo'ying — oshsa yoki o'tgan oydan ko'p sarflasangiz ogohlantiradi</span></div><div class="feat"><b>🤖</b><span>Telegram bot bilan bir xil ma'lumot — qaysi biri qulay bo'lsa, o'shani ishlating</span></div></div>
-  <div class="card"><div class="f"><label>Telefon raqamingiz</label><div class="ph">+998<input id="ph" inputmode="numeric" maxlength="12" placeholder="90 123 45 67" autocomplete="tel-national"></div></div>
-  <button class="btn tg" id="go">✈️ Telegram orqali tasdiqlash</button><p class="s mut center" id="lmsg" style="margin:10px 0 0">Telegram ochiladi → «Start» va «Raqamni yuborish» ni bosing → shu yerga qayting.</p></div></div>`;
-  const ph=$('#ph');ph.value=(S.phone||'').replace(/^998/,'');ph.oninput=()=>{ph.value=ph.value.replace(/\D/g,'').slice(0,9)};
-  $('#go').onclick=startLogin;
+  let j;try{j=await jf('https://securetoken.googleapis.com/v1/token?key='+API,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(S.rt)})}
+  catch(e){if(/INVALID_REFRESH_TOKEN|TOKEN_EXPIRED|USER_NOT_FOUND|USER_DISABLED|INVALID_GRANT/.test(e.message))relogin();throw e}
+  S.idt=j.id_token;S.rt=j.refresh_token||S.rt;S.exp=Date.now()+(+j.expires_in||3600)*1000;store();
+  try{const c=lsj('rx_cloud')||{};Object.assign(c,{idt:S.idt,rt:S.rt,exp:S.exp});localStorage.setItem('rx_cloud',JSON.stringify(c))}catch(e){}return S.idt}
+function vLogin(){relogin()}
+/* Muddat va taqiq: ega botda bloklasa yoki muddat tugasa — darvozadagi to'lov oynasiga */
+async function licCheck(){
+  try{const j=await jf(FSB+'lic/'+S.phone,{headers:{Authorization:'Bearer '+await idt()}}),f=j.fields||{};
+    const u=+((f.rxUntil||{}).integerValue||0),bl=!!((f.blocked||{}).booleanValue),l=lsj('rx_lic')||{};
+    l.until=bl?0:u;try{localStorage.setItem('rx_lic',JSON.stringify(l))}catch(e){}S.until=l.until;S.plan=((f.rxPlan||{}).stringValue)||'';
+    if(!(l.until>Date.now()))return relogin(true);
+  }catch(e){}
 }
-async function startLogin(){
-  const p='998'+$('#ph').value.replace(/\D/g,'');if(p.length!==12)return toast('Raqamni to\'liq yozing (9 ta raqam)');
-  const n=b64u(crypto.getRandomValues(new Uint8Array(30)));
-  S.phone=p;store();await resume({p,n,t0:Date.now()});
-  const url='https://t.me/'+BOT+'?start=l'+p+'_'+n;
-  $('#lmsg').innerHTML='⏳ Telegram\'da tasdiqlashni kutyapman…<br><a href="'+url+'" target="_blank" rel="noopener">Telegram ochilmadimi? Shu yerni bosing</a>';$('#go').disabled=true;
-  if(!window.open(url,'_blank'))location.href=url;
-}
-/* Telegramga o'tganda sahifa yopilib qolsa ham, qaytganda kutish davom etadi */
-async function resume(L){
-  const id=hex(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(L.n))),key=await crypto.subtle.importKey('raw',await crypto.subtle.digest('SHA-256',new TextEncoder().encode('k:'+L.n)),'AES-GCM',false,['decrypt']);
-  LG=Object.assign({},L,{id,key});try{localStorage.setItem('hamyon_lg',JSON.stringify(L))}catch(e){}pollLogin();
-}
-async function pollLogin(){
-  const L=LG;if(!L)return;
-  if(Date.now()-L.t0>10*60000){if($('#lmsg')){$('#lmsg').textContent='Vaqt tugadi. Qaytadan bosing.';$('#go').disabled=false}LG=null;try{localStorage.removeItem('hamyon_lg')}catch(e){}return}
-  try{const j=await jf(FSB+'rxl/'+L.id,{headers:{Authorization:'Bearer '+await gtok()}});const f=j.fields||{};
-    const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:ub(f.iv.stringValue)},L.key,ub(f.ct.stringValue));const c=JSON.parse(new TextDecoder().decode(pt));
-    const a=await jf('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:c.email,password:c.pw,returnSecureToken:true})});
-    LG=null;try{localStorage.removeItem('hamyon_lg')}catch(e){}S.phone=c.phone;S.rt=a.refreshToken;S.idt=a.idToken;S.exp=Date.now()+(+a.expiresIn||3600)*1000;S.time='';
-    store();toast('✅ Xush kelibsiz!');await pull(true);go('home');return;
-  }catch(e){if(e.code&&e.code!==404&&e.code!==403)console.warn(e)}
-  setTimeout(pollLogin,2000);
-}
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&LG)pollLogin()});
 
 /* ---------- bulut bilan sinxron ---------- */
 let busy=false,pend=false;
 async function pull(force){
   if(!S.rt)return;
-  const j=await jf(FSB+'rx/'+S.phone,{headers:{Authorization:'Bearer '+await idt()}});
+  let j;try{j=await jf(FSB+'rx/'+S.phone,{headers:{Authorization:'Bearer '+await idt()}})}
+  catch(e){if(e.code!==404)throw e;
+    j=await jf(FSB+'rx/'+S.phone+'?currentDocument.exists=false',{method:'PATCH',headers:{Authorization:'Bearer '+await idt(),'content-type':'application/json'},body:JSON.stringify({fields:{u:{stringValue:S.uid||''},data:{stringValue:JSON.stringify(S.data)},upd:{integerValue:String(Date.now())}}})});S.time=j.updateTime;S.dirty=false;store();return true}
   if(!force&&j.updateTime===S.time)return false;
   const srv=K.norm(JSON.parse((j.fields.data||{}).stringValue||'{}'));
   S.data=S.dirty?K.merge(srv,S.data):srv;S.time=j.updateTime;store();return true;
@@ -495,18 +487,320 @@ function debt(id){
   if(bg.querySelector('#dx'))bg.querySelector('#dx').onclick=()=>{if(!confirm('O\'chirilsinmi?'))return;change(D=>{D.del[o.id]=1;D.debts=D.debts.filter(y=>y.id!==o.id)});bg.remove()};
 }
 function vSet(){
-  app.innerHTML=`<h1>Sozlamalar</h1><div class="card"><div class="mut s">Raqamingiz</div><b style="font-size:19px">+${esc(S.phone)}</b><div class="s mut" style="margin-top:4px">Yozuvlar: ${S.data.e.length} ta · <span id="sync">${S.dirty?'⏳ saqlanmoqda':'✓ bulutda saqlangan'}</span></div></div>
+  const u=S.until||((lsj('rx_lic')||{}).until)||0,dl=Math.ceil((u-Date.now())/864e5),U=window.UI;
+  const ACS=[['#0f766e','#14b8a6'],['#1d4ed8','#60a5fa'],['#7c3aed','#c084fc'],['#be123c','#fb7185'],['#c2410c','#fb923c'],['#334155','#94a3b8']];
+  const BGS=[['none','Oddiy','var(--bg)'],['g1','Osmon','linear-gradient(160deg,#e0f2fe,#f0fdf4)'],['g2','Quyosh','linear-gradient(160deg,#fef3c7,#fcd34d)'],['g3','Gul','linear-gradient(160deg,#ede9fe,#fce7f3)'],['g4','Tun','linear-gradient(160deg,#0f172a,#1e3a8a)'],['g5','O\'rmon','linear-gradient(160deg,#052e16,#14532d)']];
+  app.innerHTML=`<h1>Sozlamalar</h1>
+  <div class="card"><div class="mut s">Raqamingiz</div><b style="font-size:19px">+${esc(S.phone)}</b>
+   <div class="s" style="margin-top:6px">${u>=4102444800000?'♾ Muddatsiz':u?'📅 Muddat: <b>'+new Date(u).toLocaleDateString('ru-RU')+'</b> gacha ('+(dl>0?dl+' kun qoldi':'tugagan')+')'+(S.plan?' · '+esc(S.plan):''):''}</div>
+   <div class="s mut" style="margin-top:4px">Yozuvlar: ${S.data.e.length} ta · <span id="sync">${S.dirty?'⏳ saqlanmoqda':'✓ bulutda saqlangan'}</span></div></div>
+  <button class="btn" id="pay" style="margin-bottom:10px">💳 To'lov va muddatni uzaytirish</button>
   <a class="btn tg" href="https://t.me/${BOT}" target="_blank" rel="noopener" style="margin-bottom:10px">🤖 Telegram botni ochish</a>
   <p class="s mut" style="margin:-2px 4px 14px">Botga yozgan xarajatlaringiz shu ilovada ham ko'rinadi va aksincha. Bot har kuni 21:00 da kunlik hisobot yuboradi.</p>
+  <h2>🎨 Ko'rinish</h2><div class="card">
+   <div class="mut s" style="margin-bottom:6px">Rejim</div><div class="seg" id="thm">${[['light','☀️ Kunduzgi'],['dark','🌙 Tungi'],['auto','🌓 Avto']].map(([k,n])=>`<button data-th="${k}" class="${U.th===k?'on':''}">${n}</button>`).join('')}</div>
+   <div class="s mut" style="margin:-4px 2px 12px">${U.th==='auto'?'Avto: kechasi (20:00–06:00) o\'zi tungi rejimga o\'tadi.':U.th==='dark'?'Doim tungi rejim.':'Doim kunduzgi rejim.'}</div>
+   <div class="mut s" style="margin-bottom:6px">Asosiy rang</div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px">${ACS.map(([c,c2])=>`<button data-ac="${c}" data-ac2="${c2}" aria-label="Rang ${c}" style="width:40px;height:40px;border-radius:50%;border:3px solid ${U.ac===c?'var(--ink)':'transparent'};background:linear-gradient(135deg,${c},${c2});cursor:pointer"></button>`).join('')}</div>
+   <div class="mut s" style="margin-bottom:6px">Fon</div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">${BGS.map(([k,n,g])=>`<button data-bg="${k}" style="height:58px;border-radius:12px;border:2px solid ${U.bg===k?'var(--pri)':'var(--line)'};background:${g};font-size:13px;font-weight:600;color:${k==='g4'||k==='g5'?'#fff':'var(--ink)'};cursor:pointer">${n}</button>`).join('')}</div>
+   <label class="btn g" style="margin-top:10px">🖼 O'z rasmingizni fon qilish<input type="file" accept="image/*" id="bgf" hidden></label>
+   ${U.bg==='img'?'<button class="btn g" id="bgx" style="margin-top:8px">Rasmni olib tashlash</button>':''}</div>
+  <h2>📦 Ma'lumotlar</h2>
   <button class="btn g" id="csv" style="margin-bottom:10px">📄 Excel'ga yuklab olish (CSV)</button>
   <button class="btn g" id="sy" style="margin-bottom:10px">🔄 Hozir yangilash</button>
-  <button class="btn r" id="out">Chiqish</button><p class="center s mut" style="margin-top:18px">Hamyon v1.0</p>`;
+  <button class="btn r" id="out">Chiqish</button><p class="center s mut" style="margin-top:18px">Hamyon v1.2</p>`;
+  const saveUI=()=>{try{localStorage.setItem('hamyon_ui',JSON.stringify(U))}catch(e){}applyUI();render()};
+  app.querySelectorAll('[data-th]').forEach(b=>b.onclick=()=>{U.th=b.dataset.th;saveUI()});
+  app.querySelectorAll('[data-ac]').forEach(b=>b.onclick=()=>{U.ac=b.dataset.ac;U.ac2=b.dataset.ac2;saveUI()});
+  app.querySelectorAll('[data-bg]').forEach(b=>b.onclick=()=>{U.bg=b.dataset.bg;saveUI()});
+  $('#bgf').onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image(),r=new FileReader();r.onload=()=>{im.onload=()=>{const k=Math.min(1,1080/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=im.width*k;c.height=im.height*k;c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+      try{localStorage.setItem('hamyon_bg',c.toDataURL('image/jpeg',.72));U.bg='img';saveUI();toast('✅ Fon o\'rnatildi')}catch(x){toast('Rasm juda katta')}};im.src=r.result};r.readAsDataURL(f)};
+  if($('#bgx'))$('#bgx').onclick=()=>{try{localStorage.removeItem('hamyon_bg')}catch(e){}U.bg='none';saveUI()};
+  $('#pay').onclick=()=>relogin(true);
   $('#csv').onclick=()=>{const rows=[['Sana','Turi','Turkum','Summa','Izoh']].concat(S.data.e.map(e=>[e.d,e.t==='i'?'Kirim':'Xarajat',(K.CAT[e.c]||{}).n||e.c,e.a,e.n||'']));
-    const b=new Blob(['﻿'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='hamyon-'+today()+'.csv';a.click()};
-  $('#sy').onclick=async()=>{try{if(S.dirty)await push();await pull(true);toast('✅ Yangilandi');render()}catch(e){toast('Internet yo\'q')}};
-  $('#out').onclick=()=>{if(S.dirty&&!confirm('Hali saqlanmagan yozuvlar bor. Baribir chiqasizmi?'))return;if(!confirm('Chiqilsinmi?'))return;S={phone:S.phone,rt:'',idt:'',exp:0,data:K.empty(),time:'',dirty:false,tab:'home',per:'m',show:60};store();render()};
+    const b=new Blob(['\ufeff'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n')],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download='hamyon-'+today()+'.csv';a.click()};
+  $('#sy').onclick=async()=>{try{if(S.dirty)await push();await pull(true);await licCheck();toast('✅ Yangilandi');render()}catch(e){toast('Internet yo\'q')}};
+  $('#out').onclick=()=>{if(S.dirty&&!confirm('Hali saqlanmagan yozuvlar bor. Baribir chiqasizmi?'))return;if(!confirm('Ilovadan chiqasizmi? Ma\'lumotlaringiz bulutda saqlanadi.'))return;S.rt='';S.data=K.empty();S.time='';store();relogin()};
 }
-render();if(S.rt)tick();
-else{try{const L=JSON.parse(localStorage.getItem('hamyon_lg')||'null');if(L&&Date.now()-L.t0<10*60000){resume(L);$('#go').disabled=true;$('#lmsg').textContent='⏳ Telegram\'da tasdiqlashni kutyapman…'}}catch(e){}}
+render();if(S.rt){tick();licCheck()}
+setInterval(()=>{if(S.rt&&!document.hidden)licCheck()},10*60000);
 if('serviceWorker'in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+</script><script>window.YAPP="hm";</script><script>/* Yordam: o'ng tepada doimiy sozlamalar va ? tugmasi; ? har bir ekrandagi joylarni birma-bir ko'rsatib tushuntiradi.
+ * Ilova yig'ilganda: window.YAPP="tr" + shu fayl. Tugmalar matni yoki selektori bo'yicha topiladi;
+ * ekranda yo'q tugma o'tkazib yuboriladi. */
+(function () {
+  if (window.__yordam) return; window.__yordam = 1;
+  var D = {
+    /* ---------- Nonvoyxona: rahbar ---------- */
+    tr: { t: '🥖 Nonvoyxona — rahbar', i: 'Nonvoyxonaning hamma hisob-kitobi: do\'konlarga berilgan non, pul, nasiya, mashina, kassa, hodimlar va hisobot.', s: [
+      { x: 'Do\'konlar', h: '🏪 Do\'konlar', d: 'Har bir do\'konga qancha non berildi, qancha qaytdi, qancha pul olindi yoki nasiya qoldi — shu yerda yoziladi. Do\'konni bossangiz, uning to\'liq hisobi chiqadi.' },
+      { x: 'Olma', h: '🍏 Olma do\'koni', d: 'Xalq Retail (Olma) buyurtmalari. Excel faylni tashlaysiz — ilova o\'zi «berish kerak / berildi / qoldi» deb hisoblaydi.' },
+      { x: 'Mashina', h: '🚚 Mashina', d: 'Mashinaga nechta non yuklandi, do\'konlarga nechtasi berildi va mashinada nechtasi qoldi. Yetmasa ogohlantiradi.' },
+      { x: 'Kassa', h: '💵 Kassa', d: 'Kun davomida kassadan olingan pullarni yozasiz. Kechqurun ilova kassa to\'g\'ri, kam yoki ortiqchaligini o\'zi hisoblaydi.' },
+      { x: 'Hodimlar', h: '👷 Hodimlar', d: 'Hodimlar, ularning qop haqi, kunlik va oylik maoshi, avansi. «Xodimlar va kodlar» bo\'limida har hodimga kirish kodi berasiz — hodim Sizning raqamingiz va shu kod bilan kiradi.' },
+      { x: 'Xarajat', h: '🧾 Xarajat', d: 'Kunlik xarajatlar: un, gaz, svet va boshqalar. Hisobotda foydadan ayriladi.' },
+      { x: 'Non turlari', h: '🍞 Non turlari', d: 'Qanday nonlar yopilishi, narxi va retsepti (1 qop un uchun nima kerak).' },
+      { x: 'Hisobot', h: '📊 Hisobot', d: 'Kun, hafta, oy bo\'yicha jami: berilgan non, olingan pul, nasiya, xarajat va foyda.' },
+      { sel: '.pxl', h: '🎬 Jonli sahna', d: 'Nonvoyxonaning bugungi holati: omborga nima kirdi, hamirchi necha qop qildi, tandirda necha non yopildi, do\'konlarga qancha ketdi. Hodimlar yozgan zahoti shu yer o\'zgaradi.' },
+      { sel: '#fab', h: '🎤 Ovozli yordamchi', d: 'Bosing va gapiring: «Anorga 15 ta patir berildi». Yordamchi nima qilishini ko\'rsatadi, «Ha» desangiz bajaradi.' },
+      { sel: '#gear', h: '⚙ Sozlamalar', d: 'Nonvoyxona nomi, bildirishnomalar, ko\'rinish va boshqa sozlamalar.' }] },
+    /* ---------- Nonvoyxona: hodim ---------- */
+    th: { t: '🥖 Nonvoyxona — hodim', i: 'Hodim ilovasi: hamirchi, yopuvchi yoki sotuvchi ishini yozadi. Yozganlaringiz rahbarga o\'zi boradi.', s: [
+      { sel: '#ph', h: '📱 Rahbar raqami', d: 'Birinchi marta: rahbaringizning telefon raqamini yozing (o\'zingiznikini emas).' },
+      { sel: '#cd2', h: '🔑 Kod', d: 'Rahbar Sizga bergan shaxsiy kodni yozing va «Kirish» ni bosing.' },
+      { x: 'Hamir', h: '🥣 Hamir', d: 'Hamirchi: nechta qop hamir qilganingizni yozasiz. Vazifa bajarilsa salyut chiqadi.' },
+      { x: 'tandir', h: '🔥 Tandirlar', d: 'Yopuvchi: har tandirda nechta non yopilganini yozasiz (1-tandir, 2-tandir…).' },
+      { x: 'Kassa', h: '💵 Kassa', d: 'Kun oxirida kassadagi pulni yozasiz. Kassadan pul olinsa, shu yerda belgilaysiz.' },
+      { x: 'Yuborish', h: '📤 Yuborish', d: 'Internet bo\'lmasa yozuvlar telefonda saqlanadi. Internet kelganda o\'zi yoki shu tugma bilan rahbarga ketadi.' }] },
+    /* ---------- Hisob-kitob ---------- */
+    'hk-i': { t: '⚡ Hisob-kitob', i: 'Usta uchun: obyektlar, qilingan ishlar, olingan pul, shogirtlar va hisobot.', s: [
+      { x: 'Shit sxemasi', h: '📐 Shit sxemasi', d: 'Shitni haqiqiy avtomatlar bilan yig\'ib, narxini hisoblaydi.' },
+      { x: 'Santexnika', h: '🚿 Santexnika sxemasi', d: 'Qozonxona, kollektor va quvurlar bilan sxema va narx.' },
+      { x: 'Hisob-kitob', h: '🧾 Hisob-kitob', d: 'Asosiy bo\'lim: obyektlar, ishlar, pullar, shogirtlar.' },
+      { sel: '#payb', h: '💳 To\'lov', d: 'Obunani uzaytirish: tarifni tanlab, kartaga o\'tkazasiz va chek rasmini yuborasiz.' },
+      { sel: '#prof', h: '👤 Profil', d: 'Sohangiz, parolni o\'zgartirish va ilovadan chiqish.' }] },
+    'hk-h': { t: '🧾 Hisob-kitob', i: 'Obyektlar, shogirtlar va hisobot. Hamma yozuv bulutga o\'zi saqlanadi.', s: [
+      { sel: '#t1', h: '🏗 Obyektlar', d: 'Ish qilayotgan joylaringiz. Obyektni bossangiz: qilingan ishlar va olingan pullar.' },
+      { sel: '#oq', h: '🔍 Qidiruv', d: 'Obyektni nomi, mijoz ismi yoki raqami bo\'yicha tez topish.' },
+      { sel: '#addBtn', h: '➕ Qo\'shish', d: 'Yangi obyekt (yoki Shogirtlar bo\'limida — yangi shogird) qo\'shish.' },
+      { sel: '[data-a="additem"]', h: '➕ Ish / tochka', d: 'Qilingan ish: nima ish, nechta, bittasi necha pul.' },
+      { sel: '[data-a="addrecv"]', h: '💵 Olingan pul', d: 'Mijozdan olingan pulni yozasiz. Keyin mijozga chek yuborish taklif qilinadi.' },
+      { sel: '#t2', h: '👷 Shogirtlar', d: 'Shogirtlar: kunlik haqi, ishlagan kunlari, berilgan pul va qarz. «📤 Ilovaga taklif» bilan shogirdga havola yuborasiz.' },
+      { sel: '[data-cinv]', h: '📤 Ilovaga taklif', d: 'Shogirdga havola yuboradi. U havolani ochib, parol qo\'yadi va obyektlaringizda «ishladim» deb yoza oladi.' },
+      { sel: '#t3', h: '📊 Hisobot', d: 'Jami olingan pul, mijozlardan qolgan qarz, shogirtlarga berilgan pul va qarz, obyektlar bo\'yicha shogirdlar.' },
+      { sel: '[data-a="gear"]', h: '⚙ Sozlamalar', d: 'Profil, ilova nomi va belgisi, ko\'rinish, zaxira nusxa.' }] },
+    'hk-sg': { t: '👷 Shogird', i: 'Ustangizning obyektlarida ishlagan kunlaringizni yozasiz. Ustangiz ham ko\'radi.', s: [
+      { sel: '.obj', h: '🏗 Obyekt', d: 'Qaysi obyektda ishlagan bo\'lsangiz, shuni bosing → necha kun → «Yozish».' },
+      { sel: '#tM', h: '💰 Hisobim', d: 'Kunlik haqingiz, ishlagan kunlaringiz, olgan va olishingiz kerak bo\'lgan pul.' },
+      { sel: '#tS', h: '⚙ Sozlamalar', d: 'Yangilash va ilovadan chiqish.' }] },
+    gate: { t: '🔐 Kirish', i: 'Birinchi marta «Ro\'yxatdan o\'tish», keyingi safar «Kirish» (raqam va parol).', s: [
+      { sel: '#tL', h: 'Kirish', d: 'Oldin ro\'yxatdan o\'tgan bo\'lsangiz: telefon raqam va parol.' },
+      { sel: '#tR', h: 'Ro\'yxatdan o\'tish', d: 'Birinchi marta shu yerni bosing.' },
+      { sel: '#forgot', h: 'Parolni unutdim', d: 'Telegramga kod keladi, u bilan yangi parol qo\'yasiz.' },
+      { sel: '#toJoin', h: '🤝 Taklif kodi', d: 'Ustangiz taklif qilgan bo\'lsa, shu yerga taklif kodini yozasiz.' }] },
+    /* ---------- Elektr Do'kon ---------- */
+    em: { t: '💡 Elektr Do\'kon', i: 'Tovarlarni ko\'rib, savatchaga solib, buyurtma berasiz. Do\'kon manzilingizga olib boradi.', s: [
+      { x: 'Ro\'yxatdan o\'tish', h: 'Ro\'yxatdan o\'tish', d: 'Birinchi marta: raqam va parol. Bepul.' },
+      { x: 'Kirish', h: 'Kirish', d: 'Keyingi safar: raqam va parol. Parolni unutsangiz — kod bilan tiklanadi.' },
+      { sel: 'input[type=search],input[placeholder*="idir"]', h: '🔍 Qidiruv', d: 'Tovar nomini yozing (masalan «kabel»). Xato yozsangiz ham topadi.' },
+      { sel: '.add', h: '➕ Savatga', d: 'Tovar yonidagi shu tugma uni savatchaga soladi. Yana bossangiz soni ko\'payadi.' },
+      { sel: '[data-act="openCart"]', h: '🛒 Savatcha', d: 'Tanlangan tovarlar. To\'lov turini tanlab, «Buyurtma berish» ni bosasiz.' },
+      { x: 'Buyurtmalarim', h: '📦 Buyurtmalarim', d: 'Buyurtmangiz qayerdaligi: qabul qilindi → yo\'lda → yetib keldi.' },
+      { x: 'Hisobim', h: '💳 Hisobim', d: 'Qarzingiz va to\'lovlaringiz.' },
+      { x: 'Profil', h: '👤 Profil', d: 'Manzilingiz, xaritadagi joyingiz, parol.' }] },
+    es: { t: '🧾 Do\'kon Sotuvchi', i: 'Buyurtmalarni qabul qilish, yetkazish, mijozlar, tovarlar va hisobot.', s: [
+      { x: 'Buyurtmalar', h: '📦 Buyurtmalar', d: 'Yangi buyurtmalar. Ketma-ket: Qabul qilish → Yo\'lga chiqdim → Yetkazildi → Chek.' },
+      { x: 'Mijozlar', h: '👥 Mijozlar', d: 'Mijozlar ro\'yxati, qarzlari, to\'lovlari. Mijozni bossangiz — to\'liq hisobi.' },
+      { x: 'Tovarlar', h: '📦 Tovarlar', d: 'Tovar qo\'shish va tahrirlash: narx, rasm, video, aksiya.' },
+      { x: 'Hisobot', h: '📊 Hisobot', d: 'Savdo, foyda, xarajat, eng ko\'p sotilganlar.' },
+      { x: 'Yangi', h: '🆕 Buyurtma holatlari', d: 'Yangi → Qabul qilingan → Yo\'lda → Yetkazilgan. Bosib, shu holatdagi buyurtmalarni ko\'rasiz.' },
+      { sel: '[data-act*="set"],[aria-label*="ozlama"]', h: '⚙ Sozlamalar', d: 'Do\'kon nomi, logo, karta raqami, printer, Telegram xabar.' }] },
+    /* ---------- Hamyon (kunlik xarajatlar) ---------- */
+    hm: { t: '👛 Hamyon', i: 'Kunlik xarajat va kirimlaringizni yozib borasiz. Ilova hisobot beradi, limitdan oshsangiz yoki o\'tgan oydan ko\'p sarflasangiz ogohlantiradi. Telegram bot bilan ma\'lumot bir xil.', s: [
+      { sel: '.hero', h: '💰 Shu oy', d: 'Katta raqam — shu oyda jami qancha sarflaganingiz. Pastida: «Bugun» — bugungi xarajat, «Kirim» — shu oy tushgan pul, «Qoldiq» — kirim minus xarajat (minus bo\'lsa, kirimdan ko\'p sarflagansiz). Oq chiziq — oylik limitdan qanchasi ishlatilgani.' },
+      { sel: '.alert', h: '⚠️ Ogohlantirish', d: 'Sariq — limitning 80% idan oshdi. Qizil — limitdan oshib ketdi. 📈 — o\'tgan oyning shu kunigacha bo\'lgandan ko\'p sarflayapsiz.' },
+      { sel: '.day', h: '📅 Kun', d: 'Yozuvlar kunlar bo\'yicha guruhlangan. O\'ngdagi raqam — shu kungi jami xarajat.' },
+      { sel: '.it', h: '🧾 Yozuv', d: 'Bitta xarajat yoki kirim: chapda turkum belgisi, o\'rtada turkum va izoh, o\'ngda summa (qizil «−» — xarajat, yashil «+» — kirim). Bossangiz — tahrirlaysiz yoki o\'chirasiz.' },
+      { sel: '#mic', h: '🎤 Ovoz bilan yozish', d: 'Bosing va gapiring, masalan: «500 mingga zapchas oldim, 200 mingga zapravka qildim». Bitta gapda bir nechta xarajatni aytsa bo\'ladi — har biri alohida yoziladi. Tugatgach yana bosing. Ovozsiz ham bo\'ladi: shu oynaga matn bilan yozing.' },
+      { sel: '#fab', h: '➕ Qo\'lda qo\'shish', d: 'Yangi yozuv: yuqorida «Xarajat» yoki «Kirim» ni tanlang → summani yozing (bo\'sh joysiz, masalan 25000) → turkumni bosing → izoh (ixtiyoriy) → sana (odatda bugun) → «Saqlash».' },
+      { sel: '#am', h: '🔢 Summa', d: 'Faqat raqam, so\'mda. Uch xonadan ajratib o\'zi ko\'rsatadi: 25 000. «so\'m» deb yozish shart emas.' },
+      { sel: '#cats', h: '🗂 Turkum', d: 'Pul nimaga ketganini tanlang. Izohga «non», «taksi», «benzin» deb yozsangiz, turkum o\'zi belgilanadi.' },
+      { sel: '#vt', h: '✍️ Matn yoki ovoz', d: 'Har bir xarajatni vergul bilan ajrating: «bozorga 150 ming, taksiga 30 ming». «ming», «mln», «yarim million» deb yozsa ham tushunadi. «Abdullohga qarz berdim 50 ming» — Qarzlar bo\'limiga tushadi.' },
+      { sel: '[data-p]', h: '🗓 Davr', d: 'Hisobotni qaysi davr uchun ko\'rish: Bugun, Hafta (dushanbadan), Oy (1-sanadan), O\'tgan oy yoki Yil.' },
+      { sel: '.bars', h: '📊 Dinamika', d: 'Har ustun — bir kun (yilda — bir oy) xarajati. To\'qroq ustun — bugun.' },
+      { sel: 'svg', h: '🍩 Turkumlar', d: 'Xarajat qaysi turkumlarga ketgani. Pastdagi ro\'yxatda foizi va oldingi davrga nisbatan o\'zgarishi. Turkumni bossangiz — ichidagi yozuvlar.' },
+      { sel: '#lm', h: '📅 Oylik limit', d: 'Bir oyga qancha sarflashni rejalashtirasiz. Oshsa ilova va bot ogohlantiradi. Bo\'sh qoldirsangiz — limit yo\'q.' },
+      { sel: '#ld', h: '☀️ Kunlik limit', d: 'Bir kunga qancha. Oshsa ogohlantiradi.' },
+      { sel: '[data-lc]', h: '🗂 Turkum limiti', d: 'Har turkum uchun alohida oylik limit (masalan kafe uchun 300 000). Kerak bo\'lmasa bo\'sh qoldiring. Oxirida «Saqlash» ni bosing.' },
+      { sel: '#nd', h: '🤝 Qarz yozish', d: '«Men berdim» — kimgadir qarz berdingiz (sizga qaytarishi kerak). «Men oldim» — Siz qarz oldingiz. Qaytarilganda qarzni bosib «✅ Qaytarildi» ni bosing.' },
+      { sel: '#pay', h: '💳 To\'lov', d: 'Muddatni uzaytirish: tarifni tanlaysiz (haftalik, oylik, yillik), kartaga o\'tkazasiz va chek rasmini yuborasiz. Tasdiqlangach muddat o\'zi uzayadi.' },
+      { sel: '#thm', h: '🌓 Rejim', d: '«Kunduzgi» — oq fon, «Tungi» — qora fon, «Avto» — kechasi o\'zi tungiga o\'tadi.' },
+      { sel: '[data-ac]', h: '🎨 Rang', d: 'Ilovaning asosiy rangi (tugmalar, yuqoridagi karta).' },
+      { sel: '[data-bg]', h: '🖼 Fon', d: 'Orqa fon rasmi. «O\'z rasmingizni fon qilish» bilan telefoningizdagi rasmni qo\'yasiz.' },
+      { sel: '#csv', h: '📄 Excel', d: 'Hamma yozuvlarni Excel\'da ochiladigan fayl qilib yuklab beradi.' },
+      { sel: '#out', h: '🚪 Chiqish', d: 'Ilovadan chiqish. Ma\'lumot o\'chmaydi — bulutda saqlanadi, qayta kirsangiz hammasi qaytadi.' }] }
+  };
+  /* Har ilova: sozlamalar qanday ochiladi, kirilganmi, ilovaning o'z ⚙ tugmasi (yashiriladi) */
+  function gS() { try { return S; } catch (e) { return null; } }
+  function clk(sel) { return function () { var e = document.querySelector(sel); if (e) e.click(); }; }
+  function vis0(sel) { var e = document.querySelector(sel); return !!(e && e.getBoundingClientRect().width > 0); }
+  var CFG = {
+    tr: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('set'); }, gd: 'Nonvoyxona nomi, filiallar, bildirishnomalar, ko\'rinish va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
+    th: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('yub'); }, gd: 'Akaunt, ovoz, til va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
+    'hk-i': { on: function () { return vis0('#prof'); }, set: clk('#prof'), gd: 'Profil: sohangiz, parolni o\'zgartirish va ilovadan chiqish.' },
+    'hk-h': { hide: '.top .gear', pad: '.top{padding-right:96px}', on: function () { return true; }, set: clk('[data-a="gear"]'), gd: 'Profil, ilova nomi va belgisi, ko\'rinish, zaxira nusxa. Har ekranda shu yerda turadi.' },
+    'hk-sg': { hide: '#tS', on: function () { return !!document.querySelector('#tabs') && vis0('#tO'); }, set: clk('#tS'), gd: 'Yangilash va ilovadan chiqish.' },
+    em: { pad: '#topActions{margin-right:90px}', on: function () { var s = gS(); return !!(s && s.token); }, set: function () { var s = gS(); s.tab = 'profile'; s.view = null; render(); scrollTo(0, 0); }, gd: 'Profilingiz: ism, manzil, xaritadagi joyingiz, parol.' },
+    hm: { hide: 'nav [data-tab=set]', pad: '.top{padding-right:96px}', on: function () { var s = gS(); return !!(s && s.rt); }, set: function () { go('set'); }, gd: 'Muddat va to\'lov, Telegram bot, ko\'rinish (kunduzgi/tungi, rang, fon), Excel va chiqish.' },
+    es: { hide: '#topActions [data-k="settings"]', pad: '#topActions{margin-right:90px}', on: function () { var s = gS(); return !!(s && s.token); }, set: clk('#topActions [data-k="settings"]'), gd: 'Do\'kon nomi, logo, karta raqami, printer, Telegram xabar.' }
+  };
+  function key() {
+    var a = window.YAPP || '';
+    if (a === 'nr') return 'tr'; if (a === 'nh') return 'th';
+    if (a === 'hk') { var p = location.pathname; if (/shogird/.test(p)) return 'hk-sg'; if (/gate/.test(p)) return 'gate'; if (/hisob\.html/.test(p)) return 'hk-h'; if (/(\/|index\.html)$/.test(p)) return 'hk-i'; return 'hk-x'; }
+    return a;
+  }
+  var K = key(), A = D[K] || { t: '❓ ' + (document.title || 'Yordam'), i: '', s: [] }, C = CFG[K] || {};
+  var OWN = '#yrdb,#yrdg,#yrd';
+  function shown(e) { if (!e || e.closest(OWN)) return false; var r = e.getBoundingClientRect(); if (r.width < 6 || r.height < 6) return false;
+    var s = getComputedStyle(e); if (s.visibility === 'hidden' || s.opacity === '0') return false;
+    for (var p = e; p && p !== document.body; p = p.parentElement) { var q = getComputedStyle(p); if (q.display === 'none') return false; } return true; }
+  function txt(e) { return (e.getAttribute('aria-label') || e.textContent || e.placeholder || e.title || e.value || '').replace(/\s+/g, ' ').trim(); }
+  /* Ma'lum tugmalar (aniq tushuntirish) */
+  function known() { var out = [];
+    A.s.forEach(function (st) { var hit = null;
+      if (st.sel) { var L = document.querySelectorAll(st.sel); for (var i = 0; i < L.length; i++) if (shown(L[i])) { hit = L[i]; break; } }
+      else { var Q = document.querySelectorAll('button,a,[role=button],[data-act],[data-a],[onclick],.tile,label');
+        for (var j = 0; j < Q.length; j++) { var e = Q[j]; if (!shown(e)) continue; var t = txt(e); if (t.indexOf(st.x) >= 0 && t.length < 90 && (!hit || t.length < txt(hit).length)) hit = e; } }
+      if (hit) { out.push({ e: hit, h: st.h, d: st.d }); if (st.sel) [].forEach.call(document.querySelectorAll(st.sel), function (z) { if (z !== hit) out.push({ e: z, skip: 1 }); }); } }); return out; }
+  /* Qolgan hamma joy: yozuvi va turiga qarab o'zi tushuntiradi */
+  var KW = [
+    [/saqla|^✓|^ok$|tasdiq/i, 'Yozganlaringizni saqlaydi.'], [/o'chir|o‘chir|🗑|^✕|^×/i, 'O\'chiradi. Oldin «Rostdan o\'chirasizmi?» deb so\'raladi.'],
+    [/orqaga|^‹|^←|^⬅|^❮/i, 'Oldingi ekranga qaytaradi.'], [/qo'sh|qo‘sh|➕|^\+/i, 'Yangi yozuv qo\'shadi. Ochilgan oynani to\'ldirib, saqlaysiz.'],
+    [/yubor|📤/i, 'Ma\'lumotni yuboradi.'], [/bekor|yopish/i, 'Hech narsani o\'zgartirmay yopadi.'], [/^kirish|kirish$/i, 'Ilovaga kiradi.'], [/chiqish/i, 'Ilovadan chiqadi.'],
+    [/^(bugun|kecha|hafta|oy|o'tgan oy|yil|hammasi|davr)$/i, 'Qaysi kunlar hisobini ko\'rishni tanlaysiz. Pastdagi raqamlar shu davr bo\'yicha o\'zgaradi.'],
+    [/nasiya|qarz/i, 'Qarzga berilgan, hali to\'lanmagan summa.'], [/to'l|to‘l|pul|so'm|kassa/i, 'Pul bilan bog\'liq: olingan, berilgan yoki to\'langan summa.'],
+    [/excel|fayl|📎|yukla/i, 'Fayl tanlab yuklaysiz.'], [/tahrir|✏|o'zgartir/i, 'Yozuvni o\'zgartirasiz.'], [/qidir|🔍/i, 'Nom bo\'yicha tez topadi.'],
+    [/ulash|telegram/i, 'Boshqalarga yuboradi (Telegram va boshqalar).'], [/chek|🧾/i, 'Chek chiqaradi yoki ko\'rsatadi.'], [/yangila|🔄|↻/i, 'Ma\'lumotni serverdan qayta oladi.'],
+    [/ovoz|🎤|mikrofon/i, 'Ovoz bilan buyruq berasiz.'], [/hisobot|📊/i, 'Jami raqamlar: kun, hafta, oy bo\'yicha.'], [/sozlama|⚙/i, 'Sozlamalar.'],
+    [/berildi|berish/i, 'Berilgan narsani belgilaysiz yoki yozasiz.'], [/qaytdi|qaytar/i, 'Qaytib kelgan narsani yozasiz.'], [/narx/i, 'Narxni ko\'rsatadi yoki o\'zgartiradi.'],
+    [/📞|qo'ng'iroq/i, 'Qo\'ng\'iroq qiladi.'], [/yordamchi|🤖/i, 'Sun\'iy intellekt yordamchisi: yozing yoki gapiring, u ilovadagi ishni bajarib beradi (oldin so\'raydi).']];
+  function nameOf(e) {
+    if (e.labels && e.labels[0]) return txt(e.labels[0]);
+    var p = e.previousElementSibling; if (p && /LABEL|SPAN|B|DIV|SMALL/.test(p.tagName) && txt(p).length < 50 && txt(p)) return txt(p);
+    var par = e.parentElement; if (par && par.tagName === 'LABEL') { var t = (par.textContent || '').replace(/\s+/g, ' ').trim(); if (t && t.length < 60) return t; }
+    return e.placeholder || e.getAttribute('aria-label') || e.title || e.name || '';
+  }
+  function describe(e) {
+    var tg = e.tagName, ty = (e.type || '').toLowerCase();
+    if (tg === 'SELECT') { var n = nameOf(e) || 'Tanlash'; return { h: '🔽 ' + n, d: 'Ro\'yxatdan birini tanlaysiz' + (e.options && e.options.length ? ': ' + [].slice.call(e.options, 0, 4).map(function (o) { return '«' + o.text.trim() + '»'; }).join(', ') + (e.options.length > 4 ? '…' : '') : '') + '.' }; }
+    if (tg === 'TEXTAREA' || tg === 'INPUT') {
+      var n2 = nameOf(e) || 'Katak';
+      if (ty === 'checkbox' || ty === 'radio') return { h: '☑ ' + n2, d: 'Bossangiz belgilanadi (yoqiladi), yana bossangiz olib tashlanadi.' };
+      if (ty === 'file') return { h: '📎 ' + n2, d: 'Telefoningizdan fayl yoki rasm tanlaysiz.' };
+      if (ty === 'date' || ty === 'month') return { h: '📅 ' + n2, d: 'Sanani tanlaysiz.' };
+      var ex = e.placeholder && e.placeholder !== n2 ? ' Masalan: «' + e.placeholder + '».' : '';
+      var num = (ty === 'number' || ty === 'tel' || e.inputMode === 'numeric' || e.inputMode === 'decimal') ? ' Faqat raqam yoziladi.' : '';
+      return { h: '✏️ ' + n2, d: 'Bu katakka «' + n2 + '» yoziladi.' + num + ex };
+    }
+    var t = txt(e), short = t.length > 40 ? t.slice(0, 40) + '…' : t, d = '';
+    for (var i = 0; i < KW.length; i++) if (KW[i][0].test(t)) { d = KW[i][1]; break; }
+    if (e.closest('nav,.nav,#nav,#navIn,.tabs,[role=tablist]')) d = 'Bo\'lim: «' + short + '». Bossangiz shu bo\'limga o\'tadi.' + (d ? ' ' + d : '');
+    else if (!d) d = t.length > 40 ? 'Bu qator ma\'lumoti. Bossangiz batafsili ochiladi.' : 'Bossangiz «' + short + '» ochiladi yoki bajariladi.';
+    return { h: short || '•', d: d };
+  }
+  function auto(skip) {
+    var Q = document.querySelectorAll('button,a[href],input:not([type=hidden]),select,textarea,[data-act],[data-a],[onclick],[role=button],[role=tab]');
+    var out = [], seen = {}, grp = {};
+    for (var i = 0; i < Q.length && out.length < 40; i++) { var e = Q[i]; if (!shown(e)) continue;
+      if (skip.some(function (k) { return k === e || k.contains(e) || e.contains(k); })) continue;
+      if (out.some(function (o) { return o.e.contains(e) || e.contains(o.e); })) continue;
+      if (!/INPUT|SELECT|TEXTAREA/.test(e.tagName) && !txt(e)) continue;
+      var x = describe(e), sig = x.h.slice(0, 30); if (seen[sig]) continue; seen[sig] = 1;
+      var g = (e.parentElement ? e.parentElement.tagName + e.parentElement.className : '') + '|' + e.tagName + e.className;
+      grp[g] = (grp[g] || 0) + 1; if (grp[g] > 3 && !/INPUT|SELECT|TEXTAREA/.test(e.tagName)) continue;
+      out.push({ e: e, h: x.h, d: x.d }); }
+    return out;
+  }
+  function steps() {
+    var K1 = known(), S1 = K1.filter(function (x) { return !x.skip; }), all = S1.concat(auto(K1.map(function (x) { return x.e; })));
+    var g = document.getElementById('yrdg'); if (g && g.style.display !== 'none') all.push({ e: g, h: '⚙ Sozlamalar', d: C.gd || 'Sozlamalar.' });
+    all.forEach(function (x) { var r = x.e.getBoundingClientRect(); x.y = x.e === g ? -1 : r.top + scrollY; x.x = r.left; });
+    all.sort(function (a, b) { return Math.abs(a.y - b.y) < 8 ? a.x - b.x : a.y - b.y; });
+    return all.slice(0, 18);
+  }
+  function screenName() { var H = document.querySelectorAll('h1,h2,h3,.title,.ttl'); for (var i = 0; i < H.length; i++) { var e = H[i]; if (shown(e) && txt(e) && txt(e).length < 50 && e.getBoundingClientRect().top < innerHeight * 0.5) return txt(e); } return ''; }
+  var css = '#yrdg,#yrdb{position:fixed;top:calc(8px + env(safe-area-inset-top,0px));background:rgba(255,255,255,.88);color:#333;box-shadow:0 1px 4px rgba(0,0,0,.18);z-index:2147482000;width:38px;height:38px;border-radius:50%;border:1px solid rgba(127,127,127,.25);padding:0;line-height:36px;text-align:center;cursor:pointer;-webkit-tap-highlight-color:transparent}' +
+    '#yrdb{right:8px;font-size:19px;font-weight:800}#yrdg{right:52px;font-size:20px}' +
+    '@media(prefers-color-scheme:dark){#yrdg,#yrdb{background:rgba(40,44,52,.88);color:#ddd}}' +
+    '#yrd{position:fixed;inset:0;z-index:2147483001}#yrd .sh{position:fixed;inset:0;background:rgba(0,0,0,.55)}#yrd .sp{position:fixed;border-radius:12px;box-shadow:0 0 0 9999px rgba(0,0,0,.55);transition:all .3s;border:3px solid #fbbf24;animation:yglow 1.2s ease-in-out infinite}@keyframes yglow{50%{border-color:#fff}}' +
+    '#yrd .bb{position:fixed;left:12px;right:12px;max-width:460px;margin:0 auto;background:#fff;color:#14171f;border-radius:16px;padding:14px 14px 10px;box-shadow:0 10px 30px rgba(0,0,0,.4);font:16px/1.45 system-ui,sans-serif;transition:top .3s}' +
+    '#yrd .bb b{display:block;font-size:18px;margin-bottom:4px}#yrd .bb .nv{display:flex;gap:8px;margin-top:10px}#yrd .bb button{flex:1;padding:11px 6px;border-radius:12px;border:0;font-size:15px;font-weight:700;background:#e5e7eb;color:#111}#yrd .bb button.p{background:#2563eb;color:#fff}#yrd .bb small{color:#6b7280}';
+  var O = null;
+  function close() { if (O) { O.remove(); O = null; } }
+  function start() {
+    close();
+    var L = steps(), o = document.createElement('div'); O = o; o.id = 'yrd';
+    o.innerHTML = '<div class="sh"></div><div class="sp" hidden></div><div class="bb" role="dialog"></div>'; document.body.appendChild(o);
+    var sh = o.querySelector('.sh'), sp = o.querySelector('.sp'), bb = o.querySelector('.bb'), k = -1, nm = screenName();
+    function nav(last) { return '<div class="nv"><button data-y="b">‹ Orqaga</button><button data-y="x">Yopish</button><button class="p" data-y="n">' + (last ? 'Tushundim' : 'Keyingi ›') + '</button></div>'; }
+    function draw() {
+      if (k < 0) { sh.hidden = false; sp.hidden = true; bb.style.top = '22%';
+        bb.innerHTML = '<b>' + (nm ? '📍 ' + nm : A.t) + '</b>' + (nm ? A.t + '. ' : '') + (A.i || '') + '<br><br>' + (L.length ? 'Shu ekrandagi ' + L.length + ' ta joyni birma-bir ko\'rsatib, nima qilishini aytaman.' : 'Bu ekranda tugma yo\'q.') +
+          '<div class="nv"><button data-y="x">Yopish</button>' + (L.length ? '<button class="p" data-y="n">Ko\'rsatish ›</button>' : '') + '</div>'; return; }
+      var it = L[k]; sh.hidden = true; if (it.e !== document.getElementById('yrdg')) { var r0 = it.e.getBoundingClientRect(); if (r0.top < 60 || r0.bottom > innerHeight - 60) it.e.scrollIntoView({ block: 'center' }); }
+      bb.innerHTML = '<b>' + it.h + '</b>' + it.d + nav(k >= L.length - 1) + '<small>' + (k + 1) + ' / ' + L.length + '</small>';
+      setTimeout(function () { if (!O) return;
+        var r = it.e.getBoundingClientRect(), pad = 5; sp.hidden = false;
+        sp.style.left = (r.left - pad) + 'px'; sp.style.top = (r.top - pad) + 'px'; sp.style.width = (r.width + pad * 2) + 'px'; sp.style.height = (r.height + pad * 2) + 'px';
+        var bh = bb.offsetHeight + 14, below = r.bottom + 12; bb.style.top = (below + bh < innerHeight ? below : Math.max(8, r.top - bh)) + 'px'; }, 60);
+    }
+    /* Ilovaning o'z tugma tutqichlariga (o'chirish tasdig'i va h.k.) bosish yetib bormasin */
+    function h(ev) { ev.stopPropagation(); var b = ev.target.closest && ev.target.closest('[data-y]'); if (ev.type !== 'click') return; ev.preventDefault();
+      if (!b) return; var y = b.getAttribute('data-y');
+      if (y === 'x') return close(); if (y === 'b') k = Math.max(-1, k - 1); if (y === 'n') { if (k >= L.length - 1) return close(); k++; } draw(); }
+    ['click', 'pointerdown', 'pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend'].forEach(function (t) { o.addEventListener(t, h, true); });
+    draw();
+  }
+  function tick() {
+    var g = document.getElementById('yrdg'), b = document.getElementById('yrdb'), on = false;
+    if (C.set) { try { on = !!C.on(); } catch (e) { on = false; } }
+    if (g) g.style.display = on ? '' : 'none';
+  }
+  function init() {
+    if (document.getElementById('yrdb')) return;
+    var st = document.createElement('style'); st.textContent = css + (C.hide ? C.hide + '{display:none!important}' : '') + (C.pad || ''); document.head.appendChild(st);
+    var g = document.createElement('button'); g.id = 'yrdg'; g.type = 'button'; g.textContent = '⚙'; g.setAttribute('aria-label', 'Sozlamalar'); g.style.display = 'none';
+    g.addEventListener('click', function (ev) { ev.stopPropagation(); try { C.set(); } catch (e) {} }, true);
+    var b = document.createElement('button'); b.id = 'yrdb'; b.type = 'button'; b.textContent = '?'; b.setAttribute('aria-label', 'Yordam: bu ekran qanday ishlaydi');
+    b.addEventListener('click', function (ev) { ev.stopPropagation(); start(); }, true);
+    document.body.appendChild(g); document.body.appendChild(b);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && O) close(); });
+    tick(); setInterval(tick, 800);
+  }
+  window.yordamStart = function () { start(); };
+
+  /* ---------- ORQAGA tugmasi: ilovadan chiqib ketmasin, bir qadam orqaga qaytsin ---------- */
+  function tst(m) { try { if (typeof toast === 'function') return toast(m); } catch (e) {} var d = document.createElement('div'); d.textContent = m; d.style.cssText = 'position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:20px;z-index:2147483002;font:15px system-ui'; document.body.appendChild(d); setTimeout(function () { d.remove(); }, 1800); }
+  var NV = (K === 'tr' || K === 'th'), STK = [], LAST = null, REST = false;
+  var NVV = ['tab', 'SS', 'IW', 'ZKV', 'ZKE', 'EK', 'REB'];
+  function nvSnap() { var o = {}; NVV.forEach(function (k) { if (typeof window[k] !== 'undefined' && typeof window[k] !== 'function') o[k] = window[k]; }); return o; }
+  function nvTrack() { if (!NV) return; var s = nvSnap(), j = JSON.stringify(s); if (LAST === null) { LAST = j; return; } if (j === LAST) return;
+    if (!REST) { if (s.tab === 'bosh') STK = []; else { STK.push(LAST); if (STK.length > 40) STK.shift(); } } REST = false; LAST = j; }
+  function nvOverlay() { if (document.getElementById('ask_n') || document.getElementById('di_o') || document.getElementById('at_n')) return true; try { if (window.AIO) return true; } catch (e) {}
+    return [].slice.call(document.body.children).some(function (e) { return /position:\s*fixed;\s*inset:\s*0/.test(e.style.cssText || '') && e.id != 'errbox' && e.id != 'upd'; }); }
+  var ORIG = window.onBack, ORIGH = window.__back;
+  function doBack() {
+    if (O) { close(); return true; }
+    var dl = document.querySelector('dialog[open]'); if (dl && !ORIGH) { try { dl.close(); } catch (e) {} return true; }
+    if (NV) {
+      if (nvOverlay()) return ORIG ? !!ORIG() : false;
+      if (STK.length) { var s = JSON.parse(STK.pop()); REST = true; NVV.forEach(function (k) { if (k in s) window[k] = s[k]; }); try { render(); } catch (e) {} LAST = JSON.stringify(nvSnap()); return true; }
+      return ORIG ? !!ORIG() : false;
+    }
+    if (ORIGH) return !!ORIGH();
+    if (K === 'em' || K === 'es') {
+      var sh = document.getElementById('sheet'); if (sh && !sh.hidden) { try { closeSheet(); } catch (e) { sh.hidden = true; } return true; }
+      var b = document.querySelector('button.back:not([data-act="openCust"])'); if (b && b.getBoundingClientRect().width) { b.click(); return true; }
+      var st = gS(), home = K === 'em' ? 'shop' : 'orders';
+      if (st && st.tab && st.tab !== home) { var t = document.querySelector('[data-act="tab"][data-k="' + home + '"]'); if (t) t.click(); else { st.tab = home; render(); } return true; }
+      return false;
+    }
+    return false;
+  }
+  var BACK_OK = { tr: 1, th: 1, 'hk-h': 1, 'hk-i': 1, 'hk-sg': 1, em: 1, es: 1 };
+  if (BACK_OK[K]) {
+    if (NV) setInterval(nvTrack, 250);
+    window.onBack = doBack; if (ORIGH) window.__back = doBack;
+    /* Brauzer / o'rnatilgan veb-ilova: tarixga bitta "qo'riqchi" qadam qo'yiladi */
+    var lastEx = 0;
+    var guard = function () { try { history.pushState({ yb: 1 }, ''); } catch (e) {} };
+    setTimeout(guard, 500);
+    window.addEventListener('popstate', function () {
+      if (doBack()) return guard();
+      if (Date.now() - lastEx < 2500) { try { history.back(); } catch (e) {} return; }
+      lastEx = Date.now(); tst('Chiqish uchun yana bir marta «Orqaga» ni bosing'); guard();
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 300); }); else setTimeout(init, 300);
+})();
 </script></body></html>

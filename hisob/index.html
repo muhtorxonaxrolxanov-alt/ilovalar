@@ -221,7 +221,7 @@ try{var c=JSON.parse(localStorage.getItem('cloud_v1')||'null');
       { x: 'Hisobot', h: '📊 Hisobot', d: 'Kun, hafta, oy bo\'yicha jami: berilgan non, olingan pul, nasiya, xarajat va foyda.' },
       { sel: '.pxl', h: '🎬 Jonli sahna', d: 'Nonvoyxonaning bugungi holati: omborga nima kirdi, hamirchi necha qop qildi, tandirda necha non yopildi, do\'konlarga qancha ketdi. Hodimlar yozgan zahoti shu yer o\'zgaradi.' },
       { sel: '#fab', h: '🎤 Ovozli yordamchi', d: 'Bosing va gapiring: «Anorga 15 ta patir berildi». Yordamchi nima qilishini ko\'rsatadi, «Ha» desangiz bajaradi.' },
-      { sel: '#gear', h: '⚙ Sozlamalar', d: 'Nonvoyxona nomi, bildirishnomalar, yangi versiya va boshqa sozlamalar.' }] },
+      { sel: '#gear', h: '⚙ Sozlamalar', d: 'Nonvoyxona nomi, bildirishnomalar, ko\'rinish va boshqa sozlamalar.' }] },
     /* ---------- Nonvoyxona: hodim ---------- */
     th: { t: '🥖 Nonvoyxona — hodim', i: 'Hodim ilovasi: hamirchi, yopuvchi yoki sotuvchi ishini yozadi. Yozganlaringiz rahbarga o\'zi boradi.', s: [
       { sel: '#ph', h: '📱 Rahbar raqami', d: 'Birinchi marta: rahbaringizning telefon raqamini yozing (o\'zingiznikini emas).' },
@@ -272,19 +272,44 @@ try{var c=JSON.parse(localStorage.getItem('cloud_v1')||'null');
       { x: 'Tovarlar', h: '📦 Tovarlar', d: 'Tovar qo\'shish va tahrirlash: narx, rasm, video, aksiya.' },
       { x: 'Hisobot', h: '📊 Hisobot', d: 'Savdo, foyda, xarajat, eng ko\'p sotilganlar.' },
       { x: 'Yangi', h: '🆕 Buyurtma holatlari', d: 'Yangi → Qabul qilingan → Yo\'lda → Yetkazilgan. Bosib, shu holatdagi buyurtmalarni ko\'rasiz.' },
-      { sel: '[data-act*="set"],[aria-label*="ozlama"]', h: '⚙ Sozlamalar', d: 'Do\'kon nomi, logo, karta raqami, printer, Telegram xabar.' }] }
+      { sel: '[data-act*="set"],[aria-label*="ozlama"]', h: '⚙ Sozlamalar', d: 'Do\'kon nomi, logo, karta raqami, printer, Telegram xabar.' }] },
+    /* ---------- Hamyon (kunlik xarajatlar) ---------- */
+    hm: { t: '👛 Hamyon', i: 'Kunlik xarajat va kirimlaringizni yozib borasiz. Ilova hisobot beradi, limitdan oshsangiz yoki o\'tgan oydan ko\'p sarflasangiz ogohlantiradi. Telegram bot bilan ma\'lumot bir xil.', s: [
+      { sel: '.hero', h: '💰 Shu oy', d: 'Katta raqam — shu oyda jami qancha sarflaganingiz. Pastida: «Bugun» — bugungi xarajat, «Kirim» — shu oy tushgan pul, «Qoldiq» — kirim minus xarajat (minus bo\'lsa, kirimdan ko\'p sarflagansiz). Oq chiziq — oylik limitdan qanchasi ishlatilgani.' },
+      { sel: '.alert', h: '⚠️ Ogohlantirish', d: 'Sariq — limitning 80% idan oshdi. Qizil — limitdan oshib ketdi. 📈 — o\'tgan oyning shu kunigacha bo\'lgandan ko\'p sarflayapsiz.' },
+      { sel: '.day', h: '📅 Kun', d: 'Yozuvlar kunlar bo\'yicha guruhlangan. O\'ngdagi raqam — shu kungi jami xarajat.' },
+      { sel: '.it', h: '🧾 Yozuv', d: 'Bitta xarajat yoki kirim: chapda turkum belgisi, o\'rtada turkum va izoh, o\'ngda summa (qizil «−» — xarajat, yashil «+» — kirim). Bossangiz — tahrirlaysiz yoki o\'chirasiz.' },
+      { sel: '#mic', h: '🎤 Ovoz bilan yozish', d: 'Bosing va gapiring, masalan: «500 mingga zapchas oldim, 200 mingga zapravka qildim». Bitta gapda bir nechta xarajatni aytsa bo\'ladi — har biri alohida yoziladi. Tugatgach yana bosing. Ovozsiz ham bo\'ladi: shu oynaga matn bilan yozing.' },
+      { sel: '#fab', h: '➕ Qo\'lda qo\'shish', d: 'Yangi yozuv: yuqorida «Xarajat» yoki «Kirim» ni tanlang → summani yozing (bo\'sh joysiz, masalan 25000) → turkumni bosing → izoh (ixtiyoriy) → sana (odatda bugun) → «Saqlash».' },
+      { sel: '#am', h: '🔢 Summa', d: 'Faqat raqam, so\'mda. Uch xonadan ajratib o\'zi ko\'rsatadi: 25 000. «so\'m» deb yozish shart emas.' },
+      { sel: '#cats', h: '🗂 Turkum', d: 'Pul nimaga ketganini tanlang. Izohga «non», «taksi», «benzin» deb yozsangiz, turkum o\'zi belgilanadi.' },
+      { sel: '#vt', h: '✍️ Matn yoki ovoz', d: 'Har bir xarajatni vergul bilan ajrating: «bozorga 150 ming, taksiga 30 ming». «ming», «mln», «yarim million» deb yozsa ham tushunadi. «Abdullohga qarz berdim 50 ming» — Qarzlar bo\'limiga tushadi.' },
+      { sel: '[data-p]', h: '🗓 Davr', d: 'Hisobotni qaysi davr uchun ko\'rish: Bugun, Hafta (dushanbadan), Oy (1-sanadan), O\'tgan oy yoki Yil.' },
+      { sel: '.bars', h: '📊 Dinamika', d: 'Har ustun — bir kun (yilda — bir oy) xarajati. To\'qroq ustun — bugun.' },
+      { sel: 'svg', h: '🍩 Turkumlar', d: 'Xarajat qaysi turkumlarga ketgani. Pastdagi ro\'yxatda foizi va oldingi davrga nisbatan o\'zgarishi. Turkumni bossangiz — ichidagi yozuvlar.' },
+      { sel: '#lm', h: '📅 Oylik limit', d: 'Bir oyga qancha sarflashni rejalashtirasiz. Oshsa ilova va bot ogohlantiradi. Bo\'sh qoldirsangiz — limit yo\'q.' },
+      { sel: '#ld', h: '☀️ Kunlik limit', d: 'Bir kunga qancha. Oshsa ogohlantiradi.' },
+      { sel: '[data-lc]', h: '🗂 Turkum limiti', d: 'Har turkum uchun alohida oylik limit (masalan kafe uchun 300 000). Kerak bo\'lmasa bo\'sh qoldiring. Oxirida «Saqlash» ni bosing.' },
+      { sel: '#nd', h: '🤝 Qarz yozish', d: '«Men berdim» — kimgadir qarz berdingiz (sizga qaytarishi kerak). «Men oldim» — Siz qarz oldingiz. Qaytarilganda qarzni bosib «✅ Qaytarildi» ni bosing.' },
+      { sel: '#pay', h: '💳 To\'lov', d: 'Muddatni uzaytirish: tarifni tanlaysiz (haftalik, oylik, yillik), kartaga o\'tkazasiz va chek rasmini yuborasiz. Tasdiqlangach muddat o\'zi uzayadi.' },
+      { sel: '#thm', h: '🌓 Rejim', d: '«Kunduzgi» — oq fon, «Tungi» — qora fon, «Avto» — kechasi o\'zi tungiga o\'tadi.' },
+      { sel: '[data-ac]', h: '🎨 Rang', d: 'Ilovaning asosiy rangi (tugmalar, yuqoridagi karta).' },
+      { sel: '[data-bg]', h: '🖼 Fon', d: 'Orqa fon rasmi. «O\'z rasmingizni fon qilish» bilan telefoningizdagi rasmni qo\'yasiz.' },
+      { sel: '#csv', h: '📄 Excel', d: 'Hamma yozuvlarni Excel\'da ochiladigan fayl qilib yuklab beradi.' },
+      { sel: '#out', h: '🚪 Chiqish', d: 'Ilovadan chiqish. Ma\'lumot o\'chmaydi — bulutda saqlanadi, qayta kirsangiz hammasi qaytadi.' }] }
   };
   /* Har ilova: sozlamalar qanday ochiladi, kirilganmi, ilovaning o'z ⚙ tugmasi (yashiriladi) */
   function gS() { try { return S; } catch (e) { return null; } }
   function clk(sel) { return function () { var e = document.querySelector(sel); if (e) e.click(); }; }
   function vis0(sel) { var e = document.querySelector(sel); return !!(e && e.getBoundingClientRect().width > 0); }
   var CFG = {
-    tr: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('set'); }, gd: 'Nonvoyxona nomi, filiallar, bildirishnomalar, yangi versiya va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
+    tr: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('set'); }, gd: 'Nonvoyxona nomi, filiallar, bildirishnomalar, ko\'rinish va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
     th: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('yub'); }, gd: 'Akaunt, ovoz, til va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
     'hk-i': { on: function () { return vis0('#prof'); }, set: clk('#prof'), gd: 'Profil: sohangiz, parolni o\'zgartirish va ilovadan chiqish.' },
     'hk-h': { hide: '.top .gear', pad: '.top{padding-right:96px}', on: function () { return true; }, set: clk('[data-a="gear"]'), gd: 'Profil, ilova nomi va belgisi, ko\'rinish, zaxira nusxa. Har ekranda shu yerda turadi.' },
     'hk-sg': { hide: '#tS', on: function () { return !!document.querySelector('#tabs') && vis0('#tO'); }, set: clk('#tS'), gd: 'Yangilash va ilovadan chiqish.' },
     em: { pad: '#topActions{margin-right:90px}', on: function () { var s = gS(); return !!(s && s.token); }, set: function () { var s = gS(); s.tab = 'profile'; s.view = null; render(); scrollTo(0, 0); }, gd: 'Profilingiz: ism, manzil, xaritadagi joyingiz, parol.' },
+    hm: { hide: 'nav [data-tab=set]', pad: '.top{padding-right:96px}', on: function () { var s = gS(); return !!(s && s.rt); }, set: function () { go('set'); }, gd: 'Muddat va to\'lov, Telegram bot, ko\'rinish (kunduzgi/tungi, rang, fon), Excel va chiqish.' },
     es: { hide: '#topActions [data-k="settings"]', pad: '#topActions{margin-right:90px}', on: function () { var s = gS(); return !!(s && s.token); }, set: clk('#topActions [data-k="settings"]'), gd: 'Do\'kon nomi, logo, karta raqami, printer, Telegram xabar.' }
   };
   function key() {
