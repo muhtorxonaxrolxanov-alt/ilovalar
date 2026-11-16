@@ -1,0 +1,8 @@
+uz.elektrdokon.sotuvchi.app-pngs-0 C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\build\generated\res\pngs\release
+uz.elektrdokon.sotuvchi.app-resValues-1 C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\build\generated\res\resValues\release
+uz.elektrdokon.sotuvchi.app-updated_navigation_xml-2 C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\build\generated\updated_navigation_xml\release
+uz.elektrdokon.sotuvchi.app-packageReleaseResources-3 C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\build\intermediates\incremental\release\packageReleaseResources\merged.dir
+uz.elektrdokon.sotuvchi.app-packageReleaseResources-4 C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\build\intermediates\incremental\release\packageReleaseResources\stripped.dir
+uz.elektrdokon.sotuvchi.app-release-5 C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\build\intermediates\merged_res\release\mergeReleaseResources
+uz.elektrdokon.sotuvchi.app-main-6 C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\res
+uz.elektrdokon.sotuvchi.app-release-7 C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\release\res

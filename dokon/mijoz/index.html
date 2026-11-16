@@ -778,7 +778,12 @@ const S = {
   view: null, pid: null, slide: 0, lastTouch: 0, brandHidden: lsGet('m_brandHide', '')
 };
 window.TOKEN = S.token;
-window.onAuthLost = () => { logout(); toast('Qaytadan kiring', true); };
+/* Kirish muddati tugasa: saqlangan raqam bilan o'zi qayta kiradi (mijoz hech narsa qilmaydi) */
+window.onAuthLost = async () => {
+  const ph = lsGet('m_phone', '') || (S.me && S.me.phone);
+  if (ph && !S.reAuth) { S.reAuth = true; try { const r = await api('login', {phone: ph, password: autoPass(ph)}); S.token = r.token; window.TOKEN = r.token; S.me = r.me; save('token'); save('me'); S.reAuth = false; refreshAll(); render(); return; } catch (e) { S.reAuth = false; } }
+  logout(); toast('Qaytadan kiring', true);
+};
 window.onPinForgot = () => logout();
 const save = k => lsSet('m_' + k, S[{token: 'token', me: 'me', shop: 'shop', cat: 'cat', cart: 'cart', queue: 'queue', orders: 'orders', acc: 'account', pop: 'popular'}[k]]);
 let rq = false; const render = () => { if (rq) return; rq = true; requestAnimationFrame(() => { rq = false; draw(); }); };
@@ -926,7 +931,7 @@ function vAuth() {
   const sh = S.shop || {}, np = !!S.needPass;
   return '<div class="login">' + (sh.banner ? '<img src="' + h(sh.banner) + '" alt=""' + IMGERR + ' style="width:100%;aspect-ratio:16/7;object-fit:cover;border-radius:14px">' : '') +
     '<div><div class="lbl">Elektr mollari do\'koni</div><h1 style="margin-top:8px">' + h(sh.name || "Elektr Do'kon") + '</h1><p class="muted" style="margin:8px 0 0">Buyurtmani telefondan bering, manzilingizga olib boramiz.</p></div>' +
-    '<form data-form="phone" class="card pad"><div class="f"><label for="l_phone">Telefon raqamingiz</label><input id="l_phone" name="phone" type="tel" inputmode="tel" placeholder="+998 90 123 45 67" required autocomplete="tel" value="' + h(S.authPhone || '') + '"></div>' +
+    '<form data-form="phone" class="card pad"><div class="f"><label for="l_phone">Telefon raqamingiz</label><input id="l_phone" name="phone" type="tel" inputmode="numeric" placeholder="+998 90 123 45 67" required autocomplete="tel" style="font-size:22px;letter-spacing:1px" value="' + h(S.authPhone || lsGet('m_phone', '') || '+998 ') + '"></div>' +
     (np ? '<div class="f"><label for="l_pass">Bu raqamga avval parol qo\'yilgan — parolingiz</label><input id="l_pass" name="password" type="password" required autocomplete="current-password"></div>' : '') +
     '<button class="btn pri block" style="height:52px">Kirish</button>' +
     '<p class="small muted" style="margin:0">' + (np ? 'Parolni unutsangiz, sotuvchiga qo\'ng\'iroq qiling.' + (sh.phone ? ' <b class="num">' + h(sh.phone) + '</b>' : '') : 'Faqat telefon raqamingizni yozing — ro\'yxatdan o\'tish bepul va bir zumda.') + '</p></form>' +
@@ -1179,8 +1184,9 @@ document.addEventListener('submit', async ev => {
   try {
     if (kind === 'login') loggedIn(await api('login', {phone: d.phone, password: d.password}));
     else if (kind === 'phone') {
-      const ph = d.phone, digits = String(ph || '').replace(/\D/g, '');
-      if (digits.length < 9) throw new Error("Telefon raqamni to'liq yozing");
+      let digits = String(d.phone || '').replace(/\D/g, ''); if (digits.length === 9) digits = '998' + digits;
+      if (digits.length !== 12) throw new Error("Telefon raqamni to'liq yozing: +998 va 9 ta raqam");
+      const ph = '+' + digits; lsSet('m_phone', ph);
       if (d.password) loggedIn(await api('login', {phone: ph, password: d.password}));
       else {
         const pw = autoPass(ph);

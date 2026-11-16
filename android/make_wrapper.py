@@ -18,6 +18,8 @@ APPS = [
     ('namangan-rahbar', ND + r'\namangan-nonvoyxona.caproj', 'nonvoyxona/namangan-rahbar/', 30, '4.0', 'Android'),
     ('namangan-hodim', ND + r'\namangan-nonvoyxona-ishchi.caproj', 'nonvoyxona/namangan-hodim/', 30, '4.0', 'Android'),
     ('hisob-kitob', r'C:\Users\user\Downloads\loyiha\cap', 'hisob/', 30, '30', 'AndroidBridge'),
+    ('dokon-mijoz', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Elektr-Dokon-Mijoz.caproj', 'dokon/mijoz/', 30, '2.0', 'none'),
+    ('dokon-sotuvchi', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Dokon-Sotuvchi.caproj', 'dokon/sotuvchi/', 30, '2.0', 'none'),
 ]
 OFF = ("<html><head><meta name=viewport content='width=device-width,initial-scale=1'></head>"
        "<body style='font-family:sans-serif;text-align:center;padding:60px 20px;background:#F6EFE3;color:#3b2414'>"

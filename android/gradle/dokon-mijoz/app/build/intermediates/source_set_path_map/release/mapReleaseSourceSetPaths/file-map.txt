@@ -1,0 +1,8 @@
+uz.elektrdokon.mijoz.app-pngs-0 C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-mijoz\app\build\generated\res\pngs\release
+uz.elektrdokon.mijoz.app-resValues-1 C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-mijoz\app\build\generated\res\resValues\release
+uz.elektrdokon.mijoz.app-updated_navigation_xml-2 C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-mijoz\app\build\generated\updated_navigation_xml\release
+uz.elektrdokon.mijoz.app-packageReleaseResources-3 C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-mijoz\app\build\intermediates\incremental\release\packageReleaseResources\merged.dir
+uz.elektrdokon.mijoz.app-packageReleaseResources-4 C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-mijoz\app\build\intermediates\incremental\release\packageReleaseResources\stripped.dir
+uz.elektrdokon.mijoz.app-release-5 C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-mijoz\app\build\intermediates\merged_res\release\mergeReleaseResources
+uz.elektrdokon.mijoz.app-main-6 C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-mijoz\app\src\main\res
+uz.elektrdokon.mijoz.app-release-7 C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-mijoz\app\src\release\res

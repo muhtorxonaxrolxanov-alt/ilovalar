@@ -1,0 +1,85 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="uz.elektrdokon.sotuvchi.web"
+4    android:versionCode="30"
+5    android:versionName="2.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="26"
+9        android:targetSdkVersion="36" />
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:4:5-66
+11-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:4:22-64
+12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+12-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:5:5-78
+12-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:5:22-76
+13    <uses-permission android:name="android.permission.VIBRATE" />
+13-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:6:5-65
+13-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:6:22-63
+14    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+14-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:7:5-76
+14-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:7:22-74
+15    <uses-permission
+15-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:8:5-94
+16        android:name="android.permission.BLUETOOTH"
+16-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:8:22-65
+17        android:maxSdkVersion="30" />
+17-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:8:66-92
+18    <uses-permission
+18-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:9:5-100
+19        android:name="android.permission.BLUETOOTH_ADMIN"
+19-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:9:22-71
+20        android:maxSdkVersion="30" />
+20-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:9:72-98
+21    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+21-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:10:5-75
+21-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:10:22-73
+22
+23    <application
+23-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:12:5-33:19
+24        android:allowBackup="true"
+24-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:13:9-35
+25        android:enableOnBackInvokedCallback="true"
+25-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:20:9-51
+26        android:extractNativeLibs="false"
+27        android:hardwareAccelerated="true"
+27-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:18:9-43
+28        android:icon="@mipmap/ic_launcher"
+28-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:14:9-43
+29        android:label="@string/app_name"
+29-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:15:9-41
+30        android:roundIcon="@mipmap/ic_launcher_round"
+30-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:16:9-54
+31        android:supportsRtl="true"
+31-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:17:9-35
+32        android:theme="@style/Theme.App"
+32-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:21:9-41
+33        android:usesCleartextTraffic="false" >
+33-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:19:9-45
+34        <activity
+34-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:22:9-32:20
+35            android:name="uz.elektrdokon.sotuvchi.MainActivity"
+35-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:23:13-41
+36            android:configChanges="orientation|screenSize|keyboardHidden|screenLayout|uiMode"
+36-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:26:13-94
+37            android:exported="true"
+37-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:24:13-36
+38            android:launchMode="singleTop"
+38-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:25:13-43
+39            android:windowSoftInputMode="adjustResize" >
+39-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:27:13-55
+40            <intent-filter>
+40-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:28:13-31:29
+41                <action android:name="android.intent.action.MAIN" />
+41-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:29:17-68
+41-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:29:25-66
+42
+43                <category android:name="android.intent.category.LAUNCHER" />
+43-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:30:17-76
+43-->C:\Loyihalar\ilovalar-sayt\android\gradle\dokon-sotuvchi\app\src\main\AndroidManifest.xml:30:27-74
+44            </intent-filter>
+45        </activity>
+46    </application>
+47
+48</manifest>
