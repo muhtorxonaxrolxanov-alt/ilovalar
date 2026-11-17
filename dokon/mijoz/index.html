@@ -948,7 +948,15 @@ function vAuth() {
 }
 /* Umumiy sahifadan kirib kelgan bo'lsa: do'kon serveriga o'zi ulanadi (mijoz hech narsa qilmaydi) */
 async function gateLogin() {
-  if (S.token) return; let l = null; try { l = JSON.parse(localStorage.getItem('em_lic') || 'null'); } catch (e) {}
+  let l = null; try { l = JSON.parse(localStorage.getItem('em_lic') || 'null'); } catch (e) {}
+  /* Boshqa raqam bilan kirildi: oldingi raqamning savati, buyurtmalari va profili tozalanadi — ma'lumotlar aralashmaydi.
+     Har raqamning buyurtmalari serverda, o'sha raqam qayta kirganda o'zi qaytadi. */
+  const dg = x => String(x || '').replace(/\D/g, '');
+  if (S.token && l && l.phone && dg(lsGet('m_phone', '')) && dg(lsGet('m_phone', '')) !== dg(l.phone)) {
+    S.token = null; window.TOKEN = null; S.me = null; S.orders = []; S.account = null; S.cart = {}; S.queue = [];
+    ['token', 'me', 'orders', 'acc', 'cart', 'queue'].forEach(k => lsSet('m_' + k, null));
+  }
+  if (S.token) return;
   if (!(l && l.ok && l.phone)) return;
   if (WEBGATE && !l.k) { try { localStorage.removeItem('em_lic'); } catch (e) {} render(); return; } // eski kirish: xavfsiz kalit yo'q — bir marta qayta kirsin
   const ph = '+' + String(l.phone).replace(/\D/g, ''); lsSet('m_phone', ph); const pw = storePass(ph);
