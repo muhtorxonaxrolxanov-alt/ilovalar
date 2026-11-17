@@ -4,6 +4,10 @@ param([string]$msg = "Yangilanish")
 $ErrorActionPreference = 'Stop'
 $env:Path = "C:\Program Files\Git\cmd;C:\Program Files\GitHub CLI;$env:Path"
 $site = 'C:\Loyihalar\ilovalar-sayt'
+# 0) Kodda sintaksis xatosi bo'lsa — saytga CHIQARMAYMIZ (2026-11-17: bitta tirnoq xatosi 222 Sotuvchini «Yuklanmoqda» da qotirgan edi)
+$node = 'C:\Program Files\nodejs\node.exe'
+foreach ($f in Get-ChildItem C:\Loyihalar\premium-xizmat\apps\src\*.js, C:\Loyihalar\nonvoyxona\src\*.js, C:\Loyihalar\ilovalar-sayt\yordam\yordam.js) {
+  & $node --check $f.FullName 2>$null; if ($LASTEXITCODE -ne 0) { "XATO: $($f.Name) da sintaksis xatosi — yuborilmadi"; & $node --check $f.FullName; exit 1 } }
 # 1) Yig'ish
 Push-Location C:\Loyihalar\nonvoyxona\src; python build_web.py; Pop-Location
 Push-Location C:\Users\user\Downloads\loyiha\web; python build_web.py; Pop-Location

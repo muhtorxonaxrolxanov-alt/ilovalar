@@ -1116,7 +1116,19 @@ else{try{SEC2.push(ENT)}catch(e){}var sm=setMenu;setMenu=function(){if(SS2=="sup
 var f0=window.fetch;window.fetch=function(u){if(bad(u&&u.url||u)){try{toast("Bu Premium nonvoyxona serveri. Namangan serveri linkini kiriting")}catch(e){}return Promise.reject(new Error("blocked"))}return f0.apply(this,arguments)};
 try{if(typeof S!="undefined"&&S&&bad(S.url))S.url=""}catch(e){}try{if(typeof SU!="undefined"&&bad(SU)){SU="";localStorage.removeItem("nv_url")}}catch(e){}})();
 </script>
-<script>(function(){var W=false;try{W=!!(window.Android&&Android.wrap&&Android.wrap())}catch(e){}if(!window.NVWEB&&!W)return;window.nvNewer=function(){return false};if("serviceWorker"in navigator&&(location.protocol=="https:"||location.hostname=="localhost")){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}})();</script><script>window.YAPP="nh";</script><script>/* Yordam: o'ng tepada doimiy sozlamalar va ? tugmasi; ? har bir ekrandagi joylarni birma-bir ko'rsatib tushuntiradi.
+<script>(function(){var W=false;try{W=!!(window.Android&&Android.wrap&&Android.wrap())}catch(e){}if(!window.NVWEB&&!W)return;window.nvNewer=function(){return false};if("serviceWorker"in navigator&&(location.protocol=="https:"||location.hostname=="localhost")){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}})();</script><script>(function(){
+function ten(){if(window.NVT)return true;try{return /\?t=\d{12}/.test(localStorage.getItem("ishchi_v1")||"")}catch(e){return false}}
+if(!ten())return;
+var R=[[/🍏\s*/g,"📑 "],[/Olma do[‘’'ʼ]konlari/g,"Excel buyurtmalar"],[/Olma do[‘’'ʼ]koni/g,"Excel buyurtmalar"],[/Olma do[‘’'ʼ]kon/g,"Excel buyurtma"],
+ [/Olma buyurtmasi/g,"Excel buyurtma"],[/Olmaga/g,"Excel buyurtmalarga"],[/Olmadan/g,"Excel buyurtmalardan"],[/Olmaning/g,"Excel buyurtmalarning"],
+ [/Olmasiz/g,"Excelsiz"],[/\bOlma(?![A-Za-z])/g,"Excel buyurtmalar"],[/\bolma(?![A-Za-z])/g,"Excel buyurtmalar"]];
+function fx(t){if(!t||t.indexOf("lma")<0&&t.indexOf("🍏")<0)return t;var o=t;R.forEach(function(r){o=o.replace(r[0],r[1])});return o}
+function walk(n){if(n.nodeType===3){var v=fx(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v;return}if(n.nodeType!==1||/^(SCRIPT|STYLE|TEXTAREA)$/.test(n.tagName))return;
+ ["placeholder","title","aria-label"].forEach(function(a){var x=n.getAttribute&&n.getAttribute(a);if(x){var y=fx(x);if(y!==x)n.setAttribute(a,y)}});
+ for(var c=n.firstChild;c;c=c.nextSibling)walk(c)}
+function go(){walk(document.body);new MutationObserver(function(ms){ms.forEach(function(m){if(m.type==="characterData")walk(m.target);else m.addedNodes.forEach(walk)})}).observe(document.body,{childList:true,subtree:true,characterData:true})}
+if(document.body)go();else addEventListener("DOMContentLoaded",go);
+})();</script><script>window.YAPP="nh";</script><script>/* Yordam: o'ng tepada doimiy sozlamalar va ? tugmasi; ? har bir ekrandagi joylarni birma-bir ko'rsatib tushuntiradi.
  * Ilova yig'ilganda: window.YAPP="tr" + shu fayl. Tugmalar matni yoki selektori bo'yicha topiladi;
  * ekranda yo'q tugma o'tkazib yuboriladi. */
 (function () {
