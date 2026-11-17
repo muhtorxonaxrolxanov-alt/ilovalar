@@ -17,7 +17,7 @@ foreach ($d in 'nonvoyxona', 'hisob') { if (Test-Path "$site\$d") { Remove-Item 
 Copy-Item C:\Loyihalar\nonvoyxona\web "$site\nonvoyxona" -Recurse
 Copy-Item C:\Users\user\Downloads\loyiha\web\out "$site\hisob" -Recurse
 # 2a) Har ilova papkasiga o'rnatish sahifasi (o.html) — Chrome aynan shu ilovani telefonga o'rnatadi
-foreach ($d in 'hisob', 'hamyon', 'dokon\mijoz', 'dokon\sotuvchi', 'nonvoyxona\toshkent-rahbar', 'nonvoyxona\toshkent-hodim', 'nonvoyxona\namangan-rahbar', 'nonvoyxona\namangan-hodim') {
+foreach ($d in 'hisob', 'hisob\shogird', 'hamyon', 'dokon\mijoz', 'dokon\sotuvchi', 'nonvoyxona\toshkent-rahbar', 'nonvoyxona\toshkent-hodim', 'nonvoyxona\namangan-rahbar', 'nonvoyxona\namangan-hodim') {
   if (Test-Path "$site\$d\manifest.webmanifest") { Copy-Item "$site\yuklash\o.html" "$site\$d\o.html" -Force } }
 # 2b) Yuklab olish sahifasi uchun eng yangi APK lar (doimiy nom bilan)
 New-Item -ItemType Directory -Force "$site\yuklash\apk" | Out-Null

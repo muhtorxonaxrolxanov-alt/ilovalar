@@ -28,11 +28,15 @@ var A={
 };
 A['hamyon']=[{n:'Hamyon',s:'Kunlik xarajatlar hisobi · bot: @hamyon_kunlik_hisob_bot',u:'hamyon/',i:'hamyon/icon-192.png',apk:'hamyon.apk'}];
 A['dokon-sotuvchi']=[A.dokon[0]];A['dokon-mijoz']=[A.dokon[1]];
+/* Shogird: ustaning taklif havolasi (?a=shogird&taklif=KOD). Avval o'z «Shogird» ilovasini o'rnatadi, keyin ichida kod bilan ro'yxatdan o'tadi. */
+var TK=((location.search.match(/[?&]taklif=([A-Za-z0-9]{8})/)||[])[1]||'').toUpperCase();
+A['shogird']=[{n:'Shogird — Hisob-kitob',s:'Ustangiz jamoasiga qo\'shilish va ish kunlarini yozish',u:'hisob/shogird/'+(TK?'?taklif='+TK:''),i:'hisob/shogird/icon-192.png',apk:''}];
+try{if(TK)localStorage.setItem('hk_taklif',TK)}catch(e){}
 var k=(location.search.match(/[?&]a=([\w-]+)/)||[])[1],L=A[k],ua=navigator.userAgent;
 var isI=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),isA=/Android/.test(ua);
 var inApp=/Telegram|FBAN|FBAV|Instagram|Line\//.test(ua)||(isI&&!/Safari/.test(ua));
 /* Android: ilovani aynan Chrome'da ochamiz (Telegram ichidan ham) — o'rnatish Chrome orqali bo'ladi */
-function cr(u){var h=S+u+'o.html';if(!isA)return h;return 'intent://'+h.replace(/^https:\/\//,'')+'#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url='+encodeURIComponent(h)+';end'}
+function cr(u){var h=S+u.replace(/\?.*$/,'')+'o.html';if(!isA)return h;return 'intent://'+h.replace(/^https:\/\//,'')+'#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url='+encodeURIComponent(h)+';end'}
 function e(s){return String(s).replace(/[&<>"']/g,function(c){return'&#'+c.charCodeAt(0)+';'})}
 var w=document.getElementById('w');
 if(!L){var h='<h1 style="margin:8px 0 16px">Ilovalar</h1>';for(var x in A){if(x.indexOf('dokon-')==0)continue;A[x].forEach(function(a){h+='<a class="b pri" href="?a='+x+'">'+e(a.n+' — '+a.s)+'</a>'})}w.innerHTML=h}
@@ -45,9 +49,12 @@ else{document.title=L[0].n+' — yuklab olish';w.innerHTML=L.map(function(a,j){r
  '<div class="st" id="a'+j+'"><a class="b and" href="'+cr(a.u)+'">📲 O\'rnatish (Chrome orqali)</a>'+
  '<ol><li>Yuqoridagi tugmani bosing.</li><li>Ochilgan sahifada <b>«📲 Telefonga o\'rnatish»</b> → <b>O\'rnatish</b>.</li><li>Ilova telefon ekraniga va ilovalar ro\'yxatiga tushadi — oddiy ilovadek, o\'z belgisi bilan, butun ekranda ochiladi.</li></ol>'+
  '<div class="s">✅ Bu usulda «Play Protect … bloklandi» degan ogohlantirish <b>chiqmaydi</b>. Ilova o\'zi yangilanib turadi.</div>'+
- '<details style="margin-top:12px"><summary class="s" style="cursor:pointer">Boshqa yo\'l: APK fayl</summary>'+
+ (a.apk?'<details style="margin-top:12px"><summary class="s" style="cursor:pointer">Boshqa yo\'l: APK fayl</summary>'+
  '<a class="b" style="background:#6b7280" href="apk/'+a.apk+'" download>⬇ APK yuklab olish</a>'+
- '<div class="s">Google bu faylni tanimagani uchun «Play Protect» ogohlantirishi chiqishi mumkin. Unda <b>Batafsil → Baribir o\'rnatish</b> ni bosing.</div></details></div></div>'}).join('');
+ '<div class="s">Google bu faylni tanimagani uchun «Play Protect» ogohlantirishi chiqishi mumkin. Unda <b>Batafsil → Baribir o\'rnatish</b> ni bosing.</div></details>':'')+'</div></div>'}).join('');
+ if(k==='shogird')w.insertAdjacentHTML('afterbegin','<div class="app" style="background:#f0fdf4;border:2px solid #16a34a"><h1 style="font-size:20px">👷 Ustangiz sizni jamoasiga taklif qildi</h1>'+
+  '<ol style="font-size:16px;line-height:1.6;padding-left:22px"><li><b>Avval</b> pastdan o\'z «Shogird» ilovangizni telefonga o\'rnating.</li><li>Telefon ekranidagi <b>«Shogird»</b> belgisini bosib oching.</li><li>Parol o\'ylab toping — ro\'yxatdan o\'tasiz va ustangiz jamoasiga qo\'shilasiz.</li></ol>'+
+  (TK?'<div style="margin-top:10px;font-size:15px">Taklif kodingiz (ilova so\'rasa yozing):</div><div style="font-size:30px;font-weight:800;letter-spacing:4px;margin:4px 0">'+e(TK)+'</div>':'')+'</div>');
  if(L.length==1){if(isI)t('i0');else if(isA)t('a0')}}
 function t(id){document.getElementById(id).classList.toggle('on')}
 </script></body></html>

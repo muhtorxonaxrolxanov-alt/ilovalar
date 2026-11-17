@@ -340,6 +340,8 @@ if(/[?&]tab=reg/.test(location.search))setTimeout(function(){$('tR').onclick()},
 /* Havola bilan ochilgan: ?taklif=KOD (shogird) yoki ?pay=1 (ilovadan to'lov) */
 (function(){var q=location.search,m=q.match(/[?&]taklif=([A-Za-z0-9]{8})/);
   if(m){showJoin(m[1]);return}
+  /* Shogird ilovasi ochildi (havoladagi kod yuklash sahifasida eslab qolingan bo'lishi mumkin) */
+  if(/[?&]shogird=1/.test(q)){var tk='';try{tk=localStorage.getItem('hk_taklif')||''}catch(e){}showJoin(tk);return}
   if(/[?&]pay=1/.test(q)){var l=HK.lic()||{};if(!l.phone)return;phone=l.phone;show('pX');$('tabs').hidden=true;$('xUntil').textContent='Yuklanmoqda…';
     HK.call(phone,{act:'payinfo'}).then(function(r){showPay(r.pay,r.until)}).catch(function(e){err(net(e))})}})();
 try{var l=HK.lic();if(l&&l.ok&&l.until<=Date.now()){err('Foydalanish muddatingiz tugagan. Parol bilan kiring va egadan ruxsat so\'rang.')}}catch(e){}

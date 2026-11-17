@@ -680,8 +680,9 @@ async function crewInvite(w){
     crewShare(w,r.token)}catch(e){note('Bo\'lmadi','Internet yo\'q yoki bot ishlamayapti. Birozdan keyin qayta urinib ko\'ring.')}
 }
 function crewShare(w,tk){
-  const link=SITE_HISOB+'gate.html?taklif='+tk,msg='Assalomu alaykum, '+w.name+'! Sizni «Hisob-kitob» ilovasidagi jamoamga qo\'shdim. Havolani oching va parol o\'ylab topib kiring:',txt=msg+'\n'+link+'\nTaklif kodi: '+tk;
-  const d=$('dlg');d.innerHTML='<h3 style="margin:0 0 6px">📤 '+esc(w.name)+' uchun taklif</h3><div class="hint">Havolani shogirdga yuboring. U havolani ochadi, parol qo\'yadi va ilovaga kiradi. Kod: <b style="font-size:18px;letter-spacing:2px">'+tk+'</b> (14 kun amal qiladi)</div>'+
+  /* Havola: avval shogird O'Z ilovasini («Shogird») telefoniga o'rnatadi, keyin ilova ichida taklif kodi bilan ro'yxatdan o'tadi */
+  const link=SITE_HISOB.replace(/hisob\/$/,'')+'yuklash/?a=shogird&taklif='+tk,msg='Assalomu alaykum, '+w.name+'! Sizni «Hisob-kitob» ilovasidagi jamoamga qo\'shdim.\n1) Havolani oching va «Shogird» ilovasini telefoningizga o\'rnating.\n2) Ilovani ochib, parol o\'ylab toping — ro\'yxatdan o\'tasiz.',txt=msg+'\n'+link+'\nTaklif kodi: '+tk;
+  const d=$('dlg');d.innerHTML='<h3 style="margin:0 0 6px">📤 '+esc(w.name)+' uchun taklif</h3><div class="hint">Havolani shogirdga yuboring. U havolani ochadi → <b>«Shogird» ilovasini o\'rnatadi</b> → ilovani ochib parol qo\'yadi va jamoangizga qo\'shiladi. Kod: <b style="font-size:18px;letter-spacing:2px">'+tk+'</b> (14 kun amal qiladi)</div>'+
     '<button class="b p opt" id="sh_tg">✈️ Telegram orqali yuborish</button><button class="b opt" id="sh_sms">💬 SMS orqali yuborish</button><button class="b opt" id="sh_cp">📋 Nusxalash</button><button class="b opt" id="sh_x">Yopish</button>';
   d.showModal();
   const go=u=>{try{if(window.AndroidBridge&&AndroidBridge.open){AndroidBridge.open(u);return}}catch(e){}location.href=u};
