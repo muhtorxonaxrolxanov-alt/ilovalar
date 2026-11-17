@@ -892,6 +892,7 @@ function draw() {
 function drawTop() {
   let s = '';
   if (S.token) { const c = cartCount(); s = '<button class="iconbtn" data-act="openCart" aria-label="Savatcha">' + I.bag + (c ? '<span class="dot">' + fmt(c) + '</span>' : '') + '</button>'; }
+  else if (S.gating) s = '<span class="small muted" style="font-weight:700">⏳ Kirilmoqda…</span>';
   else if (S.guest) s = '<button class="btn sm pri" data-act="toAuth">Kirish</button>';
   $('#topActions').innerHTML = s;
 }
@@ -960,7 +961,8 @@ async function gateLogin() {
   if (!(l && l.ok && l.phone)) return;
   if (WEBGATE && !l.k) { try { localStorage.removeItem('em_lic'); } catch (e) {} render(); return; } // eski kirish: xavfsiz kalit yo'q — bir marta qayta kirsin
   const ph = '+' + String(l.phone).replace(/\D/g, ''); lsSet('m_phone', ph); const pw = storePass(ph);
-  S.gating = true; render();
+  // Tezlik: kirish serverda tugaguncha katalog DARHOL ko'rinadi (kutish ekrani emas); tepada «⏳ Kirilmoqda…»
+  const wasGuest = S.guest; S.gating = true; S.guest = true; render();
   try { loggedIn(await api('login', {phone: ph, password: pw})); }
   catch (e1) {
     if (e1.code === 'net') { toast("Internet yo'q yoki server javob bermadi. Qayta oching.", true); }
@@ -968,7 +970,7 @@ async function gateLogin() {
     else try { loggedIn(await api('register', {phone: ph, password: pw, name: 'Mijoz ' + ph.slice(-4), address: '—'})); toast("Xush kelibsiz! Manzilingizni Profil bo'limida yozib qo'ying"); }
     catch (e2) { if (e2.code === 'exists') { S.needPass = true; S.authPhone = ph; toast("Bu raqam do'konda oldin boshqa parol bilan ochilgan. O'sha parolni bir marta yozing.", true, 6000); } else toast(e2.message || 'Xatolik', true); }
   }
-  S.gating = false; render();
+  S.gating = false; if (!S.token) S.guest = wasGuest; render();
 }
 /* Do'kon paroli: Telegram bot orqali tasdiqlangan kirishdan keladigan maxfiy kalit (em_lic.k). Uni hech kim raqamdan hisoblay olmaydi. */
 function storePass(ph) { let l = null; try { l = JSON.parse(localStorage.getItem('em_lic') || 'null'); } catch (e) {}
@@ -1148,7 +1150,7 @@ function logout() {
 }
 function loggedIn(r) {
   S.token = r.token; window.TOKEN = r.token; S.me = r.me; S.guest = false; S.tab = 'shop';
-  save('token'); save('me'); S.cat = null; lsSet('m_cat', null); S.slide = 0;
+  save('token'); save('me'); S.slide = 0; // katalog ekranda qoladi; kirgandan keyingi narxlar orqadan yangilanadi (key boshqa bo'lgani uchun)
   window.scrollTo(0, 0); refreshAll(); render();
 }
 window.appBack = () => {

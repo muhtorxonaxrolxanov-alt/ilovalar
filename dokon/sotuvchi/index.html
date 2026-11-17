@@ -786,12 +786,15 @@ const isNative = f => !!(window.Android && window.Android[f]);
 
 /* ---------- yuklash ---------- */
 async function load(what, fn) { try { await fn(); } catch (e) { if (e.code !== 'auth') errToast(e); S['err_' + what] = 1; } render(); }
-const loadOrders = () => load('orders', async () => { const r = await api('orders', {status: S.ostat}); S.od = r; S.newCount = r.counts.new || 0; });
-const loadCust = () => load('cust', async () => { S.cust = await api('customers'); });
+/* Tezlik (2026-11-17): oxirgi ko'rilgan ro'yxatlar telefonda saqlanadi va DARHOL ko'rsatiladi («Yuklanmoqda…» o'rniga),
+   yangisi serverdan orqadan kelib almashtiriladi. Chiqishda tozalanadi. */
+const CK = ['s_od_new', 's_od_accepted', 's_od_onway', 's_od_done', 's_od_all', 's_cust', 's_prods', 's_rep_m', 's_set'];
+const loadOrders = () => { if (!S.od) S.od = lsGet('s_od_' + S.ostat, null); return load('orders', async () => { const r = await api('orders', {status: S.ostat}); S.od = r; S.newCount = r.counts.new || 0; lsSet('s_od_' + S.ostat, r); }); };
+const loadCust = () => { if (!S.cust) S.cust = lsGet('s_cust', null); return load('cust', async () => { S.cust = await api('customers'); lsSet('s_cust', S.cust); }); };
 const loadCd = () => load('cd', async () => { S.cd = await api('customer', {id: S.cview, year: S.cyear}); });
-const loadProds = () => load('prods', async () => { S.prods = (await api('products')).products; });
-const loadRep = () => load('rep', async () => { S.rep = await api('report', {period: S.period}); });
-const loadSet = () => load('set', async () => { S.set = (await api('getSettings')).settings; setTimeout(tgAsk, 800); });
+const loadProds = () => { if (!S.prods) S.prods = lsGet('s_prods', null); return load('prods', async () => { S.prods = (await api('products')).products; lsSet('s_prods', S.prods); }); };
+const loadRep = () => { if (!S.rep && S.period === 'm') S.rep = lsGet('s_rep_m', null); return load('rep', async () => { S.rep = await api('report', {period: S.period}); if (S.period === 'm') lsSet('s_rep_m', S.rep); }); };
+const loadSet = () => { if (!S.set) S.set = lsGet('s_set', null); return load('set', async () => { S.set = (await api('getSettings')).settings; lsSet('s_set', S.set); setTimeout(tgAsk, 800); }); };
 
 /* ---------- yangi buyurtma kuzatuvi ---------- */
 let audio = null;
@@ -876,7 +879,7 @@ function supGo() {
   if (/github\.io$/.test(location.hostname)) location.href = '/ilovalar/hisob/murojaat.html' + q; else window.open(U + q, '_blank');
 }
 function logout() {
-  S.token = null; window.TOKEN = null; lsSet('s_token', null);
+  S.token = null; window.TOKEN = null; lsSet('s_token', null); CK.forEach(k => lsSet(k, null)); try { Object.keys(localStorage).filter(k => /^s_od_/.test(k)).forEach(k => localStorage.removeItem(k)); } catch (e) {}
   Object.assign(S, {od: null, cust: null, cd: null, cview: null, prods: null, rep: null, set: null, tab: 'orders', newCount: 0});
   render();
 }
@@ -1145,7 +1148,7 @@ function vSettings() {
     '<button class="btn sm" data-act="testNotify">Sinov xabarini yuborish</button></div>' +
     (isNative('btDevices') ? '<div class="lbl">Chek printeri</div><div class="list"><div class="li">' + I.printer.replace('<svg', '<svg style="width:24px;height:24px;flex:none"') + '<div class="grow"><div class="t">' + (S.printer ? h(S.printer.name) : 'Tanlanmagan') + '</div><div class="s">58 mm Bluetooth chek printeri</div></div><button class="btn sm" data-act="pickPrinter">' + (S.printer ? 'Almashtirish' : 'Tanlash') + '</button></div></div>' : '') +
     '<div class="lbl">Xavfsizlik</div><div class="list">' + pinRow() + '<div class="li"><div class="grow"><div class="s">Sotuvchi pochtasi</div><div class="t">' + h(s.sellerEmail) + '</div></div><button class="btn sm" data-act="loginForm">O\'zgartirish</button></div></div>' +
-    '<div class="lbl">Ma\'lumotlar va zaxira</div><div class="card pad" style="display:flex;flex-direction:column;gap:10px"><p class="small muted" style="margin:0">Hamma ma\'lumot Google Drive\'dagi «Elektr Do'kon — baza» jadvalida. Har kuni soat 3:00 da nusxasi «Zaxira nusxalar» papkasiga o\'zi saqlanadi.</p>' +
+    '<div class="lbl">Ma\'lumotlar va zaxira</div><div class="card pad" style="display:flex;flex-direction:column;gap:10px"><p class="small muted" style="margin:0">Hamma ma\'lumot Google Drive\'dagi «Elektr Do\'kon — baza» jadvalida. Har kuni soat 3:00 da nusxasi «Zaxira nusxalar» papkasiga o\'zi saqlanadi.</p>' +
     '<div class="row wrapr"><button class="btn" style="flex:1" data-act="backup">Hozir zaxira olish</button>' + (s.sheetUrl ? '<a class="btn" style="flex:1" href="' + h(s.sheetUrl) + '">Jadvalni ochish</a>' : '') + '</div></div>' +
     '<button class="btn block" data-act="sup" style="margin-bottom:10px">🆘 Yordam markazi — muammo yoki savol yozish</button>' +
     '<button class="btn ghost block" data-act="logout" data-confirm="1">' + I.out + 'Chiqish</button>';
@@ -1231,7 +1234,7 @@ document.addEventListener('click', async ev => {
     case 'imgFirst': { const i = Number(el.dataset.i); PF.imgs.unshift(PF.imgs.splice(i, 1)[0]); drawPImgs(); break; }
     case 'vidDel': PF.video = null; PF.removeVideo = true; drawPVid(); break;
     case 'delProd': if (await act(() => api('deleteProduct', {id}), 'Tovar o\'chirildi', el)) { closeSheet(); loadProds(); } break;
-    case 'period': S.period = k; loadRep(); render(); break;
+    case 'period': S.period = k; S.rep = null; loadRep(); render(); break;
     case 'repDetail': repDetail(k); break;
     case 'expForm': expSheet(); break;
     case 'delExp': if (await act(() => api('deleteExpense', {id}), 'O\'chirildi', el)) loadRep(); break;
