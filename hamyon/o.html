@@ -45,10 +45,12 @@ window.addEventListener('appinstalled',done);
 setTimeout(function(){if(!EV&&go.style.display!=='none'){go.textContent='📲 Telefonga o\'rnatish';go.disabled=false;$('man').classList.add('on');go.onclick=function(){if(EV)return doInst();$('man').classList.add('on');$('man').scrollIntoView({behavior:'smooth'})};}},3500);
 /* iPhone: Safari faqat «Bosh ekranga qo'shish» orqali o'rnatadi */
 if(/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)){go.style.display='none';$('wv').classList.remove('on');
- var sf=/Safari\//.test(ua)&&!/CriOS|FxiOS|EdgiOS|Telegram/.test(ua);
+ /* 2026-11-17: Telegram'ning ichki brauzeri o'zini Safari deb ko'rsatadi — serviceWorker yo'qligidan (WKWebView) va Telegram belgilaridan bilamiz */
+ var sf=/Safari\//.test(ua)&&!/CriOS|FxiOS|EdgiOS|Telegram/.test(ua)&&!window.TelegramWebviewProxy&&!window.TelegramWebviewProxyProto&&('serviceWorker' in navigator);
  $('st').innerHTML='<b>iPhone\'ga o\'rnatish — 2 qadam</b>';
  $('man').innerHTML=sf?'<ol style="font-size:18px"><li>Pastdagi <b>Ulashish</b> belgisini bosing <span style="display:inline-block;border:2px solid #1f6feb;border-radius:6px;padding:0 6px;color:#1f6feb">⬆</span><br><small>(ko\'rinmasa — avval pastdagi <b>«⋯»</b> ni bosing)</small></li><li><b>«Bosh ekranga qo\'shish»</b> (На экран «Домой») → <b>Qo\'shish</b>.</li></ol><div class="s">Keyin telefon ekranidagi belgidan oching.</div>'
-  :'<b>Bu oyna Safari emas — bu yerda o\'rnatib bo\'lmaydi.</b><a class="b" style="background:#1f6feb" href="x-safari-'+location.href+'">🧭 Safari\'da ochish</a><div class="s" style="margin-top:8px">Ochilmasa: yuqori o\'ngdagi <b>«⋯»</b> → <b>«Safari\'da ochish»</b>.</div>';
+  :'<b style="font-size:19px">Siz Telegram ichidasiz — bu yerda o\'rnatib bo\'lmaydi.</b><ol style="font-size:18px;text-align:left"><li>Pastki <b>o\'ng burchakdagi 🧭 (kompas)</b> belgisini bosing — <b>Safari</b> ochiladi.<br><small>(kompas bo\'lmasa: yuqoridagi <b>«⋯»</b> → <b>«Safari\'da ochish»</b>)</small></li><li>Safari\'da: pastdagi <b>Ulashish ⬆</b> → <b>«Bosh ekranga qo\'shish»</b> → <b>Qo\'shish</b>.</li></ol><a class="b" style="background:#1f6feb" href="x-safari-'+location.href+'">🧭 Safari\'da ochish</a>';
+ if(!sf)document.body.insertAdjacentHTML('beforeend','<div style="position:fixed;right:22px;bottom:calc(64px + env(safe-area-inset-bottom,0px));font-size:46px;animation:yc 1s infinite alternate">↘️</div><style>@keyframes yc{from{transform:translate(0,0)}to{transform:translate(8px,8px)}}</style>');
  $('man').classList.add('on');
  if(sf)document.body.insertAdjacentHTML('beforeend','<div style="position:fixed;left:50%;bottom:calc(8px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);font-size:46px;animation:yb 1s infinite alternate">⬇️</div><style>@keyframes yb{from{transform:translate(-50%,0)}to{transform:translate(-50%,12px)}}</style>')}
 </script></body></html>
