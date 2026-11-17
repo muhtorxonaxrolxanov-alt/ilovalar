@@ -432,7 +432,8 @@ document.addEventListener('visibilitychange',function(){if(!document.hidden)sync
   window.yordamMarkaz = function () { location.href = window.yordamMarkazUrl(); };
   /* Kirish / ro'yxatdan o'tish sahifasida (bloklangan odam ham) — burchakda doim ko'rinadigan tugma */
   if (K === 'gate') (function () { function add() { if (document.getElementById('yrds')) return; var a = document.createElement('a'); a.id = 'yrds'; a.href = window.yordamMarkazUrl(); a.textContent = '🆘 Yordam markazi';
-    a.style.cssText = 'position:fixed;left:8px;top:calc(8px + env(safe-area-inset-top,0px));z-index:2147482000;background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;border-radius:999px;padding:8px 12px;font:600 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 1px 4px rgba(0,0,0,.15)';
+    a.textContent = '🆘 Muammo bormi? Yordam markaziga yozing';
+    a.style.cssText = 'position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom,0px));white-space:nowrap;z-index:2147482000;background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;border-radius:999px;padding:10px 16px;font:600 15px system-ui,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,.15)';
     document.body.appendChild(a); }
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', add); else add(); })();
 
