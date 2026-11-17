@@ -25,6 +25,8 @@ Copy-Item "$site\hisob\shogird\index.html" "$site\hisob\shogird\o.html"
 # 2a) Har ilova papkasiga o'rnatish sahifasi (o.html) — Chrome aynan shu ilovani telefonga o'rnatadi
 foreach ($d in 'hisob', 'shogird', 'hamyon', 'dokon\mijoz', 'dokon\sotuvchi', 'nonvoyxona\toshkent-rahbar', 'nonvoyxona\toshkent-hodim', 'nonvoyxona\namangan-rahbar', 'nonvoyxona\namangan-hodim') {
   if (Test-Path "$site\$d\manifest.webmanifest") { Copy-Item "$site\yuklash\o.html" "$site\$d\o.html" -Force } }
+# 2a2) iPhone uchun o'rnatish fayli (ilova.mobileconfig) har ilova papkasiga
+python "$site\yuklash\mk_clip.py" $site 'hisob' 'shogird' 'hamyon' 'dokon\mijoz' 'dokon\sotuvchi' 'nonvoyxona\toshkent-rahbar' 'nonvoyxona\toshkent-hodim' 'nonvoyxona\namangan-rahbar' 'nonvoyxona\namangan-hodim'
 # 2b) Yuklab olish sahifasi uchun eng yangi APK lar (doimiy nom bilan)
 New-Item -ItemType Directory -Force "$site\yuklash\apk" | Out-Null
 Get-ChildItem "$site\android\out\*.apk" | Group-Object { $_.Name -replace '-[\d.]+\.apk$', '' } | ForEach-Object {
