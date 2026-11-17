@@ -960,9 +960,13 @@ async function gateLogin() {
   if (S.token) return;
   if (!(l && l.ok && l.phone)) return;
   if (WEBGATE && !l.k) { try { localStorage.removeItem('em_lic'); } catch (e) {} render(); return; } // eski kirish: xavfsiz kalit yo'q — bir marta qayta kirsin
+  // Bot kaliti (g) yo'q eski kirish: ichkarida parol so'ramaslik uchun bir marta umumiy «Kirish / Ro'yxatdan o'tish» ga qaytaramiz
+  if (WEBGATE && !l.g) { try { localStorage.removeItem('em_lic'); } catch (e) {} location.replace('/ilovalar/hisob/gate.html?prod=em&back=' + encodeURIComponent(location.pathname)); return; }
   const ph = '+' + String(l.phone).replace(/\D/g, ''); lsSet('m_phone', ph); const pw = storePass(ph);
   // Tezlik: kirish serverda tugaguncha katalog DARHOL ko'rinadi (kutish ekrani emas); tepada «⏳ Kirilmoqda…»
   const wasGuest = S.guest; S.gating = true; S.guest = true; render();
+  // 1-yo'l: bot kaliti bilan — parol umuman so'ralmaydi (raqam Telegram kodi bilan tasdiqlangan)
+  if (l.g) { try { loggedIn(await api('gl', {g: l.g})); S.gating = false; render(); return; } catch (e) { if (e.code === 'net') { S.gating = false; S.guest = wasGuest; render(); toast("Internet yo'q yoki server javob bermadi. Qayta oching.", true); return; } } }
   try { loggedIn(await api('login', {phone: ph, password: pw})); }
   catch (e1) {
     if (e1.code === 'net') { toast("Internet yo'q yoki server javob bermadi. Qayta oching.", true); }

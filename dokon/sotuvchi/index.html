@@ -846,6 +846,7 @@ function draw() {
 
 /* ---------- kirish ---------- */
 function vLogin() {
+  if (S.gating) return '<div class="empty"><b>⏳ Kirilmoqda…</b></div>';
   return '<div class="login"><div><div class="lbl">Faqat sotuvchi uchun</div><h1 style="margin-top:8px">' + h(S.shop.name || "222 Aksessuar") + '</h1><p class="muted" style="margin:8px 0 0">Buyurtmalar, mijozlar, qarzlar va foyda hisobi.</p></div>' +
     '<form data-form="login" class="card pad"><div class="f"><label for="l_email">Pochta</label><input id="l_email" name="email" type="email" required value="' + h(S.email) + '" autocomplete="username"></div>' +
     '<div class="f"><label for="l_pass">Parol</label><input id="l_pass" name="password" type="password" required autocomplete="current-password"></div>' +
@@ -1340,7 +1341,18 @@ setupSearch({
 });
 render();
 if (S.token) { loadOrders(); poll(); setTimeout(loadSet, 2500); }
+else gateSeller();
 lockNow();
+/* «Kirish / Ro'yxatdan o'tish» (umumiy darvoza) dan keyin pochta/parol SO'RALMAYDI: bot kaliti bilan sotuvchi sifatida kiradi (2026-11-17).
+   Kalit yo'q yoki bu raqam do'kon sotuvchisi bo'lmasa — eski kirish oynasi qoladi. */
+async function gateSeller() {
+  let l = null; try { l = JSON.parse(localStorage.getItem('ed_lic') || 'null'); } catch (e) {}
+  if (!l || !l.g) return;
+  S.gating = true; render();
+  try { const r = await api('gl', {g: l.g, role: 'seller'}); S.token = r.token; window.TOKEN = r.token; S.email = r.email; S.shop = r.shop || {}; lsSet('s_token', S.token); lsSet('s_email', S.email); lsSet('s_shop', S.shop); S.tab = 'orders'; loadOrders(); poll(); setTimeout(loadSet, 1500); }
+  catch (e) {}
+  S.gating = false; render();
+}
 
 </script>
 <script>if("serviceWorker"in navigator&&(location.protocol=="https:"||location.hostname=="localhost"))addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});</script><script>window.YAPP="es";</script><script>/* Yordam: o'ng tepada doimiy sozlamalar va ? tugmasi; ? har bir ekrandagi joylarni birma-bir ko'rsatib tushuntiradi.
