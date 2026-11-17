@@ -611,8 +611,9 @@ window.__S=function(){return S};window.__an=analyze;window.__bom=bom;window.__ex
   /* ---------- 📲 Telefonga o'rnatish (APK siz): Chrome ilovani o'zi yasaydi — Google ogohlantirishi chiqmaydi ---------- */
   (function () {
     var inst = false; try { inst = matchMedia('(display-mode: standalone)').matches || navigator.standalone; } catch (e) {}
-    var wrapped = false; try { wrapped = !!(window.AndroidBridge || (window.Android && Android.wrap)); } catch (e) {}
-    if (inst || wrapped || !/Android/i.test(navigator.userAgent)) return;
+    /* APK ichida (WebView: "; wv)") yoki boshqa ilova kirish sahifasida (gate.html?prod=rx|nv|ed|em) — taklif qilinmaydi */
+    var wrapped = /; wv\)/.test(navigator.userAgent), other = /gate\.html/.test(location.pathname) && /[?&]prod=(rx|nv|ed|em)/.test(location.search);
+    if (inst || wrapped || other || !/Android/i.test(navigator.userAgent)) return;
     var ask = /[?&#]o=1/.test(location.href), EV = null, BAR = null, DK = 'yrd_inst_no';
     function no() { try { return Date.now() - (+localStorage.getItem(DK) || 0) < 3 * 864e5; } catch (e) { return false; } }
     function bar(html) { if (BAR) BAR.remove(); var d = document.createElement('div'); BAR = d; d.id = 'yrdi';
