@@ -335,6 +335,8 @@ $('bRg').onclick=function(){phone=normPh($('rph').value);var a=$('rp1').value,b=
   if(!okPh(phone))return err('Telefon raqamni to\'liq yozing.');if(a.length<4)return err('Parol kamida 4 belgi bo\'lsin.');if(a!==b)return err('Ikkala parol bir xil emas.');
   run({act:'reg',ph:HK.hash(phone,a),dev:HK.dev()},$('bRg'),'Ro\'yxatdan o\'tish')};
 if(/[?&]tab=reg/.test(location.search))setTimeout(function(){$('tR').onclick()},0);
+/* ?ph=998... — ilovada yozilgan raqam kirish va ro'yxat maydonlariga o'zi tushadi */
+(function(){var m=location.search.match(/[?&]ph=(\d{12})/);if(!m)return;var v='+'+m[1];['lph','ph','rph'].forEach(function(i){if($(i))$(i).value=v})})();
 /* Havola bilan ochilgan: ?taklif=KOD (shogird) yoki ?pay=1 (ilovadan to'lov) */
 (function(){var q=location.search,m=q.match(/[?&]taklif=([A-Za-z0-9]{8})/);
   if(m){showJoin(m[1]);return}
