@@ -31,6 +31,8 @@ A['dokon-sotuvchi']=[A.dokon[0]];A['dokon-mijoz']=[A.dokon[1]];
 var k=(location.search.match(/[?&]a=([\w-]+)/)||[])[1],L=A[k],ua=navigator.userAgent;
 var isI=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),isA=/Android/.test(ua);
 var inApp=/Telegram|FBAN|FBAV|Instagram|Line\//.test(ua)||(isI&&!/Safari/.test(ua));
+/* Android: ilovani aynan Chrome'da ochamiz (Telegram ichidan ham) — o'rnatish Chrome orqali bo'ladi */
+function cr(u){var h=S+u+'?o=1';if(!isA)return h;return 'intent://'+h.replace(/^https:\/\//,'')+'#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url='+encodeURIComponent(h)+';end'}
 function e(s){return String(s).replace(/[&<>"']/g,function(c){return'&#'+c.charCodeAt(0)+';'})}
 var w=document.getElementById('w');
 if(!L){var h='<h1 style="margin:8px 0 16px">Ilovalar</h1>';for(var x in A){if(x.indexOf('dokon-')==0)continue;A[x].forEach(function(a){h+='<a class="b pri" href="?a='+x+'">'+e(a.n+' — '+a.s)+'</a>'})}w.innerHTML=h}
@@ -40,9 +42,12 @@ else{document.title=L[0].n+' — yuklab olish';w.innerHTML=L.map(function(a,j){r
  '<ol><li>Pastdagi <b>«Ilovani ochish»</b> tugmasini bosing (Safari\'da).</li><li>Pastdagi <b>Ulashish</b> belgisini bosing (kvadrat va yuqoriga strelka ⬆).</li><li><b>«Bosh ekranga qo\'shish»</b> (На экран «Домой») ni tanlang → <b>Qo\'shish</b>.</li><li>Telefon ekranida ilova belgisi paydo bo\'ladi. Shuni bosib kiring.</li></ol>'+
  '<a class="b pri" href="'+S+a.u+'" target="_blank">Ilovani ochish</a></div>'+
  '<button class="b and" onclick="t(\'a'+j+'\')">&#129302; Android uchun</button>'+
- '<div class="st" id="a'+j+'"><a class="b and" href="apk/'+a.apk+'" download>⬇ Yuklab olish (APK)</a>'+
- '<ol><li>Yuklab olingan faylni oching.</li><li>«Noma\'lum manbadan o\'rnatish» so\'ralsa — <b>Ruxsat berish</b>ni yoqing.</li><li><b>O\'rnatish</b>ni bosing, keyin <b>Ochish</b>.</li></ol>'+
- '<div class="s">Ilova o\'zi yangilanib turadi — qayta yuklash shart emas.</div></div></div>'}).join('');
+ '<div class="st" id="a'+j+'"><a class="b and" href="'+cr(a.u)+'">📲 O\'rnatish (Chrome orqali)</a>'+
+ '<ol><li>Yuqoridagi tugmani bosing — ilova <b>Chrome</b>da ochiladi.</li><li>Pastda chiqqan <b>«📲 O\'rnatish»</b> tugmasini bosing, keyin yana <b>O\'rnatish</b>.</li><li>Telefon ekranida ilova belgisi paydo bo\'ladi. Shuni bosib kiring.</li></ol>'+
+ '<div class="s">✅ Bu usulda «Play Protect … bloklandi» degan ogohlantirish <b>chiqmaydi</b>. Ilova o\'zi yangilanib turadi.</div>'+
+ '<details style="margin-top:12px"><summary class="s" style="cursor:pointer">Boshqa yo\'l: APK fayl</summary>'+
+ '<a class="b" style="background:#6b7280" href="apk/'+a.apk+'" download>⬇ APK yuklab olish</a>'+
+ '<div class="s">Google bu faylni tanimagani uchun «Play Protect» ogohlantirishi chiqishi mumkin. Unda <b>Batafsil → Baribir o\'rnatish</b> ni bosing.</div></details></div></div>'}).join('');
  if(L.length==1){if(isI)t('i0');else if(isA)t('a0')}}
 function t(id){document.getElementById(id).classList.toggle('on')}
 </script></body></html>
