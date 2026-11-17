@@ -37,14 +37,17 @@ var isI=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator
 var inApp=/Telegram|FBAN|FBAV|Instagram|Line\//.test(ua)||(isI&&!/Safari/.test(ua));
 /* Android: ilovani aynan Chrome'da ochamiz (Telegram ichidan ham) — o'rnatish Chrome orqali bo'ladi */
 function cr(u){var h=S+u.replace(/\?.*$/,'')+'o.html';if(!isA)return h;return 'intent://'+h.replace(/^https:\/\//,'')+'#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url='+encodeURIComponent(h)+';end'}
+/* iPhone: o'rnatish faqat Safari'da (Ulashish → Bosh ekranga qo'shish). Telegram/boshqa ilova ichida bo'lsa — x-safari-https:// bilan Safari'ni o'zi ochamiz (iOS 17+) */
+var iosApp=isI&&(!/Safari\//.test(ua)||/CriOS|FxiOS|EdgiOS|Telegram/.test(ua));
+function io(u){var h=S+u.replace(/\?.*$/,'')+'o.html'+((u.match(/\?.*$/)||[''])[0]);return iosApp?'x-safari-'+h:h}
 function e(s){return String(s).replace(/[&<>"']/g,function(c){return'&#'+c.charCodeAt(0)+';'})}
 var w=document.getElementById('w');
 if(!L){var h='<h1 style="margin:8px 0 16px">Ilovalar</h1>';for(var x in A){if(x.indexOf('dokon-')==0)continue;A[x].forEach(function(a){h+='<a class="b pri" href="?a='+x+'">'+e(a.n+' — '+a.s)+'</a>'})}w.innerHTML=h}
 else{document.title=L[0].n+' — yuklab olish';w.innerHTML=L.map(function(a,j){return '<div class="app"><div class="hd"><img src="'+S+a.i+'" alt="" onerror="this.style.display=\'none\'"><div><h1>'+e(a.n)+'</h1><div class="s">'+e(a.s)+'</div></div></div>'+
  '<button class="b ios" onclick="t(\'i'+j+'\')">&#128241; iPhone uchun</button>'+
- '<div class="st" id="i'+j+'">'+(inApp&&isI?'<div class="warn">Bu sahifani <b>Safari</b>da oching: pastdagi tugmani bosing, keyin yuqori o\'ngdagi «⋯» → «Safari\'da ochish».</div>':'')+
- '<ol><li>Pastdagi <b>«Ilovani ochish»</b> tugmasini bosing (Safari\'da).</li><li>Pastdagi <b>Ulashish</b> belgisini bosing (kvadrat va yuqoriga strelka ⬆).</li><li><b>«Bosh ekranga qo\'shish»</b> (На экран «Домой») ni tanlang → <b>Qo\'shish</b>.</li><li>Telefon ekranida ilova belgisi paydo bo\'ladi. Shuni bosib kiring.</li></ol>'+
- '<a class="b pri" href="'+S+a.u+'" target="_blank">Ilovani ochish</a></div>'+
+ '<div class="st" id="i'+j+'"><a class="b pri" href="'+io(a.u)+'">📲 O\'rnatish</a>'+
+ '<ol><li>Yuqoridagi <b>«📲 O\'rnatish»</b> tugmasini bosing — <b>Safari</b> ochiladi.</li><li>Safari\'da pastdagi <b>Ulashish</b> belgisini bosing (kvadrat va yuqoriga strelka ⬆).</li><li><b>«Bosh ekranga qo\'shish»</b> (На экран «Домой») → <b>Qo\'shish</b>.</li><li>Telefon ekranida ilova belgisi paydo bo\'ladi — endi shundan oching.</li></ol>'+
+ (iosApp?'<div class="warn">Safari ochilmasa: yuqori o\'ngdagi <b>«⋯»</b> → <b>«Safari\'da ochish»</b>, keyin yana «📲 O\'rnatish».</div>':'')+'</div>'+
  '<button class="b and" onclick="t(\'a'+j+'\')">&#129302; Android uchun</button>'+
  '<div class="st" id="a'+j+'"><a class="b and" href="'+cr(a.u)+'">📲 O\'rnatish (Chrome orqali)</a>'+
  '<ol><li>Yuqoridagi tugmani bosing.</li><li>Ochilgan sahifada <b>«📲 Telefonga o\'rnatish»</b> → <b>O\'rnatish</b>.</li><li>Ilova telefon ekraniga va ilovalar ro\'yxatiga tushadi — oddiy ilovadek, o\'z belgisi bilan, butun ekranda ochiladi.</li></ol>'+

@@ -1077,7 +1077,7 @@ setTimeout(()=>{try{if(!S.objects.length&&!S.workers.length&&hasB('readBackup'))
     if (isI) { if (!document.querySelector('link[rel="manifest"]') || no()) return;
       setTimeout(function () { if (BAR) return;
         bar(/CriOS|FxiOS|Telegram|FBAN|Instagram/.test(ua) || !/Safari/.test(ua)
-          ? '<b style="font-size:17px">📲 Ilovani o\'rnatish</b><br>Bu sahifani <b>Safari</b>da oching: «⋯» yoki ⬆ → <b>«Safari\'da ochish»</b>. Keyin pastdagi <b>Ulashish ⬆</b> → <b>«Bosh ekranga qo\'shish»</b> (На экран «Домой»).'
+          ? '<b style="font-size:17px">📲 Ilovani o\'rnatish</b><br>Bu oynada o\'rnatib bo\'lmaydi — Safari kerak.<a href="x-safari-' + location.href.replace(/"/g, '') + '" style="display:block;margin-top:10px;padding:12px;border-radius:12px;background:#16a34a;color:#fff;font-weight:800;text-align:center;text-decoration:none">📲 O\'rnatish (Safari\'da)</a><small style="color:#6b7280">Keyin pastdagi <b>Ulashish ⬆</b> → <b>«Bosh ekranga qo\'shish»</b>. Safari ochilmasa: «⋯» → «Safari\'da ochish».</small>'
           : '<b style="font-size:17px">📲 Ilovani o\'rnatish</b><br>Pastdagi <b>Ulashish</b> belgisini (⬆ kvadrat) bosing → <b>«Bosh ekranga qo\'shish»</b> (На экран «Домой») → <b>Qo\'shish</b>.<br>Keyin ilovani telefon ekranidagi belgidan oching.'); }, 1500);
       return; }
     function bar(html) { if (BAR) BAR.remove(); var d = document.createElement('div'); BAR = d; d.id = 'yrdi';
