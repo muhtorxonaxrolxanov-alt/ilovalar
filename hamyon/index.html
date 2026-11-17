@@ -75,6 +75,9 @@ nav button.on{color:var(--pri);font-weight:700}
 .vbig.on{background:var(--red);animation:pulse 1.1s infinite}@keyframes pulse{50%{transform:scale(1.08);box-shadow:0 0 0 14px rgba(220,38,38,.15)}}
 .vtx{width:100%;min-height:76px;border:1px solid var(--line);border-radius:12px;padding:10px;font-size:17px;background:var(--card);resize:vertical}
 .ex{font-size:13px;color:var(--mut);margin:8px 2px}.ex i{display:block;margin-top:3px}
+.vbtn{display:flex;align-items:center;gap:12px;margin:12px 0;padding:14px 16px;background:linear-gradient(135deg,#dc2626,#f97316);box-shadow:0 6px 18px rgba(220,38,38,.3)}
+#pill{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top));transform:translate(-50%,-80px);background:#111;color:#fff;padding:9px 16px;border-radius:999px;z-index:60;font-size:15px;font-weight:600;box-shadow:0 6px 18px rgba(0,0,0,.3);transition:transform .25s;max-width:92%;text-align:center;pointer-events:none}
+#pill.on{transform:translate(-50%,0)}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(150px + env(safe-area-inset-bottom));background:#111;color:#fff;padding:10px 16px;border-radius:12px;z-index:40;font-size:15px;max-width:90%;text-align:center}
 .leg{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid var(--line);cursor:pointer}.leg:last-child{border:0}.dot{width:12px;height:12px;border-radius:4px;flex:none}
 .leg .g{flex:1}.cmp{font-size:14px;margin-top:6px}
@@ -314,12 +317,19 @@ async function push(){
     try{const r=await jf(FSB+'rx/'+S.phone+'?updateMask.fieldPaths=data&updateMask.fieldPaths=upd'+(S.time?'&currentDocument.updateTime='+encodeURIComponent(S.time):''),{method:'PATCH',headers:{Authorization:'Bearer '+await idt(),'content-type':'application/json'},body:JSON.stringify({fields:{data:{stringValue:JSON.stringify(S.data)},upd:{integerValue:String(Date.now())}}})});
       S.time=r.updateTime;S.dirty=false;store();setSync('✓ saqlandi');
     }catch(e){if(e.code===400||e.code===409||e.code===412){await pull(true);continue}throw e}}
-  }catch(e){setSync('⏳ internet yo\'q — keyin yuboriladi')}
+  }catch(e){const x=$('#sync');if(x)x.textContent='⏳ internet yo\'q — keyin yuboriladi';pill('📴 Internet yo\'q — telefonda saqlandi, keyin o\'zi yuboriladi',3500)}
   busy=false;if(pend){pend=false;push()}
 }
-function setSync(t){const e=$('#sync');if(e)e.textContent=t}
+/* Jarayon belgisi: ekran tepasida doim ko'rinadi — odam «ishlamay qoldi» deb o'ylamasin */
+function pill(t,ms){if(!document.body)return addEventListener('DOMContentLoaded',()=>pill(t,ms));let p=document.getElementById('pill');if(!p){p=document.createElement('div');p.id='pill';document.body.appendChild(p)}
+  clearTimeout(pill.t);if(!t){p.classList.remove('on');return}p.textContent=t;p.classList.add('on');if(ms)pill.t=setTimeout(()=>p.classList.remove('on'),ms)}
+function setSync(t){const e=$('#sync');if(e)e.textContent=t;if(/^⏳/.test(t))pill('⏳ Saqlanmoqda…');else if(/saqlandi/.test(t))pill('✅ Saqlandi',1400)}
 function change(fn){fn(S.data);S.dirty=true;store();render();setSync('⏳ saqlanmoqda…');clearTimeout(change.t);change.t=setTimeout(push,500)}
 async function tick(){if(!S.rt||document.hidden)return;try{if(S.dirty)await push();if(await pull())render()}catch(e){}}
+/* Barmoq bilan pastga tortganda (yordam.js) — sahifani qayta yuklamay, tez yangilaymiz */
+window.YREFRESH=async()=>{pill('🔄 Yangilanmoqda…');try{if(S.dirty)await push();await pull(true);render();pill('✅ Yangilandi',1300)}catch(e){pill('📴 Internet yo\'q',2500)}};
+/* Birinchi ochilishda ma'lumot hali kelmagan bo'lsa — «yuklanmoqda» ko'rinib tursin */
+if(S.rt&&!S.time){pill('🔄 Ma\'lumotlar yuklanmoqda…');(async()=>{try{await pull(true);render();pill('✅ Tayyor',1000)}catch(e){pill('📴 Internet yo\'q',2500)}})()}
 setInterval(tick,20000);document.addEventListener('visibilitychange',tick);addEventListener('online',tick);
 
 /* ---------- ko'rinishlar ---------- */
@@ -340,6 +350,8 @@ function vHome(){
   <div class="card hero"><div class="l">${MON[+t.slice(5,7)-1][0].toUpperCase()+MON[+t.slice(5,7)-1].slice(1)} oyi xarajati</div><div class="big">${M(mx)}</div>
   <div class="row"><div class="mini">Bugun<b>${fmt(dx)}</b></div><div class="mini">Kirim<b>${fmt(mi)}</b></div><div class="mini">Qoldiq<b>${fmt(mi-mx)}</b></div></div>
   ${L.m?`<div class="s" style="margin-top:12px;opacity:.9">Oylik limit: ${fmt(mx)} / ${fmt(L.m)} — ${mx>L.m?'oshdi '+fmt(mx-L.m):'qoldi '+fmt(L.m-mx)}</div><div class="bar"><i style="width:${p}%;background:${col}"></i></div>`:`<div class="s" style="margin-top:12px;opacity:.9" onclick="go('lim')">🎯 Oylik limit qo'ying →</div>`}</div>`+alertsHtml();
+  /* Ovoz bilan yozish — katta, ko'zga tashlanadigan tugma */
+  h+=`<button class="btn vbtn" id="mic2"><span style="font-size:26px">🎤</span><span style="text-align:left;line-height:1.25"><b style="display:block;font-size:17px">Ovoz bilan yozish</b><span style="font-size:13px;font-weight:500;opacity:.9">Bosing va ayting: «non 5 ming, taksi 20 ming»</span></span></button>`;
   /* Ilova ↔ bot: botga yozilgani shu yerda ko'rinadi */
   h+=`<a class="card" href="https://t.me/${BOT}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;padding:12px 14px"><span style="font-size:30px">🤖</span><span style="flex:1"><b>Bot orqali ishlatish</b><br><span class="s mut">Telegramda yozing yoki ovozli ayting: «non 5000» — shu yerga tushadi</span></span><span style="font-size:22px;opacity:.5">›</span></a>`;
   const E=d.e.slice().sort((a,b)=>a.d===b.d?b.ts-a.ts:(a.d<b.d?1:-1));
@@ -351,7 +363,7 @@ function vHome(){
   if(E.length>S.show)h+=`<button class="btn g" id="more" style="margin-top:8px">Ko'proq ko'rsatish</button>`;
   h+=`<button class="fab" id="fab" aria-label="Qo'shish">+</button><button class="fab mic" id="mic" aria-label="Ovoz bilan yozish">🎤</button>`;
   app.innerHTML=h;
-  $('#fab').onclick=()=>edit();$('#mic').onclick=()=>voice(true);if($('#more'))$('#more').onclick=()=>{S.show+=100;render()};
+  $('#fab').onclick=()=>edit();$('#mic').onclick=()=>voice(true);$('#mic2').onclick=()=>voice(true);if($('#more'))$('#more').onclick=()=>{S.show+=100;render()};
   app.querySelectorAll('[data-e]').forEach(x=>x.onclick=()=>edit(x.dataset.e));
 }
 function sheet(html){const bg=document.createElement('div');bg.className='sheet-bg';bg.innerHTML=`<div class="sheet">${html}</div>`;bg.onclick=e=>{if(e.target===bg)bg.remove()};document.body.appendChild(bg);bg.querySelector('.xb')&&(bg.querySelector('.xb').onclick=()=>bg.remove());return bg}
@@ -408,7 +420,8 @@ function voice(auto){
     try{rec.start()}catch(e){stat('Ovoz ishlamadi')}
   }
   function add(){
-    const it=K.parseText(vt.value);
+    pill('⏳ Tahlil qilinmoqda…');
+    const it=K.parseText(vt.value);pill('');
     if(!it.length)return toast('Summani topmadim. Masalan: «non 5000»',3000);
     const today0=today(),ents=[],dbs=[];
     it.forEach(x=>{const q=K.debtOf(x);if(q)dbs.push(Object.assign({id:K.uid(),d:today0,back:0,ts:Date.now()},q));else ents.push(Object.assign({id:K.uid(),d:today0,ts:Date.now(),src:'ovoz'},x))});
