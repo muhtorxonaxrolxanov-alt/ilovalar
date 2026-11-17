@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="uz"><head><meta charset="utf-8"><meta name="theme-color" content="#15803d"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Shogird"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" type="image/png" href="icon-192.png"><script src="https://telegram.org/js/telegram-web-app.js"></script><script>/* Hisob-kitob — veb-ilova (iPhone, kompyuter, Telegram Mini App) uchun AndroidBridge o'rnini bosuvchi.
  * Faqat haqiqiy AndroidBridge YO'Q joyda ishlaydi. build_web.py har bir sahifaning eng boshiga qo'yadi. */
 (function () {
@@ -87,109 +87,68 @@
     document.addEventListener('visibilitychange', function () { if (document.hidden) put(); });
   }
 })();
-</script><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Shogird</title>
-<script src="gate.js"></script>
+</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Yordam markazi</title>
+<!-- Barcha ilovalar uchun umumiy «🆘 Yordam markazi»: murojaat darvoza (gate) orqali shifrlangan holda egasining Telegram botiga boradi. -->
 <style>
-:root{--bg:#f4f5f9;--card:#fff;--text:#14171f;--muted:#636b7d;--acc:#2563eb;--ok:#15803d;--bad:#c62828;--line:#e2e5ee}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1117;--card:#171b24;--text:#eef0f6;--muted:#9aa3b5;--acc:#5b8cff;--ok:#4ade80;--bad:#ff7b7b;--line:#272c38}}
-:root[data-theme="dark"]{--bg:#0e1117;--card:#171b24;--text:#eef0f6;--muted:#9aa3b5;--acc:#5b8cff;--ok:#4ade80;--bad:#ff7b7b;--line:#272c38}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-main{max-width:520px;margin:0 auto;padding:18px 16px 96px}
-h1{font-size:21px;margin:0}.sub{color:var(--muted);font-size:14px;margin:2px 0 14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}
-.obj{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:10px;color:var(--text);font-size:17px;font-weight:700}
-.obj small{display:block;font-weight:500;color:var(--muted);font-size:13px}
-.obj .ic{font-size:26px}
-.row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid var(--line);font-size:15px}.row:first-of-type{border-top:0}
-.ok{color:var(--ok)}.bad{color:var(--bad)}
-.tabs{position:fixed;left:0;right:0;bottom:0;display:flex;gap:6px;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));background:var(--card);border-top:1px solid var(--line)}
-.tabs button{flex:1;padding:12px 4px;border-radius:12px;border:0;background:var(--bg);color:var(--text);font-weight:700;font-size:15px}.tabs button.on{background:var(--acc);color:#fff}
-dialog{border:0;border-radius:18px;padding:18px;width:min(440px,92vw);background:var(--card);color:var(--text)}
-dialog::backdrop{background:rgba(0,0,0,.45)}
-label{display:block;font-size:13px;color:var(--muted);margin:12px 0 5px}
-input{width:100%;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:17px}
-.days{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.days button{padding:14px 0;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--text);font-size:17px;font-weight:700}.days button.on{border-color:var(--acc);background:var(--acc);color:#fff}
-.go{width:100%;margin-top:14px;padding:15px;border:0;border-radius:14px;background:var(--acc);color:#fff;font-size:17px;font-weight:700}
-.lnk{display:block;width:100%;margin-top:8px;padding:12px;border:0;background:none;color:var(--acc);font-weight:700;font-size:15px}
-.x{border:0;background:none;color:var(--bad);font-size:18px;padding:0 4px}
-.msg{padding:11px 12px;border-radius:12px;font-size:14px;background:var(--card);border:1px solid var(--line);margin-bottom:10px}
-.empty{text-align:center;color:var(--muted);padding:30px 10px}
-.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#111827;color:#fff;padding:10px 16px;border-radius:12px;font-size:15px;z-index:9}
-[hidden]{display:none!important}
-</style></head><body><main>
-<h1 id="hi">👷 Shogird</h1><div class="sub" id="who"></div>
-<div id="note" class="msg" hidden></div>
-<div id="app"></div>
-</main>
-<nav class="tabs" id="tabs"><button id="tO" class="on">🏗 Obyektlar</button><button id="tM">💰 Hisobim</button><button id="tS">⚙️</button></nav>
-<dialog id="dlg"></dialog>
+:root{--bg:#f4f1ec;--card:#fff;--tx:#1f2937;--mu:#6b7280;--bd:#e5e0d8;--ac:#2563eb;--ok:#16a34a;--bad:#dc2626}
+@media (prefers-color-scheme:dark){:root{--bg:#15130f;--card:#221f1a;--tx:#f3f0ea;--mu:#a8a29e;--bd:#3a342c}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.w{max-width:520px;margin:0 auto;padding:18px 16px 40px}
+.bk{background:none;border:0;color:var(--ac);font-size:16px;font-weight:600;padding:6px 0;cursor:pointer}
+h1{font-size:24px;margin:8px 0 4px}.s{color:var(--mu);font-size:15px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:16px;margin-top:14px}
+label{display:block;font-weight:700;margin:12px 0 6px;font-size:15px}label small{font-weight:400;color:var(--mu)}
+input,textarea,select{width:100%;font:inherit;padding:13px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
+textarea{min-height:140px;resize:vertical}
+.b{display:block;width:100%;margin-top:16px;padding:15px;border:0;border-radius:14px;background:var(--ac);color:#fff;font-size:17px;font-weight:800;cursor:pointer}
+.b[disabled]{opacity:.6}
+.msg{margin-top:12px;font-size:15px;min-height:22px}
+.ok{text-align:center;padding:20px 6px}.ok div{font-size:56px}
+.ex{font-size:14px;color:var(--mu);margin-top:6px}.ex i{display:block}
+</style></head><body><div class="w">
+<button class="bk" id="bk">‹ Orqaga</button>
+<h1>🆘 Yordam markazi</h1>
+<div class="s">Muammo bo'lsa yoki savolingiz bo'lsa, shu yerga yozing. Xabaringiz ilova egasiga darhol boradi va javob Telegram orqali keladi.</div>
+<div class="card" id="f">
+  <label>Telefon raqamingiz</label>
+  <input id="ph" inputmode="tel" placeholder="+998 90 123 45 67" autocomplete="tel">
+  <label>Ismingiz <small>(ixtiyoriy)</small></label>
+  <input id="nm" placeholder="Masalan: Akmal" maxlength="60">
+  <label>Qaysi ilova?</label>
+  <select id="ap"><option value="hk">⚡ Hisob-kitob</option><option value="nv">🥖 Nonvoyxona</option><option value="ed">💡 222 do'kon</option><option value="rx">👛 Hamyon</option></select>
+  <label>Muammo yoki savolingiz</label>
+  <textarea id="tx" maxlength="1500" placeholder="Nima bo'ldi? Qaysi tugmani bosganda? Qanday xato chiqdi?"></textarea>
+  <div class="ex">Masalan:<i>«Ro'yxatdan o'tolmayapman, kod kelmayapti»</i><i>«To'lov qildim, muddat uzaymadi»</i><i>«Xarajatni o'chirib bo'lmayapti»</i></div>
+  <button class="b" id="go">📨 Yuborish</button>
+  <div class="msg" id="m"></div>
+</div>
+</div>
+<script>window.HK_PROD='hk';</script>
+<script src="gate.js"></script>
 <script>
 (function(){
-var $=function(i){return document.getElementById(i)};
-var L=HK.lic()||{},U=L.usta||{},tab='o';
-var KEY='sg_v1',D={o:[],e:[],p:{rate:0,pays:[]},until:0,un:U.name||'',dirty:false,at:0};
-try{Object.assign(D,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
-function saveD(){try{localStorage.setItem(KEY,JSON.stringify(D))}catch(e){}}
-function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-function fm(n){return Math.round(+n||0).toLocaleString('ru-RU').replace(/ /g,' ')+" so'm"}
-function today(){var d=new Date();return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2)}
-function toast(m){var t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.remove()},2400)}
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
-/* ---- Bulut ---- */
-var C=null;try{C=JSON.parse(localStorage.getItem('cloud_v1')||'null')}catch(e){}
-var BASE='https://firestore.googleapis.com/v1/projects/'+((C&&C.cfg&&C.cfg.projectId)||'elektrik-hisob')+'/databases/(default)/documents/crew/'+U.uid;
-function jf(u,o){return fetch(u,o).then(function(r){return r.json().catch(function(){return{}}).then(function(j){if(!r.ok){var e=new Error((j.error&&j.error.status)||('HTTP '+r.status));e.code=r.status;throw e}return j})})}
-function tok(){if(!C)return Promise.reject(new Error('kirish'));if(Date.now()<C.exp-60000)return Promise.resolve(C.idt);
-  return jf('https://securetoken.googleapis.com/v1/token?key='+C.cfg.apiKey,{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(C.rt)}).then(function(j){C.idt=j.id_token;C.rt=j.refresh_token||C.rt;C.exp=Date.now()+(+j.expires_in||3600)*1000;try{localStorage.setItem('cloud_v1',JSON.stringify(C))}catch(e){}return C.idt})}
-var busy=false;
-function sync(){if(busy||!C||!U.uid)return Promise.resolve();busy=true;
-  return tok().then(function(t){var H={headers:{Authorization:'Bearer '+t}};
-    var push=D.dirty?jf(BASE+'/log/'+C.uid+'?updateMask.fieldPaths=e',{method:'PATCH',headers:{'content-type':'application/json',Authorization:'Bearer '+t},body:JSON.stringify({fields:{e:{stringValue:JSON.stringify(D.e)}}})}).then(function(){D.dirty=false}):Promise.resolve();
-    return push.then(function(){return Promise.all([
-      jf(BASE,H).then(function(j){var f=j.fields||{};try{D.o=JSON.parse((f.o||{}).stringValue||'[]')}catch(e){}D.until=+((f.until||{}).integerValue||0);D.un=(f.un||{}).stringValue||D.un}),
-      jf(BASE+'/pay/'+C.uid,H).then(function(j){try{D.p=JSON.parse(((j.fields||{}).p||{}).stringValue||'{}')}catch(e){}}).catch(function(e){if(e.code!==404)throw e}),
-      D.dirty?null:jf(BASE+'/log/'+C.uid,H).then(function(j){try{D.e=JSON.parse(((j.fields||{}).e||{}).stringValue||'[]')}catch(e){}}).catch(function(e){if(e.code!==404)throw e})])})
-  }).then(function(){D.at=Date.now();saveD();$('note').hidden=true;render()}).catch(function(e){
-    var m=/PERMISSION|403/.test(e.message)?'Ustangiz sizni jamoadan chiqargan yoki ruxsat yo\'q.':'Internet yo\'q. Yozganlaringiz telefonda saqlanadi va internet kelganda yuboriladi.';
-    $('note').textContent=m;$('note').hidden=false;render()}).then(function(){busy=false})}
-/* ---- Ko'rinishlar ---- */
-function locked(){return D.until&&D.until<Date.now()}
-function objName(id,on){var o=D.o.filter(function(x){return x.id===id})[0];return o?o.name:(on||'—')}
-function stats(){var rate=+(D.p&&D.p.rate)||0,days=0,by={};D.e.forEach(function(e){days+=+e.days||0;var k=objName(e.oid,e.on);by[k]=(by[k]||0)+(+e.days||0)});
-  var paid=(D.p&&D.p.pays||[]).reduce(function(a,p){return a+(+p.a||0)},0);return{rate:rate,days:days,earned:days*rate,paid:paid,left:days*rate-paid,by:by}}
-function render(){
-  $('hi').textContent='👷 '+((D.p&&D.p.name)||'Shogird');$('who').textContent='Usta: '+(D.un||U.name||'')+' · +'+(L.phone||'');
-  if(locked()){$('app').innerHTML='<div class="card" style="text-align:center;padding:26px 14px"><div style="font-size:44px">⏸</div><h2 style="margin:6px 0">Ilova vaqtincha to\'xtatilgan</h2><div class="sub">Ustangizning obunasi tugagan. Usta to\'lov qilgach, ilova o\'zi ochiladi. Yozuvlaringiz saqlanib turibdi.</div></div>';return}
-  ['o','m','s'].forEach(function(k){$('t'+k.toUpperCase()).className=tab===k?'on':''});
-  if(tab==='o'){var td=D.e.filter(function(e){return e.date===today()});
-    $('app').innerHTML=(td.length?'<div class="msg">✅ Bugun yozilgan: '+td.map(function(e){return esc(objName(e.oid,e.on))+' — '+e.days+' kun'}).join(', ')+'</div>':'')+
-    (D.o.length?D.o.map(function(o){return '<button class="obj" data-o="'+esc(o.id)+'"><span class="ic">🏗</span><span>'+esc(o.name)+'<small>Shu yerda ishladim deb yozish</small></span></button>'}).join(''):'<div class="empty">Ustangiz hali obyekt qo\'shmagan.<br>Usta obyekt ochishi bilan shu yerda chiqadi.</div>')}
-  else if(tab==='m'){var s=stats(),hist=D.e.slice().sort(function(a,b){return(b.date||'').localeCompare(a.date||'')});
-    $('app').innerHTML='<div class="card"><div class="row"><span>Kunlik haqim</span><b>'+(s.rate?fm(s.rate):'belgilanmagan')+'</b></div><div class="row"><span>Ishlagan kunlarim</span><b>'+s.days+'</b></div><div class="row"><span>Hisoblangan</span><b>'+fm(s.earned)+'</b></div><div class="row"><span>Olgan pulim</span><b class="ok">'+fm(s.paid)+'</b></div><div class="row"><b>Olishim kerak</b><b class="'+(s.left>0?'bad':'ok')+'">'+fm(s.left)+'</b></div></div>'+
-    (Object.keys(s.by).length?'<div class="card"><b>Obyektlar bo\'yicha</b>'+Object.keys(s.by).map(function(k){return '<div class="row"><span>'+esc(k)+'</span><span>'+s.by[k]+' kun · '+fm(s.by[k]*s.rate)+'</span></div>'}).join('')+'</div>':'')+
-    '<div class="card"><b>Ishlagan kunlarim</b>'+(hist.length?hist.map(function(e){var del=(Date.now()-(+e.ts||0))<2*864e5;return '<div class="row"><span>'+esc(e.date)+' · '+esc(objName(e.oid,e.on))+'</span><span>'+e.days+' kun'+(del?' <button class="x" data-d="'+esc(e.id)+'" aria-label="O\'chirish">✕</button>':'')+'</span></div>'}).join(''):'<div class="sub" style="margin:6px 0 0">Hali yozuv yo\'q</div>')+'</div>'+
-    ((D.p&&D.p.pays||[]).length?'<div class="card"><b>Olgan pullarim</b>'+D.p.pays.slice().sort(function(a,b){return(b.date||'').localeCompare(a.date||'')}).map(function(p){return '<div class="row"><span>'+esc(p.date)+'</span><span class="ok">'+fm(p.a)+'</span></div>'}).join('')+'</div>':'')}
-  else{$('app').innerHTML='<div class="card"><div class="row"><span>Telefon</span><b>+'+esc(L.phone||'')+'</b></div><div class="row"><span>Usta</span><b>'+esc(D.un||U.name||'')+'</b></div><div class="row"><span>Oxirgi yangilanish</span><span>'+(D.at?new Date(D.at).toLocaleTimeString('ru-RU'):'—')+'</span></div></div><button class="go" id="rf">🔄 Yangilash</button><button class="lnk" id="out" style="color:var(--bad)">Ilovadan chiqish</button>';
-    $('rf').onclick=function(){sync().then(function(){toast('Yangilandi')})};
-    $('out').onclick=function(){if(!confirm('Ilovadan chiqasizmi? Keyin raqam va parol bilan kirasiz.'))return;HK.clear();try{localStorage.removeItem('cloud_v1');localStorage.removeItem(KEY)}catch(e){}location.replace('gate.html')}}
-}
-function addDay(o){var dd=$('dlg'),n='1';
-  dd.innerHTML='<h3 style="margin:0 0 4px">🏗 '+esc(o.name)+'</h3><div class="sub" style="margin:0">Shu obyektda ishladim</div><label for="dt">Sana</label><input id="dt" type="date" value="'+today()+'"><label>Necha kun</label><div class="days">'+['0.5','1','1.5','2'].map(function(x){return '<button data-n="'+x+'"'+(x===n?' class="on"':'')+'>'+x+'</button>'}).join('')+'</div><button class="go" id="ok">✅ Yozish</button><button class="lnk" id="no">Bekor</button>';
-  dd.showModal();dd.querySelectorAll('[data-n]').forEach(function(b){b.onclick=function(){n=b.dataset.n;dd.querySelectorAll('[data-n]').forEach(function(x){x.className=x===b?'on':''})}});
-  $('no').onclick=function(){dd.close()};
-  $('ok').onclick=function(){var d=$('dt').value||today();D.e.push({id:uid(),oid:o.id,on:o.name,date:d,days:+n,ts:Date.now()});D.dirty=true;saveD();dd.close();render();toast('✅ Yozildi: '+o.name+' — '+n+' kun');sync()}}
-document.addEventListener('click',function(e){var t=e.target.closest('[data-o],[data-d]');if(!t)return;
-  if(t.dataset.o){var o=D.o.filter(function(x){return x.id===t.dataset.o})[0];if(o)addDay(o)}
-  else if(t.dataset.d){if(!confirm('Bu yozuvni o\'chirasizmi?'))return;D.e=D.e.filter(function(x){return x.id!==t.dataset.d});D.dirty=true;saveD();render();sync()}});
-$('tO').onclick=function(){tab='o';render()};$('tM').onclick=function(){tab='m';render()};$('tS').onclick=function(){tab='s';render()};
-if(L.role!=='shogird'){location.replace('index.html');return}
-render();sync();
-setInterval(function(){if(!document.hidden)sync()},120000);
-document.addEventListener('visibilitychange',function(){if(!document.hidden)sync()});
+var $=function(i){return document.getElementById(i)},Q=new URLSearchParams(location.search);
+var back=Q.get('back')||'';
+$('bk').onclick=function(){if(back&&/^\/ilovalar\//.test(back))location.href=back;else if(history.length>1)history.back();else location.href='./'};
+var app=Q.get('app')||'';if(app==='em')app='ed';if(/^(hk|nv|ed|rx)$/.test(app))$('ap').value=app;
+/* raqamni ilovadagi kirish ma'lumotidan olamiz (bor bo'lsa) */
+try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!/_lic$/.test(k))continue;var o=JSON.parse(localStorage.getItem(k)||'null');if(o&&o.phone){$('ph').value='+'+o.phone;if(!Q.get('app')){var a=k.replace(/^.*?:/,'').split('_')[0];if(/^(hk|nv|ed|rx)$/.test(a))$('ap').value=a}if(k.indexOf(app)>=0||k.indexOf(':')<0)break}}}catch(e){}
+if(Q.get('ph'))$('ph').value='+'+Q.get('ph').replace(/\D/g,'');
+function norm(s){var d=String(s).replace(/\D/g,'');if(d.length===9)d='998'+d;return d}
+function msg(t,bad){var e=$('m');e.textContent=t;e.style.color=bad?'var(--bad)':'var(--mu)'}
+$('go').onclick=function(){
+  var p=norm($('ph').value),t=$('tx').value.trim();
+  if(!/^998\d{9}$/.test(p))return msg('Telefon raqamni to\'g\'ri yozing: +998 90 123 45 67',1);
+  if(t.length<3)return msg('Muammoni yozing.',1);
+  $('go').disabled=true;msg('⏳ Yuborilmoqda…');
+  HK.call(p,{act:'help',app:$('ap').value,name:$('nm').value.trim(),text:t},40000).then(function(r){
+    if(r&&r.st==='helpok'){$('f').innerHTML='<div class="ok"><div>✅</div><b style="font-size:20px">Yuborildi!</b><p class="s">'+String(r.msg||'').replace(/[<>&]/g,'')+'</p><button class="b" id="bk2">‹ Ilovaga qaytish</button></div>';$('bk2').onclick=$('bk').onclick;return}
+    $('go').disabled=false;msg((r&&r.msg)||'Yuborilmadi. Qayta urinib ko\'ring.',1)
+  }).catch(function(){$('go').disabled=false;msg('Internet yo\'q yoki server javob bermadi. Birozdan keyin qayta urinib ko\'ring.',1)});
+};
 })();
-</script>
-<script>if("serviceWorker"in navigator&&(location.protocol=="https:"||location.hostname=="localhost"))window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});</script><script>window.YAPP="hk";</script><script>/* Yordam: o'ng tepada doimiy sozlamalar va ? tugmasi; ? har bir ekrandagi joylarni birma-bir ko'rsatib tushuntiradi.
+</script><script>if("serviceWorker"in navigator&&(location.protocol=="https:"||location.hostname=="localhost"))window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});</script><script>window.YAPP="hk";</script><script>/* Yordam: o'ng tepada doimiy sozlamalar va ? tugmasi; ? har bir ekrandagi joylarni birma-bir ko'rsatib tushuntiradi.
  * Ilova yig'ilganda: window.YAPP="tr" + shu fayl. Tugmalar matni yoki selektori bo'yicha topiladi;
  * ekranda yo'q tugma o'tkazib yuboriladi. */
 (function () {
@@ -516,9 +475,17 @@ document.addEventListener('visibilitychange',function(){if(!document.hidden)sync
     var inst = false; try { inst = matchMedia('(display-mode: standalone)').matches || navigator.standalone; } catch (e) {}
     /* APK ichida (WebView: "; wv)") yoki boshqa ilova kirish sahifasida (gate.html?prod=rx|nv|ed|em) — taklif qilinmaydi */
     var wrapped = /; wv\)/.test(navigator.userAgent), other = /gate\.html/.test(location.pathname) && /[?&]prod=(rx|nv|ed|em)/.test(location.search);
-    if (inst || wrapped || other || !/Android/i.test(navigator.userAgent)) return;
+    var ua = navigator.userAgent, isI = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (inst || wrapped || other || !(/Android/i.test(ua) || isI)) return;
     var ask = /[?&#]o=1/.test(location.href), EV = null, BAR = null, DK = 'yrd_inst_no';
     function no() { try { return Date.now() - (+localStorage.getItem(DK) || 0) < 3 * 864e5; } catch (e) { return false; } }
+    /* iPhone: Safari o'zi taklif qilmaydi — «Bosh ekranga qo'shish» yo'lini ko'rsatamiz (2026-11-17) */
+    if (isI) { if (!document.querySelector('link[rel="manifest"]') || no()) return;
+      setTimeout(function () { if (BAR) return;
+        bar(/CriOS|FxiOS|Telegram|FBAN|Instagram/.test(ua) || !/Safari/.test(ua)
+          ? '<b style="font-size:17px">📲 Ilovani o\'rnatish</b><br>Bu sahifani <b>Safari</b>da oching: «⋯» yoki ⬆ → <b>«Safari\'da ochish»</b>. Keyin pastdagi <b>Ulashish ⬆</b> → <b>«Bosh ekranga qo\'shish»</b> (На экран «Домой»).'
+          : '<b style="font-size:17px">📲 Ilovani o\'rnatish</b><br>Pastdagi <b>Ulashish</b> belgisini (⬆ kvadrat) bosing → <b>«Bosh ekranga qo\'shish»</b> (На экран «Домой») → <b>Qo\'shish</b>.<br>Keyin ilovani telefon ekranidagi belgidan oching.'); }, 1500);
+      return; }
     function bar(html) { if (BAR) BAR.remove(); var d = document.createElement('div'); BAR = d; d.id = 'yrdi';
       d.style.cssText = 'position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));max-width:460px;margin:0 auto;z-index:2147482500;background:#fff;color:#14171f;border-radius:16px;padding:14px;box-shadow:0 8px 28px rgba(0,0,0,.35);font:16px/1.45 system-ui,sans-serif';
       d.innerHTML = html + '<div style="display:flex;gap:8px;margin-top:10px"><button data-i="x" style="flex:1;padding:12px;border:0;border-radius:12px;background:#e5e7eb;font-weight:700;font-size:15px">Keyin</button>' + (EV ? '<button data-i="ok" style="flex:2;padding:12px;border:0;border-radius:12px;background:#16a34a;color:#fff;font-weight:800;font-size:16px">📲 O\'rnatish</button>' : '') + '</div>';

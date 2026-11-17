@@ -20,7 +20,7 @@ h1{font-size:26px;margin:16px 0 4px}.s{color:var(--mut);font-size:16px;line-heig
 <button class="b" id="go" disabled>⏳ Tayyorlanmoqda…</button>
 <div class="box" id="man"><b>Qo'lda o'rnatish:</b><ol><li>Yuqori o'ngdagi <b>⋮</b> (uch nuqta) ni bosing.</li><li><b>«Ilovani o'rnatish»</b> (yoki «Bosh ekranga qo'shish» → <b>O'rnatish</b>) ni tanlang.</li></ol><div class="s" style="margin-top:8px">Agar menyuda «Ilovani ochish» tursa — ilova allaqachon o'rnatilgan. Telefon ekranidagi belgisidan oching.</div></div>
 <div class="box" id="wv"><b>Bu oyna Chrome emas.</b> Pastdagi tugmani bosing — Chrome'da ochiladi va o'sha yerda o'rnatasiz.<a class="b" id="toc" href="#">Chrome'da ochish</a></div>
-<a class="b g" id="op" href="./">Ilovani hozir ochish</a>
+<a id="op" href="./" style="display:block;margin-top:26px;color:var(--mut);font-size:14px">O'rnatmasdan brauzerda ochish</a>
 </div>
 <script>
 var go=document.getElementById('go'),EV=null,ua=navigator.userAgent;
@@ -39,5 +39,9 @@ function doInst(){if(!EV)return;EV.prompt();EV.userChoice.then(function(c){if(c&
 go.onclick=doInst;
 function done(){$('ic').outerHTML='<div class="ok">✅</div>';$('st').innerHTML='<b>O\'rnatildi!</b><br>Telefon ekranida va ilovalar ro\'yxatida belgisi paydo bo\'ldi (bir necha soniyada). Endi shu belgidan oching.';go.style.display='none';$('man').classList.remove('on')}
 window.addEventListener('appinstalled',done);
-setTimeout(function(){if(!EV&&go.style.display!=='none'){go.textContent='📲 Telefonga o\'rnatish';go.disabled=false;go.onclick=function(){$('man').classList.add('on');$('man').scrollIntoView({behavior:'smooth'})};}},3500);
+/* Chrome 3.5 soniyada taklif qilmasa — qo'lda o'rnatish yo'lini darhol ko'rsatamiz (2026-11-17: «o'rnatish chiqmadi» bo'lgan edi) */
+setTimeout(function(){if(!EV&&go.style.display!=='none'){go.textContent='📲 Telefonga o\'rnatish';go.disabled=false;$('man').classList.add('on');go.onclick=function(){if(EV)return doInst();$('man').classList.add('on');$('man').scrollIntoView({behavior:'smooth'})};}},3500);
+/* iPhone: Safari faqat «Bosh ekranga qo'shish» orqali o'rnatadi */
+if(/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)){go.style.display='none';$('wv').classList.remove('on');
+ $('man').innerHTML='<b>iPhone\'ga o\'rnatish:</b><ol><li>Pastdagi <b>Ulashish</b> belgisini bosing (⬆ kvadrat).</li><li><b>«Bosh ekranga qo\'shish»</b> (На экран «Домой») → <b>Qo\'shish</b>.</li><li>Ilovani telefon ekranidagi belgidan oching.</li></ol>';$('man').classList.add('on')}
 </script></body></html>

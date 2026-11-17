@@ -30,7 +30,7 @@ A['hamyon']=[{n:'Hamyon',s:'Kunlik xarajatlar hisobi · bot: @hamyon_kunlik_hiso
 A['dokon-sotuvchi']=[A.dokon[0]];A['dokon-mijoz']=[A.dokon[1]];
 /* Shogird: ustaning taklif havolasi (?a=shogird&taklif=KOD). Avval o'z «Shogird» ilovasini o'rnatadi, keyin ichida kod bilan ro'yxatdan o'tadi. */
 var TK=((location.search.match(/[?&]taklif=([A-Za-z0-9]{8})/)||[])[1]||'').toUpperCase();
-A['shogird']=[{n:'Shogird — Hisob-kitob',s:'Ustangiz jamoasiga qo\'shilish va ish kunlarini yozish',u:'hisob/shogird/'+(TK?'?taklif='+TK:''),i:'hisob/shogird/icon-192.png',apk:''}];
+A['shogird']=[{n:'Shogird — Hisob-kitob',s:'Ustangiz jamoasiga qo\'shilish va ish kunlarini yozish',u:'shogird/'+(TK?'?taklif='+TK:''),i:'shogird/icon-192.png',apk:''}];
 try{if(TK)localStorage.setItem('hk_taklif',TK)}catch(e){}
 var k=(location.search.match(/[?&]a=([\w-]+)/)||[])[1],L=A[k],ua=navigator.userAgent;
 var isI=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),isA=/Android/.test(ua);

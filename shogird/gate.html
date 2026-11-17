@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="uz"><head><meta charset="utf-8"><meta name="theme-color" content="#15803d"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Shogird"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" type="image/png" href="icon-192.png"><script src="https://telegram.org/js/telegram-web-app.js"></script><script>/* Hisob-kitob — veb-ilova (iPhone, kompyuter, Telegram Mini App) uchun AndroidBridge o'rnini bosuvchi.
  * Faqat haqiqiy AndroidBridge YO'Q joyda ishlaydi. build_web.py har bir sahifaning eng boshiga qo'yadi. */
 (function () {
@@ -87,68 +87,265 @@
     document.addEventListener('visibilitychange', function () { if (document.hidden) put(); });
   }
 })();
-</script><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Yordam markazi</title>
-<!-- Barcha ilovalar uchun umumiy «🆘 Yordam markazi»: murojaat darvoza (gate) orqali shifrlangan holda egasining Telegram botiga boradi. -->
+</script><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Kirish</title>
 <style>
-:root{--bg:#f4f1ec;--card:#fff;--tx:#1f2937;--mu:#6b7280;--bd:#e5e0d8;--ac:#2563eb;--ok:#16a34a;--bad:#dc2626}
-@media (prefers-color-scheme:dark){:root{--bg:#15130f;--card:#221f1a;--tx:#f3f0ea;--mu:#a8a29e;--bd:#3a342c}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.w{max-width:520px;margin:0 auto;padding:18px 16px 40px}
-.bk{background:none;border:0;color:var(--ac);font-size:16px;font-weight:600;padding:6px 0;cursor:pointer}
-h1{font-size:24px;margin:8px 0 4px}.s{color:var(--mu);font-size:15px}
-.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:16px;margin-top:14px}
-label{display:block;font-weight:700;margin:12px 0 6px;font-size:15px}label small{font-weight:400;color:var(--mu)}
-input,textarea,select{width:100%;font:inherit;padding:13px;border-radius:12px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
-textarea{min-height:140px;resize:vertical}
-.b{display:block;width:100%;margin-top:16px;padding:15px;border:0;border-radius:14px;background:var(--ac);color:#fff;font-size:17px;font-weight:800;cursor:pointer}
-.b[disabled]{opacity:.6}
-.msg{margin-top:12px;font-size:15px;min-height:22px}
-.ok{text-align:center;padding:20px 6px}.ok div{font-size:56px}
-.ex{font-size:14px;color:var(--mu);margin-top:6px}.ex i{display:block}
-</style></head><body><div class="w">
-<button class="bk" id="bk">‹ Orqaga</button>
-<h1>🆘 Yordam markazi</h1>
-<div class="s">Muammo bo'lsa yoki savolingiz bo'lsa, shu yerga yozing. Xabaringiz ilova egasiga darhol boradi va javob Telegram orqali keladi.</div>
-<div class="card" id="f">
-  <label>Telefon raqamingiz</label>
-  <input id="ph" inputmode="tel" placeholder="+998 90 123 45 67" autocomplete="tel">
-  <label>Ismingiz <small>(ixtiyoriy)</small></label>
-  <input id="nm" placeholder="Masalan: Akmal" maxlength="60">
-  <label>Qaysi ilova?</label>
-  <select id="ap"><option value="hk">⚡ Hisob-kitob</option><option value="nv">🥖 Nonvoyxona</option><option value="ed">💡 222 do'kon</option><option value="rx">👛 Hamyon</option></select>
-  <label>Muammo yoki savolingiz</label>
-  <textarea id="tx" maxlength="1500" placeholder="Nima bo'ldi? Qaysi tugmani bosganda? Qanday xato chiqdi?"></textarea>
-  <div class="ex">Masalan:<i>«Ro'yxatdan o'tolmayapman, kod kelmayapti»</i><i>«To'lov qildim, muddat uzaymadi»</i><i>«Xarajatni o'chirib bo'lmayapti»</i></div>
-  <button class="b" id="go">📨 Yuborish</button>
-  <div class="msg" id="m"></div>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f4f5f9;--card:#fff;--text:#14171f;--muted:#636b7d;--acc:#2563eb;--ok:#15803d;--bad:#c62828;--line:#e2e5ee}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1117;--card:#171b24;--text:#eef0f6;--muted:#9aa3b5;--acc:#5b8cff;--ok:#4ade80;--bad:#ff7b7b;--line:#272c38}}
+:root[data-theme="dark"]{--bg:#0e1117;--card:#171b24;--text:#eef0f6;--muted:#9aa3b5;--acc:#5b8cff;--ok:#4ade80;--bad:#ff7b7b;--line:#272c38}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.45}
+main{max-width:480px;margin:0 auto;padding:26px 16px 40px}
+h1{font-size:22px;margin:0 0 4px}.sub{color:var(--muted);margin:0 0 18px;font-size:15px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px}
+label{display:block;font-size:13px;color:var(--muted);margin:12px 0 5px}
+input{width:100%;padding:13px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:18px}
+input.code{letter-spacing:8px;text-align:center;font-size:26px;font-weight:700}
+.tr{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tr button{padding:14px 6px;border-radius:12px;border:2px solid var(--line);background:var(--bg);color:var(--text);font-size:15px;font-weight:600}
+.tr button.on{border-color:var(--acc);background:var(--acc);color:#fff}
+.go{width:100%;margin-top:14px;padding:15px;border:0;border-radius:14px;background:var(--acc);color:#fff;font-size:17px;font-weight:700}
+.go[disabled]{opacity:.5}
+.lnk{display:block;text-align:center;margin-top:12px;color:var(--acc);font-weight:600;text-decoration:none;background:none;border:0;width:100%;font-size:15px}
+.msg{padding:11px 12px;border-radius:12px;font-size:14px;margin-top:12px;background:var(--bg);border:1px solid var(--line)}
+.msg.bad{color:var(--bad);border-color:var(--bad)}.msg.ok{color:var(--ok);border-color:var(--ok)}
+.spin{display:inline-block;width:18px;height:18px;border:3px solid var(--line);border-top-color:var(--acc);border-radius:50%;animation:sp 1s linear infinite;vertical-align:-3px;margin-right:8px}
+@keyframes sp{to{transform:rotate(360deg)}}
+[hidden]{display:none!important}
+.tabs2{display:flex;gap:6px;margin-bottom:14px}.tabs2 button{flex:1;padding:12px 4px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);font-weight:700;font-size:16px}.tabs2 button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+.steps{display:flex;gap:6px;margin-bottom:16px}.steps i{flex:1;height:5px;border-radius:3px;background:var(--line)}.steps i.on{background:var(--acc)}
+</style></head><body><main>
+<h1>👋 Xush kelibsiz</h1><p class="sub" id="sub">👷 Shogird ilovasi — ustangiz jamoasi</p>
+<div class="tabs2" id="tabs"><button id="tL" class="on">Kirish</button><button id="tR">Ro'yxatdan o'tish</button></div>
+
+<div id="pL">
+  <div class="card">
+    <label for="lph">Telefon raqamingiz</label>
+    <input id="lph" type="tel" inputmode="tel" value="+998" autocomplete="tel">
+    <label for="lpw">Parol</label>
+    <input id="lpw" type="password" autocomplete="current-password" placeholder="Parolingiz">
+  </div>
+  <button class="go" id="bL">Kirish</button>
+  <button class="lnk" id="forgot">Parolni unutdim</button>
 </div>
+
+<div id="pT" hidden>
+  <div class="card">
+    <label id="trL">Qaysi sohada ishlaysiz?</label>
+    <div class="tr" id="trs">
+      <button data-t="elektrik">⚡ Elektrik</button><button data-t="santexnik">🔧 Santexnik</button>
+      <button data-t="quruvchi">🧱 Quruvchi</button><button data-t="boshqa">🛠 Boshqa soha</button>
+    </div>
+  </div>
+  <button class="go" id="bT">Davom etish</button>
 </div>
-<script>window.HK_PROD='hk';</script>
+
+<div id="p1" hidden>
+  <div class="card">
+    <label for="ph" id="phL">Telefon raqamingiz</label>
+    <input id="ph" type="tel" inputmode="tel" value="+998" autocomplete="tel">
+    <div class="msg" style="font-size:13px">Kod <b>shu raqamning Telegramiga</b> keladi.</div>
+    <a class="lnk" id="botLnk" href="https://t.me/muhtorxon_hisob_bot" target="_blank" rel="noopener" hidden>✈️ Telegramda botni ochish</a>
+  </div>
+  <button class="go" id="b1">Kod olish</button>
+  <button class="lnk" id="back1">← Orqaga</button>
+</div>
+
+<div id="p2" hidden>
+  <div class="card">
+    <div id="sentTo" class="sub" style="margin:0 0 6px"></div>
+    <label for="cd">Telegramga kelgan 6 xonali kod</label>
+    <input id="cd" class="code" type="tel" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="••••••">
+  </div>
+  <button class="go" id="b2">Tasdiqlash</button>
+  <button class="lnk" id="back2">← Raqamni o'zgartirish</button>
+</div>
+
+<div id="p3" hidden>
+  <div class="card" style="text-align:center;padding:24px 14px">
+    <div style="font-size:42px">⏳</div>
+    <h2 style="margin:6px 0">Ega tasdiqlashini kuting</h2>
+    <p class="sub" style="margin:0 0 6px" id="waitTxt">Ruxsat berilishi bilan bu oyna o'zi ochiladi.</p>
+    <div><span class="spin"></span><span>Kutilmoqda…</span></div>
+  </div>
+  <button class="lnk" id="back3">← Orqaga</button>
+</div>
+
+<div id="p4" hidden>
+  <div class="card">
+    <div class="sub" style="margin:0 0 4px" id="pwSub">Parol o'ylab toping. Keyingi safar ilovani raqam va shu parol bilan ochasiz, kod so'ralmaydi.</div>
+    <label for="np1">Yangi parol (kamida 6 belgi)</label>
+    <input id="np1" type="password" autocomplete="new-password">
+    <label for="np2">Parolni takrorlang</label>
+    <input id="np2" type="password" autocomplete="new-password">
+  </div>
+  <button class="go" id="b4">Saqlash va kirish</button>
+</div>
+<div id="pX" hidden>
+  <div class="card">
+    <h2 style="margin:0 0 4px">💳 Obuna</h2>
+    <div class="sub" style="margin:0 0 6px" id="xUntil"></div>
+    <label>Tarifni tanlang</label>
+    <div class="tr" id="xPlans"></div>
+    <div id="xCardBox" hidden>
+      <label>Shu kartaga o'tkazing</label>
+      <div class="msg" style="margin-top:0"><div style="font-size:22px;font-weight:800;letter-spacing:1px" id="xCard"></div><div id="xName" class="sub" style="margin:2px 0 0"></div><div style="margin-top:6px">Summa: <b id="xSum"></b></div></div>
+      <button class="lnk" id="xCopy">📋 Karta raqamini nusxalash</button>
+      <label for="xImg">To'lov cheki (rasm yoki skrinshot)</label>
+      <input id="xImg" type="file" accept="image/*">
+      <img id="xPrev" alt="Chek" style="max-width:100%;border-radius:12px;margin-top:8px" hidden>
+    </div>
+    <div class="msg" id="xNone" hidden>To'lov hali sozlanmagan. Ega bilan bog'laning.</div>
+  </div>
+  <button class="go" id="bX" disabled>Chekni yuborish</button>
+  <button class="lnk" id="backX">← Orqaga</button>
+</div>
+
+<div id="pJ" hidden>
+  <div class="card">
+    <h2 style="margin:0 0 4px">🤝 Jamoaga taklif</h2>
+    <div class="sub" style="margin:0 0 6px" id="jTxt">Taklif tekshirilmoqda…</div>
+    <div id="jCodeBox" hidden><label for="jCode">Ustangiz bergan taklif kodi</label><input id="jCode" class="code" style="letter-spacing:4px" maxlength="8" autocapitalize="characters" placeholder="ABCD2345"><button class="go" id="bJc">Tekshirish</button></div>
+    <div id="jPwBox" hidden>
+      <label for="jp1">Parol o'ylab toping (kamida 6 belgi)</label><input id="jp1" type="password" autocomplete="new-password">
+      <label for="jp2">Parolni takrorlang</label><input id="jp2" type="password" autocomplete="new-password">
+      <div class="msg" style="font-size:13px">Keyingi safar ilovani <b>telefon raqamingiz va shu parol</b> bilan ochasiz.</div>
+    </div>
+  </div>
+  <button class="go" id="bJ" hidden>Qo'shilish</button>
+  <button class="lnk" id="backJ">← Orqaga</button>
+</div>
+<div id="pRg" hidden>
+  <div class="card">
+    <label for="rph">Telefon raqamingiz</label><input id="rph" type="tel" inputmode="numeric" value="+998 " autocomplete="tel">
+    <label for="rp1">Parol o'ylab toping (kamida 4 belgi)</label><input id="rp1" type="password" autocomplete="new-password">
+    <label for="rp2">Parolni takrorlang</label><input id="rp2" type="password" autocomplete="new-password">
+    <div class="msg" style="font-size:13px">Ro'yxatdan o'tish <b>bepul</b>. Keyingi safar raqam va shu parol bilan kirasiz.</div>
+  </div>
+  <button class="go" id="bRg">Ro'yxatdan o'tish</button>
+</div>
+<button class="lnk" id="toJoin">🤝 Ustam taklif qilgan (taklif kodi bor)</button>
+<div class="msg bad" id="er" hidden></div>
+<div class="msg" id="inf" hidden></div>
+
+<script>window.HK_PROD=(location.search.match(/[?&]prod=(nv|ed|em|rx)\b/)||[])[1]||'hk';</script>
 <script src="gate.js"></script>
 <script>
-(function(){
-var $=function(i){return document.getElementById(i)},Q=new URLSearchParams(location.search);
-var back=Q.get('back')||'';
-$('bk').onclick=function(){if(back&&/^\/ilovalar\//.test(back))location.href=back;else if(history.length>1)history.back();else location.href='./'};
-var app=Q.get('app')||'';if(app==='em')app='ed';if(/^(hk|nv|ed|rx)$/.test(app))$('ap').value=app;
-/* raqamni ilovadagi kirish ma'lumotidan olamiz (bor bo'lsa) */
-try{for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(!/_lic$/.test(k))continue;var o=JSON.parse(localStorage.getItem(k)||'null');if(o&&o.phone){$('ph').value='+'+o.phone;if(!Q.get('app')){var a=k.replace(/^.*?:/,'').split('_')[0];if(/^(hk|nv|ed|rx)$/.test(a))$('ap').value=a}if(k.indexOf(app)>=0||k.indexOf(':')<0)break}}}catch(e){}
-if(Q.get('ph'))$('ph').value='+'+Q.get('ph').replace(/\D/g,'');
-function norm(s){var d=String(s).replace(/\D/g,'');if(d.length===9)d='998'+d;return d}
-function msg(t,bad){var e=$('m');e.textContent=t;e.style.color=bad?'var(--bad)':'var(--mu)'}
-$('go').onclick=function(){
-  var p=norm($('ph').value),t=$('tx').value.trim();
-  if(!/^998\d{9}$/.test(p))return msg('Telefon raqamni to\'g\'ri yozing: +998 90 123 45 67',1);
-  if(t.length<3)return msg('Muammoni yozing.',1);
-  $('go').disabled=true;msg('⏳ Yuborilmoqda…');
-  HK.call(p,{act:'help',app:$('ap').value,name:$('nm').value.trim(),text:t},40000).then(function(r){
-    if(r&&r.st==='helpok'){$('f').innerHTML='<div class="ok"><div>✅</div><b style="font-size:20px">Yuborildi!</b><p class="s">'+String(r.msg||'').replace(/[<>&]/g,'')+'</p><button class="b" id="bk2">‹ Ilovaga qaytish</button></div>';$('bk2').onclick=$('bk').onclick;return}
-    $('go').disabled=false;msg((r&&r.msg)||'Yuborilmadi. Qayta urinib ko\'ring.',1)
-  }).catch(function(){$('go').disabled=false;msg('Internet yo\'q yoki server javob bermadi. Birozdan keyin qayta urinib ko\'ring.',1)});
-};
-})();
-</script><script>if("serviceWorker"in navigator&&(location.protocol=="https:"||location.hostname=="localhost"))window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});</script><script>window.YAPP="hk";</script><script>/* Yordam: o'ng tepada doimiy sozlamalar va ? tugmasi; ? har bir ekrandagi joylarni birma-bir ko'rsatib tushuntiradi.
+var CFG=HK.cfg,$=function(i){return document.getElementById(i)};
+/* Nonvoyxona rejimi (?prod=nv): soha so'ralmaydi, kirgach nonvoyxona ilovasiga qaytadi */
+var NV=HK.PROD!=='hk',PRN={nv:['🥖 Nonvoyxona ilovasi','Nonvoyxona — kirish','../nonvoyxona/'],ed:['💡 222 Aksessuar — Sotuvchi','222 Aksessuar Sotuvchi — kirish','../dokon/sotuvchi/'],em:['💡 222 Aksessuar','222 Aksessuar — kirish','../dokon/mijoz/'],rx:['👛 Hamyon — kunlik xarajatlar','Hamyon — kirish','../hamyon/']}[HK.PROD]||[];
+function nvBack(){var m=location.search.match(/[?&]back=([^&]+)/),b=m?decodeURIComponent(m[1]):'';return /^\/ilovalar\/(nonvoyxona|dokon|hamyon)\/[\w\-\/]*$/.test(b)?b:PRN[2]}
+if(NV){document.title=PRN[1];$('toJoin').hidden=true;$('sub').textContent=PRN[0];var bl=$('botLnk');if(bl)bl.textContent='✈️ Telegramda botni ochish (kod shu yerga keladi)'}
+var trade='',phone='',mode='login',Cc=null,Rr=null,PANELS=['pL','pT','p1','p2','p3','p4','pX','pJ','pRg'];
+function err(m){var e=$('er');e.textContent=m;e.hidden=!m}
+function info(m){var e=$('inf');e.innerHTML=m||'';e.hidden=!m}
+function show(id){PANELS.forEach(function(p){$(p).hidden=p!==id});$('tabs').hidden=(id!=='pL'&&id!=='pT'&&mode!=='x');$('toJoin').hidden=(id!=='pL'||NV);err('');info('')}
+function normPh(v){var d=String(v||'').replace(/\D/g,'');if(d.length===9)d='998'+d;return d}
+function okPh(p){return p.length===12&&p.indexOf('998')===0}
+function net(e){return /Failed to fetch|NetworkError|Load failed/i.test(e.message)?'Internet yo\'q yoki sekin.':e.message}
+function lastPh(){try{return localStorage.getItem('hk_last_phone')||''}catch(e){return ''}}
+function tabs(w){$('tL').className=w==='L'?'on':'';$('tR').className=w==='R'?'on':''}
+$('tL').onclick=function(){mode='login';tabs('L');show('pL')};
+$('tR').onclick=function(){mode='reg';tabs('R');if(HK.PROD==='em'){show('pRg');$('tabs').hidden=false;return}if(NV){$('phL').textContent='Telefon raqamingiz';$('back1').dataset.to='pL';show('p1');$('tabs').hidden=false;return}$('trL').textContent='Qaysi sohada ishlaysiz?';show('pT')};
+$('forgot').onclick=function(){mode='reset';$('tabs').hidden=true;$('phL').textContent='Parolni tiklash: telefon raqamingiz';$('ph').value=$('lph').value;show('p1');$('tabs').hidden=true;$('back1').dataset.to='pL'};
+document.querySelectorAll('#trs button').forEach(function(b){b.onclick=function(){trade=b.dataset.t;document.querySelectorAll('#trs button').forEach(function(x){x.className=x===b?'on':''})}});
+$('bT').onclick=function(){if(!trade)return err('Sohangizni tanlang.');$('phL').textContent='Telefon raqamingiz';$('back1').dataset.to='pT';show('p1');$('ph').focus()};
+$('back1').onclick=function(){var t=$('back1').dataset.to||'pT';if(t==='pL'){mode='login';tabs('L')}show(t)};
+$('back2').onclick=function(){HK.cancel();show('p1')};$('back3').onclick=function(){HK.cancel();show(mode==='login'?'pL':'p1')};
+$('b1').onclick=function(){
+  phone=normPh($('ph').value);
+  if(!okPh(phone))return err('Telefon raqamni to\'liq yozing. Masalan: +998 90 123 45 67');
+  err('');$('b1').disabled=true;$('b1').textContent='Yuborilmoqda…';
+  HK.call(phone,{act:'otp',trade:mode==='reg'?trade:'',dev:HK.dev()}).then(function(r){
+    $('b1').disabled=false;$('b1').textContent='Kod olish';
+    if(r.st==='sent'){$('sentTo').textContent='Kod +'+phone+' raqamining Telegramiga yuborildi.';show('p2');$('cd').value='';$('cd').focus();return}
+    if(r.st==='notg'){$('botLnk').hidden=false;return err('Bu raqamga kod yuborib bo\'lmadi: raqam botga ulanmagan. «Telegramda botni ochish» ni bosing, botda «📱 Raqamni ulashish» ni bosing va qayta urinib ko\'ring.')}
+    if(r.st==='blocked')return err('Bu raqam bloklangan. Ega bilan bog\'laning.');
+    err(r.msg||'Xatolik. Qayta urinib ko\'ring.')
+  }).catch(function(e){$('b1').disabled=false;$('b1').textContent='Kod olish';err(net(e))})};
+function signIn(r){
+  if(!r.pw)return Promise.reject(new Error('Kirish ma\'lumoti eskirdi. Qaytadan urinib ko\'ring.'));
+  return HK.jf('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key='+CFG.apiKey,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({email:'p'+phone+'@hisobkitob.app',password:r.pw,returnSecureToken:true})}).then(function(j){
+    Cc={cfg:CFG,phone:phone,uid:j.localId,idt:j.idToken,rt:j.refreshToken,exp:Date.now()+(+j.expiresIn||3600)*1000,lastUpd:0,lastRemote:0,lastAt:'',msg:''};Rr=r})}
+function finish(){
+  try{localStorage.setItem(NV?HK.PROD+'_cloud':'cloud_v1',JSON.stringify(Cc));localStorage.setItem('hk_last_phone',phone)}catch(e){}
+  HK.set({ok:true,phone:phone,trade:Rr.trade||trade||'elektrik',until:Rr.until,at:Date.now(),role:Rr.role||'usta',usta:Rr.usta||null,g:Rr.g||'',k:(HK.PROD==='em'&&Rr.pw)?HK.hash('em-dokon',Rr.pw).slice(0,32):''});
+  show('pL');info('✅ Kirdingiz!');setTimeout(function(){location.replace(NV?nvBack():'index.html')},400)}
+function after(r){
+  if(r.phone)phone=r.phone;
+  signIn(r).then(function(){
+    if(mode==='login'||r.role==='shogird'||(mode==='reg'&&HK.PROD==='em'))return finish();
+    $('pwSub').textContent=mode==='reset'?'Yangi parol o\'ylab toping.':'Ro\'yxatdan o\'tdingiz! Endi parol o\'ylab toping. Keyingi safar ilovani raqam va shu parol bilan ochasiz, kod so\'ralmaydi.';
+    $('np1').value='';$('np2').value='';show('p4')
+  }).catch(function(e){err('Hisobga kirib bo\'lmadi: '+net(e))})}
+function waitOwner(r){show('p3');$('waitTxt').textContent=r.msg||'Ega tasdiqlashini kuting.';
+  return HK.poll(phone,r.nonce,1800000,true).then(function(r2){if(r2.st==='ok')return after(r2);
+    if(r2.st==='paid'){mode='login';tabs('L');show('pL');$('lph').value='+'+phone;info('✅ '+(r2.msg||'To\'lov tasdiqlandi.')+' Endi «Kirish» ni bosing.');return}
+    show(mode==='login'?'pL':'p1');err(r2.msg||'Ruxsat berilmadi.')}).catch(function(e){if(e.message!=='stop')err(net(e))})}
+/* ---- To'lov (obuna) ---- */
+var PAY=null,PLAN='',IMG='',TKT='';
+var PN={d:'Kunlik',w:'Haftalik',m:'Oylik',y:'Yillik'};
+function fm(n){return Math.round(+n||0).toLocaleString('ru-RU').replace(/ /g,' ')+" so'm"}
+function showPay(pay,until,tkt){PAY=pay||{};PLAN='';IMG='';TKT=tkt||'';$('bX').textContent='Chekni yuborish';$('xPrev').hidden=true;$('xImg').value='';$('bX').disabled=true;
+  $('xUntil').textContent=TKT?'Xush kelibsiz! Tarifni tanlang:':until?(until>Date.now()?'Hozirgi muddat: '+new Date(until).toLocaleDateString('ru-RU')+' gacha':'Muddat tugagan: '+new Date(until).toLocaleDateString('ru-RU')):'Tarifni tanlab, to\'lov qiling.';
+  var ks=['d','w','m','y'].filter(function(k){return +PAY[k]>0});
+  var tr=TKT&&+PAY.trial>0;$('xNone').hidden=!!((ks.length&&PAY.card)||tr);$('xCardBox').hidden=true;
+  $('xPlans').innerHTML=(tr?'<button data-p="trial">🎁 Bepul sinov<br><b>'+PAY.trial+' kun</b></button>':'')+ks.map(function(k){return '<button data-p="'+k+'">'+PN[k]+'<br><b>'+fm(PAY[k])+'</b></button>'}).join('');
+  $('xPlans').querySelectorAll('button').forEach(function(b){b.onclick=function(){PLAN=b.dataset.p;$('xPlans').querySelectorAll('button').forEach(function(x){x.className=x===b?'on':''});
+    if(PLAN==='trial'){$('xCardBox').hidden=true;$('bX').textContent='🎁 Bepul sinovni boshlash';$('bX').disabled=false;return}
+    $('bX').textContent='Chekni yuborish';$('xCardBox').hidden=!PAY.card;$('xCard').textContent=PAY.card||'';$('xName').textContent=PAY.cname||'';$('xSum').textContent=fm(PAY[PLAN]);$('bX').disabled=!IMG}});
+  show('pX');$('tabs').hidden=true}
+$('xCopy').onclick=function(){var t=String((PAY&&PAY.card)||'').replace(/\s/g,'');try{navigator.clipboard.writeText(t);info('Karta raqami nusxalandi')}catch(e){info(t)}};
+$('xImg').onchange=function(){var f=this.files&&this.files[0];if(!f)return;var rd=new FileReader();rd.onload=function(){var im=new Image();im.onload=function(){var s=Math.min(1,1100/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext('2d').drawImage(im,0,0,c.width,c.height);var u=c.toDataURL('image/jpeg',.72);IMG=u.split(',')[1];$('xPrev').src=u;$('xPrev').hidden=false;$('bX').disabled=!PLAN};im.onerror=function(){err('Rasmni o\'qib bo\'lmadi.')};im.src=rd.result};rd.readAsDataURL(f)};
+$('bX').onclick=function(){if(!PLAN)return err('Tarifni tanlang.');if(PLAN==='trial')return run({act:'trial',tkt:TKT,dev:HK.dev()},$('bX'),'🎁 Bepul sinovni boshlash');if(!IMG)return err('Chek rasmini tanlang.');run({act:'pay',plan:PLAN,img:IMG},$('bX'),'Chekni yuborish')};
+$('backX').onclick=function(){if(/[?&]pay=1/.test(location.search))return location.replace(NV?nvBack():'index.html');mode='login';tabs('L');show('pL')};
+/* ---- Shogird: taklif bilan qo'shilish ---- */
+var TOK='',TI=null;
+function joinCheck(t){TOK=String(t||'').toUpperCase().replace(/[^A-Z0-9]/g,'');if(TOK.length!==8){$('jTxt').textContent='Taklif kodi 8 belgidan iborat.';return}
+  $('jTxt').textContent='Taklif tekshirilmoqda…';$('jCodeBox').hidden=true;
+  HK.call('t'+TOK,{act:'tinfo'}).then(function(r){if(r.st!=='tinfo'){$('jTxt').textContent=r.msg||'Taklif topilmadi.';$('jCodeBox').hidden=false;return}
+    TI=r;$('jTxt').innerHTML='<b>'+String(r.un||'Ustangiz').replace(/[<>&]/g,'')+'</b> sizni o\'z jamoasiga qo\'shmoqda.<br>Sizning raqamingiz: <b>+'+r.sp+'</b>';$('jPwBox').hidden=false;$('bJ').hidden=false}).catch(function(e){$('jTxt').textContent=net(e);$('jCodeBox').hidden=false})}
+function showJoin(t){show('pJ');$('tabs').hidden=true;$('jPwBox').hidden=true;$('bJ').hidden=true;if(t)joinCheck(t);else{$('jTxt').textContent='Ustangiz bergan havolani oching yoki taklif kodini yozing.';$('jCodeBox').hidden=false}}
+$('toJoin').onclick=function(){showJoin('')};
+$('bJc').onclick=function(){joinCheck($('jCode').value)};
+$('backJ').onclick=function(){mode='login';tabs('L');show('pL')};
+$('bJ').onclick=function(){var a=$('jp1').value,b=$('jp2').value;if(a.length<6)return err('Parol kamida 6 belgi bo\'lsin.');if(a!==b)return err('Ikkala parol bir xil emas.');if(!TI)return;
+  var bt=$('bJ');bt.disabled=true;bt.textContent='Ulanmoqda…';phone=TI.sp;
+  HK.call('t'+TOK,{act:'join',ph:HK.hash(TI.sp,a),dev:HK.dev()},40000).then(function(r){bt.disabled=false;bt.textContent='Qo\'shilish';if(r.st==='ok')return after(r);err(r.msg||'Ulanib bo\'lmadi.')}).catch(function(e){bt.disabled=false;bt.textContent='Qo\'shilish';err(net(e))})};
+function run(cmd,btn,label){
+  btn.disabled=true;btn.textContent='Tekshirilmoqda…';
+  return HK.call(phone,cmd).then(function(r){btn.disabled=false;btn.textContent=label;
+    if(r.st==='ok')return after(r);
+    if(r.st==='choose')return showPay(r.pay,0,r.tkt);
+    if(r.st==='exp'){if(r.who==='me')return showPay(r.pay,r.until);return err(r.msg)}
+    if(r.st==='wait')return waitOwner(r);
+    err(r.msg||(r.st==='blocked'?'Bu raqam bloklangan.':'Ruxsat berilmadi.'))
+  }).catch(function(e){btn.disabled=false;btn.textContent=label;err(e.message==='stop'?'':net(e))})}
+$('b2').onclick=function(){var c=$('cd').value.replace(/\D/g,'');if(c.length!==6)return err('6 xonali kodni yozing.');err('');run({act:'verify',code:c,trade:mode==='reg'?trade:'',dev:HK.dev()},$('b2'),'Tasdiqlash')};
+$('bL').onclick=function(){phone=normPh($('lph').value);var pw=$('lpw').value;
+  if(!okPh(phone))return err('Telefon raqamni to\'liq yozing.');if(!pw)return err('Parolni yozing.');
+  run({act:'login',ph:HK.hash(phone,pw),dev:HK.dev()},$('bL'),'Kirish')};
+$('lpw').onkeydown=function(e){if(e.key==='Enter')$('bL').onclick()};
+$('b4').onclick=function(){var a=$('np1').value,b=$('np2').value;
+  if(a.length<6)return err('Parol kamida 6 belgidan iborat bo\'lsin.');if(a!==b)return err('Ikkala parol bir xil emas.');
+  $('b4').disabled=true;$('b4').textContent='Saqlanmoqda…';
+  HK.call(phone,{act:'setpw',idt:Cc.idt,ph:HK.hash(phone,a)}).then(function(r){$('b4').disabled=false;$('b4').textContent='Saqlash va kirish';
+    if(r.st==='pwok')return finish();err(r.msg||'Parol saqlanmadi.')}).catch(function(e){$('b4').disabled=false;$('b4').textContent='Saqlash va kirish';err(net(e))})};
+var lp=lastPh();if(lp)$('lph').value='+'+lp;
+$('bRg').onclick=function(){phone=normPh($('rph').value);var a=$('rp1').value,b=$('rp2').value;
+  if(!okPh(phone))return err('Telefon raqamni to\'liq yozing.');if(a.length<4)return err('Parol kamida 4 belgi bo\'lsin.');if(a!==b)return err('Ikkala parol bir xil emas.');
+  run({act:'reg',ph:HK.hash(phone,a),dev:HK.dev()},$('bRg'),'Ro\'yxatdan o\'tish')};
+if(/[?&]tab=reg/.test(location.search))setTimeout(function(){$('tR').onclick()},0);
+/* ?ph=998... — ilovada yozilgan raqam kirish va ro'yxat maydonlariga o'zi tushadi */
+(function(){var m=location.search.match(/[?&]ph=(\d{12})/);if(!m)return;var v='+'+m[1];['lph','ph','rph'].forEach(function(i){if($(i))$(i).value=v})})();
+/* Havola bilan ochilgan: ?taklif=KOD (shogird) yoki ?pay=1 (ilovadan to'lov) */
+(function(){var q=location.search,m=q.match(/[?&]taklif=([A-Za-z0-9]{8})/);
+  if(m){showJoin(m[1]);return}
+  /* Shogird ilovasi ochildi (havoladagi kod yuklash sahifasida eslab qolingan bo'lishi mumkin) */
+  if(/[?&]shogird=1/.test(q)){var tk='';try{tk=localStorage.getItem('hk_taklif')||''}catch(e){}showJoin(tk);return}
+  if(/[?&]pay=1/.test(q)){var l=HK.lic()||{};if(!l.phone)return;phone=l.phone;show('pX');$('tabs').hidden=true;$('xUntil').textContent='Yuklanmoqda…';
+    HK.call(phone,{act:'payinfo'}).then(function(r){showPay(r.pay,r.until)}).catch(function(e){err(net(e))})}})();
+try{var l=HK.lic();if(l&&l.ok&&l.until<=Date.now()){err('Foydalanish muddatingiz tugagan. Parol bilan kiring va egadan ruxsat so\'rang.')}}catch(e){}
+</script></main><script>if("serviceWorker"in navigator&&(location.protocol=="https:"||location.hostname=="localhost"))window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})});</script><script>window.YAPP="hk";</script><script>/* Yordam: o'ng tepada doimiy sozlamalar va ? tugmasi; ? har bir ekrandagi joylarni birma-bir ko'rsatib tushuntiradi.
  * Ilova yig'ilganda: window.YAPP="tr" + shu fayl. Tugmalar matni yoki selektori bo'yicha topiladi;
  * ekranda yo'q tugma o'tkazib yuboriladi. */
 (function () {
@@ -475,9 +672,17 @@ $('go').onclick=function(){
     var inst = false; try { inst = matchMedia('(display-mode: standalone)').matches || navigator.standalone; } catch (e) {}
     /* APK ichida (WebView: "; wv)") yoki boshqa ilova kirish sahifasida (gate.html?prod=rx|nv|ed|em) — taklif qilinmaydi */
     var wrapped = /; wv\)/.test(navigator.userAgent), other = /gate\.html/.test(location.pathname) && /[?&]prod=(rx|nv|ed|em)/.test(location.search);
-    if (inst || wrapped || other || !/Android/i.test(navigator.userAgent)) return;
+    var ua = navigator.userAgent, isI = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (inst || wrapped || other || !(/Android/i.test(ua) || isI)) return;
     var ask = /[?&#]o=1/.test(location.href), EV = null, BAR = null, DK = 'yrd_inst_no';
     function no() { try { return Date.now() - (+localStorage.getItem(DK) || 0) < 3 * 864e5; } catch (e) { return false; } }
+    /* iPhone: Safari o'zi taklif qilmaydi — «Bosh ekranga qo'shish» yo'lini ko'rsatamiz (2026-11-17) */
+    if (isI) { if (!document.querySelector('link[rel="manifest"]') || no()) return;
+      setTimeout(function () { if (BAR) return;
+        bar(/CriOS|FxiOS|Telegram|FBAN|Instagram/.test(ua) || !/Safari/.test(ua)
+          ? '<b style="font-size:17px">📲 Ilovani o\'rnatish</b><br>Bu sahifani <b>Safari</b>da oching: «⋯» yoki ⬆ → <b>«Safari\'da ochish»</b>. Keyin pastdagi <b>Ulashish ⬆</b> → <b>«Bosh ekranga qo\'shish»</b> (На экран «Домой»).'
+          : '<b style="font-size:17px">📲 Ilovani o\'rnatish</b><br>Pastdagi <b>Ulashish</b> belgisini (⬆ kvadrat) bosing → <b>«Bosh ekranga qo\'shish»</b> (На экран «Домой») → <b>Qo\'shish</b>.<br>Keyin ilovani telefon ekranidagi belgidan oching.'); }, 1500);
+      return; }
     function bar(html) { if (BAR) BAR.remove(); var d = document.createElement('div'); BAR = d; d.id = 'yrdi';
       d.style.cssText = 'position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));max-width:460px;margin:0 auto;z-index:2147482500;background:#fff;color:#14171f;border-radius:16px;padding:14px;box-shadow:0 8px 28px rgba(0,0,0,.35);font:16px/1.45 system-ui,sans-serif';
       d.innerHTML = html + '<div style="display:flex;gap:8px;margin-top:10px"><button data-i="x" style="flex:1;padding:12px;border:0;border-radius:12px;background:#e5e7eb;font-weight:700;font-size:15px">Keyin</button>' + (EV ? '<button data-i="ok" style="flex:2;padding:12px;border:0;border-radius:12px;background:#16a34a;color:#fff;font-weight:800;font-size:16px">📲 O\'rnatish</button>' : '') + '</div>';

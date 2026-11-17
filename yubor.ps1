@@ -16,8 +16,14 @@ $env:PYTHONUTF8 = '1'; python C:\Loyihalar\premium-xizmat\apps\web\build_web.py 
 foreach ($d in 'nonvoyxona', 'hisob') { if (Test-Path "$site\$d") { Remove-Item "$site\$d" -Recurse -Force } }
 Copy-Item C:\Loyihalar\nonvoyxona\web "$site\nonvoyxona" -Recurse
 Copy-Item C:\Users\user\Downloads\loyiha\web\out "$site\hisob" -Recurse
+# 2-) Shogird — alohida manzilda (…/ilovalar/shogird/): hisob/ ichida tursa, telefonda Hisob-kitob o'rnatilgan bo'lsa o'sha ilova ichida ochilib, o'rnatish chiqmasdi (2026-11-17)
+if (Test-Path "$site\shogird") { Remove-Item "$site\shogird" -Recurse -Force }
+Move-Item "$site\hisob\shogird" "$site\shogird"
+New-Item -ItemType Directory -Force "$site\hisob\shogird" | Out-Null
+'<!doctype html><meta charset="utf-8"><script>location.replace("../../shogird/"+location.search)</script>' | Out-File "$site\hisob\shogird\index.html" -Encoding utf8
+Copy-Item "$site\hisob\shogird\index.html" "$site\hisob\shogird\o.html"
 # 2a) Har ilova papkasiga o'rnatish sahifasi (o.html) — Chrome aynan shu ilovani telefonga o'rnatadi
-foreach ($d in 'hisob', 'hisob\shogird', 'hamyon', 'dokon\mijoz', 'dokon\sotuvchi', 'nonvoyxona\toshkent-rahbar', 'nonvoyxona\toshkent-hodim', 'nonvoyxona\namangan-rahbar', 'nonvoyxona\namangan-hodim') {
+foreach ($d in 'hisob', 'shogird', 'hamyon', 'dokon\mijoz', 'dokon\sotuvchi', 'nonvoyxona\toshkent-rahbar', 'nonvoyxona\toshkent-hodim', 'nonvoyxona\namangan-rahbar', 'nonvoyxona\namangan-hodim') {
   if (Test-Path "$site\$d\manifest.webmanifest") { Copy-Item "$site\yuklash\o.html" "$site\$d\o.html" -Force } }
 # 2b) Yuklab olish sahifasi uchun eng yangi APK lar (doimiy nom bilan)
 New-Item -ItemType Directory -Force "$site\yuklash\apk" | Out-Null

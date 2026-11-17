@@ -1,0 +1,13 @@
+<!doctype html><html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#15803d"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Shogird">
+<link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" href="icon-192.png"><title>Shogird</title></head>
+<body style="font-family:system-ui,sans-serif;text-align:center;padding:60px 20px;background:#f0fdf4;color:#14532d"><div style="font-size:48px">👷</div><p>Yuklanmoqda…</p>
+<script>
+/* Shogird ilovasi: kirgan bo'lsa — ish kabineti; bo'lmasa — taklif kodi bilan qo'shilish (kod havoladan yoki yuklash sahifasidan eslab qolingan) */
+(function(){var m=location.search.match(/[?&]taklif=([A-Za-z0-9]{8})/);try{if(m)localStorage.setItem('hk_taklif',m[1].toUpperCase())}catch(e){}
+var l=null;try{l=JSON.parse(localStorage.getItem('hk_lic')||'null')}catch(e){}
+if(l&&l.ok&&l.role==='shogird'){location.replace('shogird.html');return}
+var t='';try{t=localStorage.getItem('hk_taklif')||''}catch(e){}
+location.replace(t?'gate.html?taklif='+t:'gate.html?shogird=1')})();
+if("serviceWorker"in navigator&&location.protocol=="https:")navigator.serviceWorker.register("sw.js").catch(function(){});
+</script></body></html>
