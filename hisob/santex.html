@@ -59,7 +59,7 @@
       var done = false, fin = function () {
         if (done) return; done = true; window.HK_HOLD = 0; document.documentElement.style.visibility = '';
         var l = null; try { l = JSON.parse(ls('hk_lic') || 'null'); } catch (e) {}
-        if (!(l && l.ok && l.until > Date.now()) && !/gate\.html$/.test(location.pathname)) location.replace('gate.html');
+        if (!(l && l.ok && l.until > Date.now()) && !/(gate|murojaat)\.html$/.test(location.pathname)) location.replace('gate.html');
       };
       try {
         CS.getItems(['hk_lic', 'hk_cloud'], function (err, v) {

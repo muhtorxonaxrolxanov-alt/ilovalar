@@ -55,5 +55,5 @@
   window.HK.hash=function(phone,pw){return sha('hk1:'+phone+':'+pw)};
   var l=window.HK.lic();
   var ok=l&&l.ok&&l.until>Date.now();
-  if(PROD==='hk'&&!ok&&!window.HK_HOLD&&!/gate\.html$/.test(location.pathname)){location.replace('gate.html')}
+  if(PROD==='hk'&&!ok&&!window.HK_HOLD&&!/(gate|murojaat)\.html$/.test(location.pathname)){location.replace('gate.html')}
 })();
