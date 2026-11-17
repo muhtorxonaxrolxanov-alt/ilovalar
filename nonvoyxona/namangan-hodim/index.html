@@ -137,7 +137,7 @@ ls.removeItem("nv_prof");ls.removeItem("nv_profs");if(NU)ls.setItem("nv_dataurl"
 var EX=/^nv_(aicfg|aimods|aislow|aifh|vdone|prof|profs|dataurl|aio|rem|zkm|url)$/;ks.forEach(function(k){if(/^nv_/.test(k)&&k.indexOf("@")<0&&!EX.test(k)&&!(k in o))ls.removeItem(k)});
 Object.keys(o).forEach(function(k){ls.setItem(k,o[k])});ls.removeItem("nvx_snap")}catch(e){}})();
 
-window.NVBUILD=1794861372568;window.nvNorm=function(v){return String(v==null?"":v).replace(/,/g,".").replace(/[^\d.]/g,"").replace(/\.{2,}/g,".").replace(/^\.+|\.+$/g,"")};window.nvNewer=function(x){if(!x)return false;var a=nvNorm(x.v),b=nvNorm(typeof APPV!="undefined"?APPV:"");if(!a||a==b)return false;try{return newer(a,b)}catch(e){return false}};
+window.NVBUILD=1794886410921;window.nvNorm=function(v){return String(v==null?"":v).replace(/,/g,".").replace(/[^\d.]/g,"").replace(/\.{2,}/g,".").replace(/^\.+|\.+$/g,"")};window.nvNewer=function(x){if(!x)return false;var a=nvNorm(x.v),b=nvNorm(typeof APPV!="undefined"?APPV:"");if(!a||a==b)return false;try{return newer(a,b)}catch(e){return false}};
 </script><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1"><title>Namangan - Hodim</title>
 <script>window.onerror=function(m,u,l){var d=document.getElementById("errbox");if(!d){d=document.createElement("div");d.id="errbox";d.style.cssText="position:fixed;left:8px;right:8px;bottom:8px;z-index:99;background:#7a1f1f;color:#fff;padding:10px;border-radius:10px;font:13px sans-serif";(document.body||document.documentElement).appendChild(d)}d.innerHTML="<b>Xato:</b> "+String(m).replace(/</g,"&lt;")+" ("+l+")<br><button onclick=\"location.reload()\" style=\"margin:6px 6px 0 0\">Qayta yuklash</button><button onclick=\"errWipe(this)\" style=\"margin-top:6px\">Ma'lumotni tozalash</button>"};function errWipe(b){if(b.getAttribute("data-s")){try{localStorage.clear()}catch(e){}location.reload()}else{b.setAttribute("data-s","1");b.textContent="Rostdan tozalaymi? Yana bosing"}}</script>
@@ -1086,6 +1086,22 @@ try{if(typeof render=="function"){var R0=render;render=function(){try{run()}catc
 setTimeout(function(){if(run()){try{render()}catch(e){}}},800);
 })();
 </script>
+<script id="sup">/* 🆘 Yordam markazi (2026-11-17): Sozlamalarda bo'lim. Murojaat umumiy sahifada yoziladi (hisob/murojaat.html)
+   va egasining Telegram botiga boradi. Rahbar (SEC/setH/SS) va hodim (SEC2/setMenu/SS2) ilovalarida. */
+(function(){if(window.nvSub)return;
+var OWN=typeof SEC!="undefined";if(!OWN&&typeof SEC2=="undefined")return;
+var SITE="https://muhtorxonaxrolxanov-alt.github.io/ilovalar/hisob/murojaat.html";
+window.nvSupGo=function(){var ph="";try{ph=String((S&&S.acc&&S.acc.ph)||"").replace(/\D/g,"")}catch(e){}
+  var q="?app=nv"+(ph?"&ph="+ph:"")+"&back="+encodeURIComponent(location.pathname);
+  if(/github\.io$/.test(location.hostname))location.href="/ilovalar/hisob/murojaat.html"+q;
+  else{try{if(window.Android&&Android.open){Android.open(SITE+q);return}}catch(e){}window.open(SITE+q,"_blank")}};
+function pageH(){return'<div style="background:var(--sf);border:1px solid var(--bd);border-radius:14px;padding:14px;margin-bottom:10px;line-height:1.5">Ilovada muammo bo\'lsa, biror narsa ishlamasa yoki savolingiz bo\'lsa — shu yerdan yozing. Xabaringiz ilova egasiga Telegramda darhol boradi, javob ham Telegram orqali keladi.</div>'+
+  '<button onclick="nvSupGo()" style="width:100%;padding:15px;border-radius:14px;border:0;background:#dc2626;color:#fff;font-size:17px;font-weight:800">📨 Yordam markaziga yozish</button>'}
+var ENT=["sup","🆘","Yordam markazi","Muammo yoki savol yozish"];
+if(OWN){try{SEC.push(ENT)}catch(e){}var sh=setH;setH=function(){if(SS=="sup")return'<button style="margin:4px 0 8px" onclick="SS=\'\';render()">← Sozlamalar</button><h2>🆘 Yordam markazi</h2>'+pageH();return sh.apply(this,arguments)}}
+else{try{SEC2.push(ENT)}catch(e){}var sm=setMenu;setMenu=function(){if(SS2=="sup")return'<button style="margin:4px 0 8px;width:auto" onclick="SS2=\'\';R()">← Sozlamalar</button><h2>🆘 Yordam markazi</h2>'+pageH();return sm.apply(this,arguments)}}
+})();
+</script>
 <script id="blk">(function(){var IDS=["AKfycbw3Uw8e", "AKfycbwQpzWc", "AKfycbwY5t8Z", "AKfycbwq1ByKF", "AKfycbwtRk3w", "AKfycbx1U7aG", "AKfycbx9K4Vq", "AKfycbxH4jg0", "AKfycbxJTINGy", "AKfycbxoOaWF", "AKfycbxqc4ucr", "AKfycby2e92Wkz", "AKfycbyOpRPhQ", "AKfycbzuZwMOj", "AKfycbwtRk3w", "AKfycbxkjaW-7KQ", "AKfycby2e92Wkz", "AKfycbwlOTXDGp"];function bad(s){s=String(s||"");return IDS.some(function(i){return s.indexOf(i)>=0})}
 var f0=window.fetch;window.fetch=function(u){if(bad(u&&u.url||u)){try{toast("Bu Premium nonvoyxona serveri. Namangan serveri linkini kiriting")}catch(e){}return Promise.reject(new Error("blocked"))}return f0.apply(this,arguments)};
 try{if(typeof S!="undefined"&&S&&bad(S.url))S.url=""}catch(e){}try{if(typeof SU!="undefined"&&bad(SU)){SU="";localStorage.removeItem("nv_url")}}catch(e){}})();
@@ -1192,7 +1208,7 @@ try{if(typeof S!="undefined"&&S&&bad(S.url))S.url=""}catch(e){}try{if(typeof SU!
   var CFG = {
     tr: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('set'); }, gd: 'Nonvoyxona nomi, filiallar, bildirishnomalar, ko\'rinish va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
     th: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('yub'); }, gd: 'Akaunt, ovoz, til va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
-    'hk-i': { on: function () { return vis0('#prof'); }, set: clk('#prof'), gd: 'Profil: sohangiz, parolni o\'zgartirish va ilovadan chiqish.' },
+    'hk-i': { on: function () { return !!document.getElementById('prof'); }, set: clk('#prof'), gd: 'Sozlamalar: raqamingiz va muddatingiz, 💳 To\'lov, 🆘 Yordam markazi, soha, parolni o\'zgartirish va ilovadan chiqish.' },
     'hk-h': { hide: '.top .gear', pad: '.top{padding-right:96px}', on: function () { return true; }, set: clk('[data-a="gear"]'), gd: 'Profil, ilova nomi va belgisi, ko\'rinish, zaxira nusxa. Har ekranda shu yerda turadi.' },
     'hk-sg': { hide: '#tS', on: function () { return !!document.querySelector('#tabs') && vis0('#tO'); }, set: clk('#tS'), gd: 'Yangilash va ilovadan chiqish.' },
     em: { pad: '#topActions{margin-right:90px}', on: function () { var s = gS(); return !!(s && s.token); }, set: function () { var s = gS(); s.tab = 'profile'; s.view = null; render(); scrollTo(0, 0); }, gd: 'Profilingiz: ism, manzil, xaritadagi joyingiz, parol.' },
@@ -1292,7 +1308,8 @@ try{if(typeof S!="undefined"&&S&&bad(S.url))S.url=""}catch(e){}try{if(typeof SU!
     function draw() {
       if (k < 0) { sh.hidden = false; sp.hidden = true; bb.style.top = '22%';
         bb.innerHTML = '<b>' + (nm ? '📍 ' + nm : A.t) + '</b>' + (nm ? A.t + '. ' : '') + (A.i || '') + '<br><br>' + (L.length ? 'Shu ekrandagi ' + L.length + ' ta joyni birma-bir ko\'rsatib, nima qilishini aytaman.' : 'Bu ekranda tugma yo\'q.') +
-          '<div class="nv"><button data-y="x">Yopish</button>' + (L.length ? '<button class="p" data-y="n">Ko\'rsatish ›</button>' : '') + '</div>'; return; }
+          '<div class="nv"><button data-y="x">Yopish</button>' + (L.length ? '<button class="p" data-y="n">Ko\'rsatish ›</button>' : '') + '</div>' +
+          '<div class="nv"><button data-y="s" style="background:#fee2e2;color:#991b1b">🆘 Yordam markaziga yozish</button></div>'; return; }
       var it = L[k]; sh.hidden = true; if (it.e !== document.getElementById('yrdg')) { var r0 = it.e.getBoundingClientRect(); if (r0.top < 60 || r0.bottom > innerHeight - 60) it.e.scrollIntoView({ block: 'center' }); }
       bb.innerHTML = '<b>' + it.h + '</b>' + it.d + nav(k >= L.length - 1) + '<small>' + (k + 1) + ' / ' + L.length + '</small>';
       setTimeout(function () { if (!O) return;
@@ -1303,6 +1320,7 @@ try{if(typeof S!="undefined"&&S&&bad(S.url))S.url=""}catch(e){}try{if(typeof SU!
     /* Ilovaning o'z tugma tutqichlariga (o'chirish tasdig'i va h.k.) bosish yetib bormasin */
     function h(ev) { ev.stopPropagation(); var b = ev.target.closest && ev.target.closest('[data-y]'); if (ev.type !== 'click') return; ev.preventDefault();
       if (!b) return; var y = b.getAttribute('data-y');
+      if (y === 's') { close(); return window.yordamMarkaz(); }
       if (y === 'x') return close(); if (y === 'b') k = Math.max(-1, k - 1); if (y === 'n') { if (k >= L.length - 1) return close(); k++; } draw(); }
     ['click', 'pointerdown', 'pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend'].forEach(function (t) { o.addEventListener(t, h, true); });
     draw();
@@ -1324,6 +1342,16 @@ try{if(typeof S!="undefined"&&S&&bad(S.url))S.url=""}catch(e){}try{if(typeof SU!
     tick(); setInterval(tick, 800);
   }
   window.yordamStart = function () { start(); };
+  /* 🆘 Yordam markazi: murojaat sahifasi (hisob/murojaat.html) → egasining Telegram botiga boradi */
+  function appCode() { var a = window.YAPP || '', m = /[?&]prod=(nv|ed|em|rx)/.exec(location.search);
+    if (m) return m[1] === 'em' ? 'ed' : m[1]; if (/^(tr|th|nr|nh)$/.test(a)) return 'nv'; if (a === 'em' || a === 'es') return 'ed'; if (a === 'hm') return 'rx'; return 'hk'; }
+  window.yordamMarkazUrl = function () { return '/ilovalar/hisob/murojaat.html?app=' + appCode() + '&back=' + encodeURIComponent(location.pathname + location.search); };
+  window.yordamMarkaz = function () { location.href = window.yordamMarkazUrl(); };
+  /* Kirish / ro'yxatdan o'tish sahifasida (bloklangan odam ham) — burchakda doim ko'rinadigan tugma */
+  if (K === 'gate') (function () { function add() { if (document.getElementById('yrds')) return; var a = document.createElement('a'); a.id = 'yrds'; a.href = window.yordamMarkazUrl(); a.textContent = '🆘 Yordam markazi';
+    a.style.cssText = 'position:fixed;left:8px;top:calc(8px + env(safe-area-inset-top,0px));z-index:2147482000;background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;border-radius:999px;padding:8px 12px;font:600 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 1px 4px rgba(0,0,0,.15)';
+    document.body.appendChild(a); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', add); else add(); })();
 
   /* ---------- ORQAGA tugmasi: ilovadan chiqib ketmasin, bir qadam orqaga qaytsin ---------- */
   function tst(m) { try { if (typeof toast === 'function') return toast(m); } catch (e) {} var d = document.createElement('div'); d.textContent = m; d.style.cssText = 'position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:20px;z-index:2147483002;font:15px system-ui'; document.body.appendChild(d); setTimeout(function () { d.remove(); }, 1800); }
@@ -1377,7 +1405,10 @@ try{if(typeof S!="undefined"&&S&&bad(S.url))S.url=""}catch(e){}try{if(typeof SU!
     var y0 = null, dy = 0, P = null, busy = false, LIM = 85;
     function ind() { if (P) return P; P = document.createElement('div'); P.id = 'yptr';
       P.style.cssText = 'position:fixed;left:50%;top:0;width:42px;height:42px;margin-left:-21px;border-radius:50%;background:#fff;color:#16a34a;box-shadow:0 2px 10px rgba(0,0,0,.3);z-index:2147483003;display:flex;align-items:center;justify-content:center;font:bold 24px system-ui;transform:translateY(-60px);pointer-events:none';
-      P.textContent = '⟳'; document.body.appendChild(P); return P; }
+      /* ichida halqa: tortayotganda aylanmaydi (bosh aylanmasin), qo'yib yuborilgach joyida bir tekis aylanadi */
+      P.innerHTML = '<i style="display:block;width:22px;height:22px;border-radius:50%;border:3px solid rgba(22,163,74,.25);border-top-color:#16a34a"></i>';
+      var st = document.createElement('style'); st.textContent = '@keyframes yptrs{to{transform:rotate(360deg)}}#yptr.spin i{animation:yptrs .8s linear infinite}'; document.head.appendChild(st);
+      document.body.appendChild(P); return P; }
     function blocked(t) { if (O || busy) return true; if (scrollY > 0 || (document.scrollingElement && document.scrollingElement.scrollTop > 0)) return true;
       for (var e = t; e && e !== document.body && e.nodeType === 1; e = e.parentElement) {
         if (e.scrollTop > 0) return true; var tg = e.tagName; if (tg === 'INPUT' || tg === 'TEXTAREA' || tg === 'SELECT' || tg === 'CANVAS' || tg === 'IFRAME' || e.isContentEditable) return true;
@@ -1386,12 +1417,12 @@ try{if(typeof S!="undefined"&&S&&bad(S.url))S.url=""}catch(e){}try{if(typeof SU!
     document.addEventListener('touchstart', function (e) { y0 = (e.touches.length === 1 && !blocked(e.target)) ? e.touches[0].clientY : null; dy = 0; }, { passive: true });
     document.addEventListener('touchmove', function (e) { if (y0 === null) return; dy = e.touches[0].clientY - y0;
       if (dy <= 0) { if (P) P.style.transform = 'translateY(-60px)'; return; }
-      var p = ind(), d = Math.min(dy * 0.5, 90); p.style.transition = 'none'; p.style.transform = 'translateY(' + (d - 50) + 'px) rotate(' + dy * 2 + 'deg)'; p.style.opacity = dy * 0.5 >= LIM * 0.5 ? '1' : '.6'; }, { passive: true });
+      var p = ind(), d = Math.min(dy * 0.5, 90); p.style.transition = 'none'; p.style.transform = 'translateY(' + (d - 50) + 'px)'; p.style.opacity = dy * 0.5 >= LIM * 0.5 ? '1' : '.6'; }, { passive: true });
     document.addEventListener('touchend', function () { if (y0 === null) return; y0 = null; if (!P) return;
       P.style.transition = 'transform .25s';
       if (dy * 0.5 < LIM * 0.5 || dy < LIM) { P.style.transform = 'translateY(-60px)'; return; }
-      busy = true; P.style.transform = 'translateY(40px)'; P.animate && P.animate([{ rotate: '0deg' }, { rotate: '360deg' }], { duration: 700, iterations: Infinity });
-      var fin = function () { busy = false; if (P) P.style.transform = 'translateY(-60px)'; };
+      busy = true; P.style.transform = 'translateY(40px)'; P.classList.add('spin');
+      var fin = function () { busy = false; if (P) { P.classList.remove('spin'); P.style.transform = 'translateY(-60px)'; } };
       try { if (typeof window.YREFRESH === 'function') { Promise.resolve(window.YREFRESH()).then(fin, fin); return; } } catch (e) {}
       setTimeout(function () { location.reload(); }, 250); }, { passive: true });
   })();

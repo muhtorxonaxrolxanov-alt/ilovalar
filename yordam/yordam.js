@@ -100,7 +100,7 @@
   var CFG = {
     tr: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('set'); }, gd: 'Nonvoyxona nomi, filiallar, bildirishnomalar, ko\'rinish va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
     th: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('yub'); }, gd: 'Akaunt, ovoz, til va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
-    'hk-i': { on: function () { return vis0('#prof'); }, set: clk('#prof'), gd: 'Profil: sohangiz, parolni o\'zgartirish va ilovadan chiqish.' },
+    'hk-i': { on: function () { return !!document.getElementById('prof'); }, set: clk('#prof'), gd: 'Sozlamalar: raqamingiz va muddatingiz, 💳 To\'lov, 🆘 Yordam markazi, soha, parolni o\'zgartirish va ilovadan chiqish.' },
     'hk-h': { hide: '.top .gear', pad: '.top{padding-right:96px}', on: function () { return true; }, set: clk('[data-a="gear"]'), gd: 'Profil, ilova nomi va belgisi, ko\'rinish, zaxira nusxa. Har ekranda shu yerda turadi.' },
     'hk-sg': { hide: '#tS', on: function () { return !!document.querySelector('#tabs') && vis0('#tO'); }, set: clk('#tS'), gd: 'Yangilash va ilovadan chiqish.' },
     em: { pad: '#topActions{margin-right:90px}', on: function () { var s = gS(); return !!(s && s.token); }, set: function () { var s = gS(); s.tab = 'profile'; s.view = null; render(); scrollTo(0, 0); }, gd: 'Profilingiz: ism, manzil, xaritadagi joyingiz, parol.' },
@@ -200,7 +200,8 @@
     function draw() {
       if (k < 0) { sh.hidden = false; sp.hidden = true; bb.style.top = '22%';
         bb.innerHTML = '<b>' + (nm ? '📍 ' + nm : A.t) + '</b>' + (nm ? A.t + '. ' : '') + (A.i || '') + '<br><br>' + (L.length ? 'Shu ekrandagi ' + L.length + ' ta joyni birma-bir ko\'rsatib, nima qilishini aytaman.' : 'Bu ekranda tugma yo\'q.') +
-          '<div class="nv"><button data-y="x">Yopish</button>' + (L.length ? '<button class="p" data-y="n">Ko\'rsatish ›</button>' : '') + '</div>'; return; }
+          '<div class="nv"><button data-y="x">Yopish</button>' + (L.length ? '<button class="p" data-y="n">Ko\'rsatish ›</button>' : '') + '</div>' +
+          '<div class="nv"><button data-y="s" style="background:#fee2e2;color:#991b1b">🆘 Yordam markaziga yozish</button></div>'; return; }
       var it = L[k]; sh.hidden = true; if (it.e !== document.getElementById('yrdg')) { var r0 = it.e.getBoundingClientRect(); if (r0.top < 60 || r0.bottom > innerHeight - 60) it.e.scrollIntoView({ block: 'center' }); }
       bb.innerHTML = '<b>' + it.h + '</b>' + it.d + nav(k >= L.length - 1) + '<small>' + (k + 1) + ' / ' + L.length + '</small>';
       setTimeout(function () { if (!O) return;
@@ -211,6 +212,7 @@
     /* Ilovaning o'z tugma tutqichlariga (o'chirish tasdig'i va h.k.) bosish yetib bormasin */
     function h(ev) { ev.stopPropagation(); var b = ev.target.closest && ev.target.closest('[data-y]'); if (ev.type !== 'click') return; ev.preventDefault();
       if (!b) return; var y = b.getAttribute('data-y');
+      if (y === 's') { close(); return window.yordamMarkaz(); }
       if (y === 'x') return close(); if (y === 'b') k = Math.max(-1, k - 1); if (y === 'n') { if (k >= L.length - 1) return close(); k++; } draw(); }
     ['click', 'pointerdown', 'pointerup', 'mousedown', 'mouseup', 'touchstart', 'touchend'].forEach(function (t) { o.addEventListener(t, h, true); });
     draw();
@@ -232,6 +234,16 @@
     tick(); setInterval(tick, 800);
   }
   window.yordamStart = function () { start(); };
+  /* 🆘 Yordam markazi: murojaat sahifasi (hisob/murojaat.html) → egasining Telegram botiga boradi */
+  function appCode() { var a = window.YAPP || '', m = /[?&]prod=(nv|ed|em|rx)/.exec(location.search);
+    if (m) return m[1] === 'em' ? 'ed' : m[1]; if (/^(tr|th|nr|nh)$/.test(a)) return 'nv'; if (a === 'em' || a === 'es') return 'ed'; if (a === 'hm') return 'rx'; return 'hk'; }
+  window.yordamMarkazUrl = function () { return '/ilovalar/hisob/murojaat.html?app=' + appCode() + '&back=' + encodeURIComponent(location.pathname + location.search); };
+  window.yordamMarkaz = function () { location.href = window.yordamMarkazUrl(); };
+  /* Kirish / ro'yxatdan o'tish sahifasida (bloklangan odam ham) — burchakda doim ko'rinadigan tugma */
+  if (K === 'gate') (function () { function add() { if (document.getElementById('yrds')) return; var a = document.createElement('a'); a.id = 'yrds'; a.href = window.yordamMarkazUrl(); a.textContent = '🆘 Yordam markazi';
+    a.style.cssText = 'position:fixed;left:8px;top:calc(8px + env(safe-area-inset-top,0px));z-index:2147482000;background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;border-radius:999px;padding:8px 12px;font:600 14px system-ui,sans-serif;text-decoration:none;box-shadow:0 1px 4px rgba(0,0,0,.15)';
+    document.body.appendChild(a); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', add); else add(); })();
 
   /* ---------- ORQAGA tugmasi: ilovadan chiqib ketmasin, bir qadam orqaga qaytsin ---------- */
   function tst(m) { try { if (typeof toast === 'function') return toast(m); } catch (e) {} var d = document.createElement('div'); d.textContent = m; d.style.cssText = 'position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#111;color:#fff;padding:10px 16px;border-radius:20px;z-index:2147483002;font:15px system-ui'; document.body.appendChild(d); setTimeout(function () { d.remove(); }, 1800); }
@@ -285,7 +297,10 @@
     var y0 = null, dy = 0, P = null, busy = false, LIM = 85;
     function ind() { if (P) return P; P = document.createElement('div'); P.id = 'yptr';
       P.style.cssText = 'position:fixed;left:50%;top:0;width:42px;height:42px;margin-left:-21px;border-radius:50%;background:#fff;color:#16a34a;box-shadow:0 2px 10px rgba(0,0,0,.3);z-index:2147483003;display:flex;align-items:center;justify-content:center;font:bold 24px system-ui;transform:translateY(-60px);pointer-events:none';
-      P.textContent = '⟳'; document.body.appendChild(P); return P; }
+      /* ichida halqa: tortayotganda aylanmaydi (bosh aylanmasin), qo'yib yuborilgach joyida bir tekis aylanadi */
+      P.innerHTML = '<i style="display:block;width:22px;height:22px;border-radius:50%;border:3px solid rgba(22,163,74,.25);border-top-color:#16a34a"></i>';
+      var st = document.createElement('style'); st.textContent = '@keyframes yptrs{to{transform:rotate(360deg)}}#yptr.spin i{animation:yptrs .8s linear infinite}'; document.head.appendChild(st);
+      document.body.appendChild(P); return P; }
     function blocked(t) { if (O || busy) return true; if (scrollY > 0 || (document.scrollingElement && document.scrollingElement.scrollTop > 0)) return true;
       for (var e = t; e && e !== document.body && e.nodeType === 1; e = e.parentElement) {
         if (e.scrollTop > 0) return true; var tg = e.tagName; if (tg === 'INPUT' || tg === 'TEXTAREA' || tg === 'SELECT' || tg === 'CANVAS' || tg === 'IFRAME' || e.isContentEditable) return true;
@@ -294,12 +309,12 @@
     document.addEventListener('touchstart', function (e) { y0 = (e.touches.length === 1 && !blocked(e.target)) ? e.touches[0].clientY : null; dy = 0; }, { passive: true });
     document.addEventListener('touchmove', function (e) { if (y0 === null) return; dy = e.touches[0].clientY - y0;
       if (dy <= 0) { if (P) P.style.transform = 'translateY(-60px)'; return; }
-      var p = ind(), d = Math.min(dy * 0.5, 90); p.style.transition = 'none'; p.style.transform = 'translateY(' + (d - 50) + 'px) rotate(' + dy * 2 + 'deg)'; p.style.opacity = dy * 0.5 >= LIM * 0.5 ? '1' : '.6'; }, { passive: true });
+      var p = ind(), d = Math.min(dy * 0.5, 90); p.style.transition = 'none'; p.style.transform = 'translateY(' + (d - 50) + 'px)'; p.style.opacity = dy * 0.5 >= LIM * 0.5 ? '1' : '.6'; }, { passive: true });
     document.addEventListener('touchend', function () { if (y0 === null) return; y0 = null; if (!P) return;
       P.style.transition = 'transform .25s';
       if (dy * 0.5 < LIM * 0.5 || dy < LIM) { P.style.transform = 'translateY(-60px)'; return; }
-      busy = true; P.style.transform = 'translateY(40px)'; P.animate && P.animate([{ rotate: '0deg' }, { rotate: '360deg' }], { duration: 700, iterations: Infinity });
-      var fin = function () { busy = false; if (P) P.style.transform = 'translateY(-60px)'; };
+      busy = true; P.style.transform = 'translateY(40px)'; P.classList.add('spin');
+      var fin = function () { busy = false; if (P) { P.classList.remove('spin'); P.style.transform = 'translateY(-60px)'; } };
       try { if (typeof window.YREFRESH === 'function') { Promise.resolve(window.YREFRESH()).then(fin, fin); return; } } catch (e) {}
       setTimeout(function () { location.reload(); }, 250); }, { passive: true });
   })();
