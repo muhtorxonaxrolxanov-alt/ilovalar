@@ -18,13 +18,13 @@ APPS = [
     ('namangan-rahbar', ND + r'\namangan-nonvoyxona.caproj', 'nonvoyxona/namangan-rahbar/', 30, '4.0', 'Android'),
     ('namangan-hodim', ND + r'\namangan-nonvoyxona-ishchi.caproj', 'nonvoyxona/namangan-hodim/', 30, '4.0', 'Android'),
     ('hisob-kitob', r'C:\Users\user\Downloads\loyiha\cap', 'hisob/', 30, '30', 'AndroidBridge'),
-    ('dokon-mijoz', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Elektr-Dokon-Mijoz.caproj', 'dokon/mijoz/', 31, '2.1', 'none'),
-    ('dokon-sotuvchi', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Dokon-Sotuvchi.caproj', 'dokon/sotuvchi/', 31, '2.1', 'none'),
+    ('dokon-mijoz', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Elektr-Dokon-Mijoz.caproj', 'dokon/mijoz/', 32, '2.2', 'none'),
+    ('dokon-sotuvchi', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Dokon-Sotuvchi.caproj', 'dokon/sotuvchi/', 32, '2.2', 'none'),
     # Hamyon: ovozni telefonning o'zi taniydi (Android.listen) — shuning uchun nonvoyxona Java kodi asosida
     ('hamyon', ND + r'\premium-nonvoyxona.caproj', 'hamyon/', 2, '1.1', 'Android'),
 ]
 # Telefondagi nomi va belgisi (bo'lmasa — asl nomi + " (yangi)", asl belgi)
-LABEL = {'dokon-mijoz': '222', 'dokon-sotuvchi': '222 Sotuvchi', 'hamyon': 'Hamyon'}
+LABEL = {'dokon-mijoz': '222 Aksessuar', 'dokon-sotuvchi': '222 Aksessuar Sotuvchi', 'hamyon': 'Hamyon'}
 ICON = {'dokon-mijoz': os.path.join(HERE, '..', 'dokon', 'mijoz', 'icon-512.png'),
         'dokon-sotuvchi': os.path.join(HERE, '..', 'dokon', 'sotuvchi', 'icon-512.png'),
         'hamyon': os.path.join(HERE, '..', 'hamyon', 'icon-512.png')}

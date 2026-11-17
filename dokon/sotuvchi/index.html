@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="uz">
-<head><script>(function(){if(location.protocol==="file:")return;var l=null;try{l=JSON.parse(localStorage.getItem("ed_lic")||"null")}catch(e){}if(!(l&&l.ok&&l.until>Date.now())){location.replace("/ilovalar/hisob/gate.html?prod=ed&back="+encodeURIComponent(location.pathname))}})();</script><meta name="theme-color" content="#111B25"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="222"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<head><script>(function(){if(location.protocol==="file:")return;var l=null;try{l=JSON.parse(localStorage.getItem("ed_lic")||"null")}catch(e){}if(!(l&&l.ok&&l.until>Date.now())){location.replace("/ilovalar/hisob/gate.html?prod=ed&back="+encodeURIComponent(location.pathname))}})();</script><meta name="theme-color" content="#111B25"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="222 Sotuvchi"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#F2A900">
-<title>222 Sotuvchi</title>
+<title>222 Aksessuar Sotuvchi</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600;700&display=swap">
 <style>
 
@@ -717,7 +717,7 @@ function receiptLines(o, shop, balance, W) {
   const L = [], line = (a, b) => { a = ascii(a); b = ascii(b); const sp = W - a.length - b.length; return sp >= 1 ? a + ' '.repeat(sp) + b : a + '\n' + ' '.repeat(Math.max(0, W - b.length)) + b; };
   const wrap = t => { const out = []; ascii(t).split(' ').forEach(w => { if (!out.length || (out[out.length - 1] + ' ' + w).length > W) out.push(w); else out[out.length - 1] += ' ' + w; }); return out; };
   const sum = n => fmt(n);
-  L.push({c: 1, b: 1, t: shop.name || "222"});
+  L.push({c: 1, b: 1, t: shop.name || "222 Aksessuar"});
   [shop.address, shop.phone].filter(Boolean).forEach(x => L.push({c: 1, t: x}));
   L.push({t: '-'.repeat(W)});
   L.push({t: line('Chek No ' + o.code, fday(o.at || new Date()))});
@@ -791,7 +791,7 @@ const loadCust = () => load('cust', async () => { S.cust = await api('customers'
 const loadCd = () => load('cd', async () => { S.cd = await api('customer', {id: S.cview, year: S.cyear}); });
 const loadProds = () => load('prods', async () => { S.prods = (await api('products')).products; });
 const loadRep = () => load('rep', async () => { S.rep = await api('report', {period: S.period}); });
-const loadSet = () => load('set', async () => { S.set = (await api('getSettings')).settings; });
+const loadSet = () => load('set', async () => { S.set = (await api('getSettings')).settings; setTimeout(tgAsk, 800); });
 
 /* ---------- yangi buyurtma kuzatuvi ---------- */
 let audio = null;
@@ -824,7 +824,7 @@ function refreshTab() {
 
 /* ---------- chizish ---------- */
 function draw() {
-  $('#shopName').textContent = S.shop.name || "222";
+  $('#shopName').textContent = S.shop.name || "222 Aksessuar";
   $('#shopSub').textContent = 'Sotuvchi paneli';
   setLogo(S.shop.logo);
   const t = $('#topActions');
@@ -843,10 +843,32 @@ function draw() {
 
 /* ---------- kirish ---------- */
 function vLogin() {
-  return '<div class="login"><div><div class="lbl">Faqat sotuvchi uchun</div><h1 style="margin-top:8px">' + h(S.shop.name || "222") + '</h1><p class="muted" style="margin:8px 0 0">Buyurtmalar, mijozlar, qarzlar va foyda hisobi.</p></div>' +
+  return '<div class="login"><div><div class="lbl">Faqat sotuvchi uchun</div><h1 style="margin-top:8px">' + h(S.shop.name || "222 Aksessuar") + '</h1><p class="muted" style="margin:8px 0 0">Buyurtmalar, mijozlar, qarzlar va foyda hisobi.</p></div>' +
     '<form data-form="login" class="card pad"><div class="f"><label for="l_email">Pochta</label><input id="l_email" name="email" type="email" required value="' + h(S.email) + '" autocomplete="username"></div>' +
     '<div class="f"><label for="l_pass">Parol</label><input id="l_pass" name="password" type="password" required autocomplete="current-password"></div>' +
     '<button class="btn pri block" style="height:52px">Kirish</button><p class="small muted" style="margin:0">Parolni unutsangiz: Apps Script\'da <b>SOTUVCHI_PAROLINI_TIKLASH</b> funksiyasini ishga tushiring.</p></form></div>';
+}
+/* 🤖 Telegram botni bir bosishda ulash: bot ?start=KOD bilan ochiladi, sotuvchi «Start» ni bosadi, server KOD ni topib
+   xabarlarni aynan shu odamning Telegramiga yo'naltiradi (buyurtmalar, yangi mijoz, chek, har kuni 21:00 hisobot). */
+let tgBusy = false;
+async function tgLink(btn) {
+  const bot = S.set && S.set.telegramBot; if (!bot || tgBusy) return;
+  const code = Array.from(crypto.getRandomValues(new Uint8Array(6)), b => 'abcdefghjkmnpqrstuvwxyz23456789'[b % 31]).join('') + Date.now().toString(36).slice(-3);
+  const url = 'https://t.me/' + bot + '?start=' + code;
+  try { if (window.Android && Android.open) Android.open(url); else window.open(url, '_blank') || (location.href = url); } catch (e) { location.href = url; }
+  tgBusy = true; if (btn) btn.textContent = '⏳ Telegramda «Start» ni bosing…';
+  toast('Telegram ochildi — «Start» tugmasini bosing', false, 5000);
+  for (let i = 0; i < 40; i++) {
+    await new Promise(r => setTimeout(r, 3000));
+    try { const r = await api('tgLink', {code}); if (r.linked) { tgBusy = false; toast('✅ Telegram ulandi! Buyurtmalar va hisobot endi shu Telegramga keladi', false, 6000); loadSet(); return; } } catch (e) {}
+  }
+  tgBusy = false; if (btn) btn.textContent = '🤖 Telegram botni ulash (@' + bot + ')'; toast('Ulanmadi. Qayta bosib, Telegramda «Start» ni bosing', true);
+}
+/* Kirgandan keyin Telegram ulanmagan bo'lsa — bir marta taklif qilamiz */
+function tgAsk() {
+  const s = S.set; if (!s || s.telegramChat || !s.telegramBot || lsGet('s_tgAsk', 0)) return;
+  lsSet('s_tgAsk', 1);
+  openSheet(sheetHead('🤖 Telegramga ulang') + '<p>Yangi buyurtmalar, yangi mijozlar va <b>har kuni kechqurun hisobot</b> sizning Telegramingizga kelsin.</p><p class="small muted">Tugmani bosing → bot ochiladi → «Start» ni bosing. Shu.</p><button class="btn pri block" data-act="tgLink">🤖 Telegram botni ulash</button><button class="btn ghost block" data-act="closeSheet" style="margin-top:8px">Keyinroq</button>');
 }
 /* 🆘 Yordam markazi: murojaat egasining Telegram botiga boradi (umumiy sahifa hisob/murojaat.html) */
 function supGo() {
@@ -1115,12 +1137,15 @@ function vSettings() {
     (isNative('pinShortcut') ? '<div style="border-top:1px dashed var(--line);padding-top:12px" class="row"><div class="logo" style="width:56px;height:56px;border-radius:14px;flex:none;background:#111B25">' + LOGO.replace('#1C1400', '#F2A900') + (own.icon ? '<img src="' + h(own.icon) + '" alt="">' : '') + '</div><div style="min-width:0"><b>Sotuvchi ilovasi: ' + h(own.name || "Do'kon Sotuvchi") + '</b><div class="small muted">Faqat shu telefonda</div></div></div><button class="btn" data-act="ownBrandForm">Sotuvchi belgisi va nomini o\'zgartirish</button>' : '') + '</div>' +
     '<div class="lbl">Yangi buyurtma xabari</div><div class="card pad" style="display:flex;flex-direction:column;gap:10px">' +
     '<label class="tog" style="padding:0"><span><b>Pochtaga xabar</b><br><span class="small muted">' + h(s.sellerEmail) + ' — Gmail ilovasi bildirishnoma beradi</span></span><span class="sw"><input type="checkbox" data-act="emailNotify"' + (s.emailNotify ? ' checked' : '') + '><span></span></span></label>' +
-    '<div style="border-top:1px dashed var(--line);padding-top:10px"><b>Telegram</b> <span class="small muted">' + (s.telegramChat ? '· ulangan ✓' : '· ulanmagan') + '</span><p class="small muted" style="margin:4px 0 8px">1) Telegram\'da @BotFather → /newbot → tokenni oling. 2) Botingizga /start yozing. 3) Tokenni shu yerga qo\'yib, «Ulash» ni bosing.</p>' +
-    '<form data-form="tg" style="display:flex;gap:8px;flex-wrap:wrap"><input name="telegramToken" placeholder="' + h(s.telegramToken || '123456:ABC...') + '" style="flex:1;min-width:160px;height:44px;border-radius:11px;border:1px solid var(--line);background:var(--surface);padding:0 12px"><button class="btn">Ulash</button></form></div>' +
+    '<div style="border-top:1px dashed var(--line);padding-top:10px"><b>Telegram</b> <span class="small muted">' + (s.telegramChat ? '· ulangan ✓' : '· ulanmagan') + '</span>' +
+    (s.telegramBot ? '<p class="small muted" style="margin:4px 0 8px">Buyurtmalar, yangi mijozlar va har kuni 21:00 da kunlik hisobot <b>sizning Telegramingizga</b> keladi. Tugmani bosing → bot ochiladi → <b>«Start»</b> ni bosing. Tamom.</p>' +
+      '<button class="btn pri block" data-act="tgLink">🤖 ' + (s.telegramChat ? 'Boshqa Telegramga ulash' : 'Telegram botni ulash') + ' (@' + h(s.telegramBot) + ')</button>' +
+      '<details style="margin-top:8px"><summary class="small muted">O\'z botingizni ulash (token bilan)</summary>' : '<p class="small muted" style="margin:4px 0 8px">1) Telegram\'da @BotFather → /newbot → tokenni oling. 2) Botingizga /start yozing. 3) Tokenni shu yerga qo\'yib, «Ulash» ni bosing.</p>') +
+    '<form data-form="tg" style="display:flex;gap:8px;flex-wrap:wrap"><input name="telegramToken" placeholder="' + h(s.telegramToken || '123456:ABC...') + '" style="flex:1;min-width:160px;height:44px;border-radius:11px;border:1px solid var(--line);background:var(--surface);padding:0 12px"><button class="btn">Ulash</button></form>' + (s.telegramBot ? '</details>' : '') + '</div>' +
     '<button class="btn sm" data-act="testNotify">Sinov xabarini yuborish</button></div>' +
     (isNative('btDevices') ? '<div class="lbl">Chek printeri</div><div class="list"><div class="li">' + I.printer.replace('<svg', '<svg style="width:24px;height:24px;flex:none"') + '<div class="grow"><div class="t">' + (S.printer ? h(S.printer.name) : 'Tanlanmagan') + '</div><div class="s">58 mm Bluetooth chek printeri</div></div><button class="btn sm" data-act="pickPrinter">' + (S.printer ? 'Almashtirish' : 'Tanlash') + '</button></div></div>' : '') +
     '<div class="lbl">Xavfsizlik</div><div class="list">' + pinRow() + '<div class="li"><div class="grow"><div class="s">Sotuvchi pochtasi</div><div class="t">' + h(s.sellerEmail) + '</div></div><button class="btn sm" data-act="loginForm">O\'zgartirish</button></div></div>' +
-    '<div class="lbl">Ma\'lumotlar va zaxira</div><div class="card pad" style="display:flex;flex-direction:column;gap:10px"><p class="small muted" style="margin:0">Hamma ma\'lumot Google Drive\'dagi «222 — baza» jadvalida. Har kuni soat 3:00 da nusxasi «Zaxira nusxalar» papkasiga o\'zi saqlanadi.</p>' +
+    '<div class="lbl">Ma\'lumotlar va zaxira</div><div class="card pad" style="display:flex;flex-direction:column;gap:10px"><p class="small muted" style="margin:0">Hamma ma\'lumot Google Drive\'dagi «Elektr Do'kon — baza» jadvalida. Har kuni soat 3:00 da nusxasi «Zaxira nusxalar» papkasiga o\'zi saqlanadi.</p>' +
     '<div class="row wrapr"><button class="btn" style="flex:1" data-act="backup">Hozir zaxira olish</button>' + (s.sheetUrl ? '<a class="btn" style="flex:1" href="' + h(s.sheetUrl) + '">Jadvalni ochish</a>' : '') + '</div></div>' +
     '<button class="btn block" data-act="sup" style="margin-bottom:10px">🆘 Yordam markazi — muammo yoki savol yozish</button>' +
     '<button class="btn ghost block" data-act="logout" data-confirm="1">' + I.out + 'Chiqish</button>';
@@ -1219,6 +1244,7 @@ document.addEventListener('click', async ev => {
     case 'loginForm': passSheet(false); break;
     case 'backup': { const r = await act(() => api('backupNow'), null, el); if (r) toast('Zaxira saqlandi: ' + r.file.name, false, 4000); break; }
     case 'sup': supGo(); break;
+    case 'tgLink': tgLink(el); break;
     case 'logout': logout(); break;
   }
 });
@@ -1255,7 +1281,7 @@ document.addEventListener('submit', async ev => {
   const d = Object.fromEntries(new FormData(f).entries()), btn = f.querySelector('button:not([type=button])');
   if (kind === 'login') {
     const r = await act(() => api('sellerLogin', {email: d.email, password: d.password}), null, btn);
-    if (r) { S.token = r.token; window.TOKEN = r.token; S.email = r.email; S.shop = r.shop || {}; lsSet('s_token', S.token); lsSet('s_email', S.email); lsSet('s_shop', S.shop); S.tab = 'orders'; loadOrders(); poll(); render(); if (r.mustChange) passSheet(true); }
+    if (r) { S.token = r.token; window.TOKEN = r.token; S.email = r.email; S.shop = r.shop || {}; lsSet('s_token', S.token); lsSet('s_email', S.email); lsSet('s_shop', S.shop); S.tab = 'orders'; loadOrders(); poll(); render(); if (r.mustChange) passSheet(true); else setTimeout(loadSet, 1500); }
   } else if (kind === 'login2') {
     const r = await act(() => api('changeLogin', {password: d.password, newEmail: d.newEmail || undefined, newPassword: d.newPassword || undefined}), 'Saqlandi', btn);
     if (r) { S.token = r.token; window.TOKEN = r.token; S.email = r.email; lsSet('s_token', S.token); lsSet('s_email', S.email); closeSheet(); if (S.tab === 'settings') loadSet(); }
@@ -1310,7 +1336,7 @@ setupSearch({
   names: () => S.tab === 'clients' ? ((S.cust && S.cust.customers) || []).flatMap(c => [c.name, c.shop]) : (S.prods || []).map(p => p.name).concat([...new Set((S.prods || []).map(p => p.cat))])
 });
 render();
-if (S.token) { loadOrders(); poll(); }
+if (S.token) { loadOrders(); poll(); setTimeout(loadSet, 2500); }
 lockNow();
 
 </script>

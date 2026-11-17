@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="uz">
-<head><meta name="theme-color" content="#F2A900"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="222"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
+<head><meta name="theme-color" content="#F2A900"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="222 Aksessuar"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#F2A900">
-<title>222</title>
+<title>222 Aksessuar</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Onest:wght@400;500;600;700&display=swap">
 <style>
 
@@ -717,7 +717,7 @@ function receiptLines(o, shop, balance, W) {
   const L = [], line = (a, b) => { a = ascii(a); b = ascii(b); const sp = W - a.length - b.length; return sp >= 1 ? a + ' '.repeat(sp) + b : a + '\n' + ' '.repeat(Math.max(0, W - b.length)) + b; };
   const wrap = t => { const out = []; ascii(t).split(' ').forEach(w => { if (!out.length || (out[out.length - 1] + ' ' + w).length > W) out.push(w); else out[out.length - 1] += ' ' + w; }); return out; };
   const sum = n => fmt(n);
-  L.push({c: 1, b: 1, t: shop.name || "222"});
+  L.push({c: 1, b: 1, t: shop.name || "222 Aksessuar"});
   [shop.address, shop.phone].filter(Boolean).forEach(x => L.push({c: 1, t: x}));
   L.push({t: '-'.repeat(W)});
   L.push({t: line('Chek No ' + o.code, fday(o.at || new Date()))});
@@ -815,11 +815,11 @@ const canPin = () => !!(window.Android && window.Android.pinShortcut);
 function autoUpdateShortcut() {   // belgi allaqachon qo'shilgan bo'lsa, yangi rasm/nom o'zi yangilanadi
   const sh = S.shop || {};
   if (!canPin() || !lsGet('m_brandPinned', '') || lsGet('m_brandPinned', '') === sh.brandV) return;
-  try { window.Android.pinShortcut(sh.appName || sh.name || "222", sh.appIcon || '', 'update'); lsSet('m_brandPinned', sh.brandV); } catch (e) {}
+  try { window.Android.pinShortcut(sh.appName || sh.name || "222 Aksessuar", sh.appIcon || '', 'update'); lsSet('m_brandPinned', sh.brandV); } catch (e) {}
 }
 function addShortcut() {
   const sh = S.shop || {};
-  try { window.Android.pinShortcut(sh.appName || sh.name || "222", sh.appIcon || '', 'pin'); lsSet('m_brandPinned', sh.brandV || '1'); } catch (e) { toast('Bu telefonda ishlamaydi', true); }
+  try { window.Android.pinShortcut(sh.appName || sh.name || "222 Aksessuar", sh.appIcon || '', 'pin'); lsSet('m_brandPinned', sh.brandV || '1'); } catch (e) { toast('Bu telefonda ishlamaydi', true); }
 }
 window.onNativeEvent = (name, val) => {
   if (name === 'shortcut') toast(val === 'pinned' || val === 'requested' ? 'Bosh ekranga qo\'shildi ✓' : val === 'updated' ? 'Belgi yangilandi ✓' : 'Bosh ekranga qo\'shib bo\'lmadi', val === 'error' || val === 'unsupported');
@@ -875,7 +875,7 @@ const stepper = (p, big) => {
 /* ---------- chizish ---------- */
 function draw() {
   const sh = S.shop || {};
-  $('#shopName').textContent = sh.name || "222";
+  $('#shopName').textContent = sh.name || "222 Aksessuar";
   $('#shopSub').textContent = sh.tagline || 'Elektr mollari · yetkazib berish';
   setLogo(sh.logo);
   drawNet(); drawTop(); drawNav();
@@ -932,7 +932,7 @@ function gateUrl(tab) { return '/ilovalar/hisob/gate.html?prod=em' + (tab ? '&ta
 function vAuth() {
   const sh = S.shop || {}, np = !!S.needPass;
   const top = '<div class="login">' + (sh.banner ? '<img src="' + h(sh.banner) + '" alt=""' + IMGERR + ' style="width:100%;aspect-ratio:16/7;object-fit:cover;border-radius:14px">' : '') +
-    '<div><div class="lbl">222</div><h1 style="margin-top:8px">' + h(sh.name || "222") + '</h1><p class="muted" style="margin:8px 0 0">Buyurtmani telefondan bering, manzilingizga olib boramiz.</p></div>';
+    '<div><div class="lbl">222 Aksessuar</div><h1 style="margin-top:8px">' + h(sh.name || "222 Aksessuar") + '</h1><p class="muted" style="margin:8px 0 0">Buyurtmani telefondan bering, manzilingizga olib boramiz.</p></div>';
   if (WEBGATE && !np && S.gating) return top + '<div class="card pad" style="text-align:center;font-weight:700">⏳ Kirilmoqda…</div></div>';
   if (WEBGATE && !np) return top +
     '<div class="card pad" style="display:flex;flex-direction:column;gap:10px"><a class="btn pri block" style="height:54px;display:flex;align-items:center;justify-content:center;text-decoration:none" href="' + gateUrl('reg') + '">Ro\'yxatdan o\'tish</a>' +
@@ -1130,7 +1130,7 @@ function vProfile() {
       .map(([k, v]) => '<div class="li"><div class="grow"><div class="s">' + k + '</div><div class="t" style="white-space:normal">' + h(v || '—') + '</div></div></div>').join('') + '</div>' +
     '<div class="row wrapr"><button class="btn" style="flex:1" data-act="editProfile">Ma\'lumotlarni o\'zgartirish</button><button class="btn" style="flex:1" data-act="passForm">Parolni almashtirish</button></div>' +
     '<div class="lbl">Xavfsizlik</div><div class="list">' + pinRow() + '</div>' +
-    (canPin() ? '<div class="lbl">Telefon ekrani</div><div class="list"><div class="li"><div class="logo" style="width:44px;height:44px;flex:none">' + LOGO + (sh.appIcon ? '<img src="' + h(sh.appIcon) + '" alt=""' + IMGERR + '>' : '') + '</div><div class="grow"><div class="t">' + h(sh.appName || sh.name || "222") + '</div><div class="s">Do\'kon belgisini bosh ekranga qo\'shish</div></div><button class="btn sm" data-act="pinBrand">Qo\'shish</button></div></div>' : '') +
+    (canPin() ? '<div class="lbl">Telefon ekrani</div><div class="list"><div class="li"><div class="logo" style="width:44px;height:44px;flex:none">' + LOGO + (sh.appIcon ? '<img src="' + h(sh.appIcon) + '" alt=""' + IMGERR + '>' : '') + '</div><div class="grow"><div class="t">' + h(sh.appName || sh.name || "222 Aksessuar") + '</div><div class="s">Do\'kon belgisini bosh ekranga qo\'shish</div></div><button class="btn sm" data-act="pinBrand">Qo\'shish</button></div></div>' : '') +
     (sh.phone || sh.address ? '<div class="card pad" style="display:flex;flex-direction:column;gap:8px"><div class="lbl">Sotuvchi bilan aloqa</div><b>' + h(sh.name || '') + '</b>' + (sh.phone ? '<div class="row between wrapr"><b class="num">' + h(sh.phone) + '</b>' + telLink(sh.phone) + '</div>' : '') + (sh.address ? '<div class="small muted">' + h(sh.address) + '</div>' : '') + (sh.hours ? '<div class="small muted">Ish vaqti: ' + h(sh.hours) + '</div>' : '') + '</div>' : '') +
     '<button class="btn block" data-act="sup" style="margin-bottom:10px">🆘 Yordam markazi — muammo yoki savol yozish</button>' +
     '<button class="btn ghost block" data-act="logout" data-confirm="1">' + I.out + 'Chiqish</button>';
