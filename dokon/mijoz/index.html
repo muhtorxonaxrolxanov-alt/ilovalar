@@ -1535,6 +1535,33 @@ lockNow();
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 300); }); else setTimeout(init, 300);
 
+  /* ---------- ⟳ Barmoq bilan tepadan pastga tortsa — ilova yangilanadi (ma'lumot serverdan qayta olinadi) ----------
+     Ilova o'z yangilash funksiyasini window.YREFRESH ga qo'ysa — shu chaqiriladi, bo'lmasa sahifa qayta yuklanadi. */
+  (function () {
+    if (!('ontouchstart' in window)) return;
+    try { document.documentElement.style.overscrollBehaviorY = 'contain'; } catch (e) {} // brauzerning o'zinikini o'chiramiz (ikki marta bo'lmasin)
+    var y0 = null, dy = 0, P = null, busy = false, LIM = 85;
+    function ind() { if (P) return P; P = document.createElement('div'); P.id = 'yptr';
+      P.style.cssText = 'position:fixed;left:50%;top:0;width:42px;height:42px;margin-left:-21px;border-radius:50%;background:#fff;color:#16a34a;box-shadow:0 2px 10px rgba(0,0,0,.3);z-index:2147483003;display:flex;align-items:center;justify-content:center;font:bold 24px system-ui;transform:translateY(-60px);pointer-events:none';
+      P.textContent = '⟳'; document.body.appendChild(P); return P; }
+    function blocked(t) { if (O || busy) return true; if (scrollY > 0 || (document.scrollingElement && document.scrollingElement.scrollTop > 0)) return true;
+      for (var e = t; e && e !== document.body && e.nodeType === 1; e = e.parentElement) {
+        if (e.scrollTop > 0) return true; var tg = e.tagName; if (tg === 'INPUT' || tg === 'TEXTAREA' || tg === 'SELECT' || tg === 'CANVAS' || tg === 'IFRAME' || e.isContentEditable) return true;
+        if (/leaflet|map|ymaps|gm-style/i.test(e.className && e.className.baseVal === undefined ? e.className : '')) return true; }
+      return false; }
+    document.addEventListener('touchstart', function (e) { y0 = (e.touches.length === 1 && !blocked(e.target)) ? e.touches[0].clientY : null; dy = 0; }, { passive: true });
+    document.addEventListener('touchmove', function (e) { if (y0 === null) return; dy = e.touches[0].clientY - y0;
+      if (dy <= 0) { if (P) P.style.transform = 'translateY(-60px)'; return; }
+      var p = ind(), d = Math.min(dy * 0.5, 90); p.style.transition = 'none'; p.style.transform = 'translateY(' + (d - 50) + 'px) rotate(' + dy * 2 + 'deg)'; p.style.opacity = dy * 0.5 >= LIM * 0.5 ? '1' : '.6'; }, { passive: true });
+    document.addEventListener('touchend', function () { if (y0 === null) return; y0 = null; if (!P) return;
+      P.style.transition = 'transform .25s';
+      if (dy * 0.5 < LIM * 0.5 || dy < LIM) { P.style.transform = 'translateY(-60px)'; return; }
+      busy = true; P.style.transform = 'translateY(40px)'; P.animate && P.animate([{ rotate: '0deg' }, { rotate: '360deg' }], { duration: 700, iterations: Infinity });
+      var fin = function () { busy = false; if (P) P.style.transform = 'translateY(-60px)'; };
+      try { if (typeof window.YREFRESH === 'function') { Promise.resolve(window.YREFRESH()).then(fin, fin); return; } } catch (e) {}
+      setTimeout(function () { location.reload(); }, 250); }, { passive: true });
+  })();
+
   /* ---------- 📲 Telefonga o'rnatish (APK siz): Chrome ilovani o'zi yasaydi — Google ogohlantirishi chiqmaydi ---------- */
   (function () {
     var inst = false; try { inst = matchMedia('(display-mode: standalone)').matches || navigator.standalone; } catch (e) {}
