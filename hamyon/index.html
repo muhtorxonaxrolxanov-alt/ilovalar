@@ -340,6 +340,8 @@ function vHome(){
   <div class="card hero"><div class="l">${MON[+t.slice(5,7)-1][0].toUpperCase()+MON[+t.slice(5,7)-1].slice(1)} oyi xarajati</div><div class="big">${M(mx)}</div>
   <div class="row"><div class="mini">Bugun<b>${fmt(dx)}</b></div><div class="mini">Kirim<b>${fmt(mi)}</b></div><div class="mini">Qoldiq<b>${fmt(mi-mx)}</b></div></div>
   ${L.m?`<div class="s" style="margin-top:12px;opacity:.9">Oylik limit: ${fmt(mx)} / ${fmt(L.m)} — ${mx>L.m?'oshdi '+fmt(mx-L.m):'qoldi '+fmt(L.m-mx)}</div><div class="bar"><i style="width:${p}%;background:${col}"></i></div>`:`<div class="s" style="margin-top:12px;opacity:.9" onclick="go('lim')">🎯 Oylik limit qo'ying →</div>`}</div>`+alertsHtml();
+  /* Ilova ↔ bot: botga yozilgani shu yerda ko'rinadi */
+  h+=`<a class="card" href="https://t.me/${BOT}" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit;padding:12px 14px"><span style="font-size:30px">🤖</span><span style="flex:1"><b>Bot orqali ishlatish</b><br><span class="s mut">Telegramda yozing yoki ovozli ayting: «non 5000» — shu yerga tushadi</span></span><span style="font-size:22px;opacity:.5">›</span></a>`;
   const E=d.e.slice().sort((a,b)=>a.d===b.d?b.ts-a.ts:(a.d<b.d?1:-1));
   if(!E.length)h+=`<div class="empty"><b>👛</b>Hali yozuv yo'q.<br>Pastdagi <b style="display:inline;font-size:inherit">+</b> tugmasini bosing yoki botga yozing: <i>non 5000</i></div>`;
   let cur='',n=0;
