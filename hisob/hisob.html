@@ -1122,8 +1122,9 @@ setTimeout(()=>{try{if(!S.objects.length&&!S.workers.length&&hasB('readBackup'))
   b.onclick = function () { keep = Date.now() + 60000; if (on) return stop(); if (st) return; gate(); };
   var MRC = !!(window.MediaRecorder && navigator.mediaDevices && navigator.mediaDevices.getUserMedia && (window.AudioContext || window.webkitAudioContext));
   function denied() {
-    panel('<b>🎤 Mikrofon yopiq.</b><br>Oching: <b>Chrome</b> → <b>⋮</b> → <b>Sozlamalar</b> → <b>Sayt sozlamalari</b> → <b>Mikrofon</b> → <b>muhtorxonaxrolxanov-alt.github.io</b> → <b>Ruxsat</b>.<br>Yoki manzil qatoridagi 🔒 → <b>Ruxsatlar</b> → <b>Mikrofon</b>.<br><small>iPhone: Sozlamalar → Safari → Mikrofon → Ruxsat.</small><button type="button" id="hkmx" style="background:#6b7280">Yopish</button>');
+    panel('<b>🎤 Mikrofon yopiq.</b><br>Oching: <b>Chrome</b> → <b>⋮</b> → <b>Sozlamalar</b> → <b>Sayt sozlamalari</b> → <b>Mikrofon</b> → <b>muhtorxonaxrolxanov-alt.github.io</b> → <b>Ruxsat</b>.<br>Yoki manzil qatoridagi 🔒 → <b>Ruxsatlar</b> → <b>Mikrofon</b>.<br><small>iPhone: Sozlamalar → Safari → Mikrofon → Ruxsat.</small><br>Agar u yerda ruxsat bor bo‘lsa: telefon <b>Sozlamalar</b> → <b>Ilovalar</b> → <b>Chrome</b> → <b>Ruxsatlar</b> → <b>Mikrofon</b> → <b>Ruxsat</b>.<button type="button" id="hkmr">🔄 Qayta urinish</button><button type="button" id="hkmx" style="background:#6b7280">Yopish</button>');
     pn.querySelector('#hkmx').onclick = function () { panel(''); };
+    pn.querySelector('#hkmr').onclick = function () { panel('Ruxsat so‘ralyapti…'); rec(); };
   }
   function ask() {
     panel('<div style="text-align:center"><b style="font-size:17px">🎤 Mikrofonga ruxsat bering</b><br>Ovozingizni yozib olish uchun kerak. Tugmani bosing va chiqqan oynada <b>«Ruxsat berish»</b> (Разрешить) ni tanlang — yozish o‘zi boshlanadi.</div><button type="button" id="hkmok">✅ Ruxsat berish</button>');
