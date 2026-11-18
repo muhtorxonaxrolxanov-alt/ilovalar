@@ -1,0 +1,32 @@
+<!doctype html><html lang="uz"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Namangan nonvoyxona — Rahbar — yuklab olish</title><meta name="robots" content="noindex">
+<style>body{margin:0;font:17px/1.5 system-ui,sans-serif;background:#0f172a;color:#f8fafc;display:flex;min-height:100vh;align-items:center;justify-content:center}
+.c{max-width:420px;padding:24px 18px;text-align:center}img{width:96px;height:96px;border-radius:22px}h1{font-size:22px;margin:12px 0 4px}
+.b{display:block;margin:16px 0 8px;padding:16px;border-radius:16px;background:#16a34a;color:#fff;font-weight:800;font-size:19px;text-decoration:none;border:0;width:100%}
+.s{text-align:left;background:#1e293b;border-radius:14px;padding:12px 14px;margin-top:12px;font-size:16px}.s b{color:#fde68a}small{color:#94a3b8}</style></head>
+<body><div class="c"><img src="../../nonvoyxona/namangan-rahbar/icon-192.png" alt=""><h1>Namangan nonvoyxona — Rahbar</h1><div id="st">⬇️ Ilova yuklanmoqda…</div>
+<button class="b" id="go">⬇️ Yuklab olish</button><div class="s" id="hw"></div></div>
+<script>
+var APK='../../yuklash/apk/namangan-rahbar.apk',CLIP='../../nonvoyxona/namangan-rahbar/ilova.mobileconfig',ua=navigator.userAgent;
+var isI=/iPhone|iPad|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1),isA=/Android/.test(ua);
+var tg=!!(window.TelegramWebviewProxy||window.TelegramWebview)||/Telegram/.test(ua);
+var sf=isI&&/Safari\//.test(ua)&&!/CriOS|FxiOS|EdgiOS|GSA\//.test(ua)&&!tg&&('serviceWorker' in navigator);
+var wv=isA&&(/; wv\)/.test(ua)||tg||!/Chrome\//.test(ua));
+function abs(u){var a=document.createElement('a');a.href=u;return a.href}
+var hw=document.getElementById('hw'),st=document.getElementById('st');
+function go(){
+  if(isA){var u=abs(APK);
+    if(wv){location.href='intent://'+u.replace(/^https:\/\//,'')+'#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url='+encodeURIComponent(u)+';end'}else location.href=u;
+    st.textContent='✅ Fayl yuklanmoqda (namangan-rahbar.apk)';
+    hw.innerHTML='<b>Keyin:</b><br>1) Pastda yoki tepadagi bildirishnomada <b>«namangan-rahbar.apk»</b> faylini oching.<br>2) <b>«O‘rnatish»</b> ni bosing.<br>3) «Noma’lum ilovalar» haqida so‘rasa — <b>Sozlamalar → Ruxsat berish</b>, keyin orqaga qaytib yana <b>«O‘rnatish»</b>.<br>4) «Play Himoya» ogohlantirsa — <b>«Baribir o‘rnatish»</b>.<br><small>Ilova o‘zi yangilanib turadi, qayta yuklash shart emas.</small>';return}
+  if(isI){
+    if(!sf){location.href='x-safari-'+location.href;st.textContent='Safari ochilmoqda…';
+      hw.innerHTML='Telegram ichida o‘rnatib bo‘lmaydi. Safari o‘zi ochilmasa: pastki o‘ng burchakdagi <b>🧭 (kompas)</b> belgisini bosing — sahifa Safari’da ochiladi va o‘rnatish boshlanadi.';return}
+    st.textContent='⬇️ O‘rnatish fayli tayyorlanmoqda…';
+    fetch(CLIP,{cache:'no-store'}).then(function(r){return r.arrayBuffer()}).then(function(b){var u=new Uint8Array(b),s='';for(var i=0;i<u.length;i+=8192)s+=String.fromCharCode.apply(null,u.subarray(i,i+8192));
+      location.href='data:application/x-apple-aspen-config;base64,'+btoa(s);st.textContent='✅ O‘rnatish fayli yuklandi'}).catch(function(){st.textContent='Internet sekin — «Yuklab olish» ni yana bosing'});
+    hw.innerHTML='<b>Keyin:</b><br>1) «Profil yuklab olinsinmi?» — <b>Ruxsat berish</b>.<br>2) <b>Sozlamalar</b> ilovasini oching → tepada <b>«Profil yuklandi»</b>.<br>3) <b>O‘rnatish</b> → telefon parolini kiriting → yana <b>O‘rnatish</b>.<br>4) Bosh ekranda <b>«Namangan nonvoyxona — Rahbar»</b> belgisi paydo bo‘ladi.';return}
+  st.textContent='📱 Bu havolani telefonda oching';
+  hw.innerHTML='Android: havolani telefonda ochsangiz, ilova fayli o‘zi yuklanadi.<br>iPhone: havolani Safari’da oching.<br><br><a style="color:#86efac" href="'+APK+'">Android fayli (APK) — kompyuterga yuklash</a>'}
+document.getElementById('go').onclick=go;go();
+</script></body></html>

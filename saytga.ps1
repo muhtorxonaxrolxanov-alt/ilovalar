@@ -28,6 +28,8 @@ foreach ($d in 'hisob', 'shogird', 'hamyon', 'dokon\mijoz', 'dokon\sotuvchi', 'n
   if (Test-Path "$site\$d\manifest.webmanifest") { Copy-Item "$site\yuklash\o.html" "$site\$d\o.html" -Force } }
 # 2a2) iPhone uchun o'rnatish fayli (ilova.mobileconfig) har ilova papkasiga
 python "$site\yuklash\mk_clip.py" $site 'hisob' 'shogird' 'hamyon' 'dokon\mijoz' 'dokon\sotuvchi' 'nonvoyxona\toshkent-rahbar' 'nonvoyxona\toshkent-hodim' 'nonvoyxona\namangan-rahbar' 'nonvoyxona\namangan-hodim'
+# 2a3) Faqat yuklab olish havolalari: …/ilovalar/y/<ilova>/ (sayt ochilmaydi — APK yoki iPhone profili darhol)
+python "$site\yuklash\mk_dl.py" $site
 # 2b) Yuklab olish sahifasi uchun eng yangi APK lar (doimiy nom bilan)
 New-Item -ItemType Directory -Force "$site\yuklash\apk" | Out-Null
 Get-ChildItem "$site\android\out\*.apk" | Group-Object { $_.Name -replace '-[\d.]+\.apk$', '' } | ForEach-Object {

@@ -22,13 +22,16 @@ APPS = [
     ('dokon-sotuvchi', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Dokon-Sotuvchi.caproj', 'dokon/sotuvchi/', 32, '2.2', 'none'),
     # Hamyon: ovozni telefonning o'zi taniydi (Android.listen) — shuning uchun nonvoyxona Java kodi asosida
     ('hamyon', ND + r'\premium-nonvoyxona.caproj', 'hamyon/', 2, '1.1', 'Android'),
+    # Shogird (2026-11-18): Hisob-kitob Java kodi, lekin shogird/ sahifasini ochadi — alohida ilova
+    ('shogird', r'C:\Users\user\Downloads\loyiha\cap', 'shogird/', 1, '1.0', 'AndroidBridge'),
 ]
 # Telefondagi nomi va belgisi (bo'lmasa — asl nomi + " (yangi)", asl belgi)
-LABEL = {'dokon-mijoz': '222 Aksessuar', 'dokon-sotuvchi': '222 Aksessuar Sotuvchi', 'hamyon': 'Hamyon'}
+LABEL = {'dokon-mijoz': '222 Aksessuar', 'dokon-sotuvchi': '222 Aksessuar Sotuvchi', 'hamyon': 'Hamyon', 'shogird': 'Shogird'}
 ICON = {'dokon-mijoz': os.path.join(HERE, '..', 'dokon', 'mijoz', 'icon-512.png'),
         'dokon-sotuvchi': os.path.join(HERE, '..', 'dokon', 'sotuvchi', 'icon-512.png'),
-        'hamyon': os.path.join(HERE, '..', 'hamyon', 'icon-512.png')}
-APPID = {'hamyon': 'uz.hamyon.xarajat'}  # boshqa ilova Java kodidan foydalansa ham, alohida ilova bo'lib o'rnatilsin
+        'hamyon': os.path.join(HERE, '..', 'hamyon', 'icon-512.png'),
+        'shogird': os.path.join(HERE, '..', 'shogird', 'icon-512.png')}
+APPID = {'hamyon': 'uz.hamyon.xarajat', 'shogird': 'uz.hisobkitob.shogird'}  # boshqa ilova Java kodidan foydalansa ham, alohida ilova bo'lib o'rnatilsin
 
 
 def set_icon(gdir, png):
