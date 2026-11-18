@@ -398,8 +398,26 @@ function edit(id){
 /* ---------- Ovoz yoki matn bilan yozish: "500 mingga zapchas oldim, 200 mingga zapravka qildim" ---------- */
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
 const AND=window.Android&&typeof Android.listen==='function';
+/* 2026-11-17: ovoz yozib olinadi va botga (Gemini) yuboriladi — telefonning o'z tanishi o'zbekchani (shevalarni) tanimasdi.
+   Yozuv WAV 11 kHz ga aylantiriladi (hamma telefonda bir xil tur), rxv/{id} ga qo'yiladi, bot matn va yozuvlarni r ga qaytaradi. */
+const MRC=!!(window.MediaRecorder&&navigator.mediaDevices&&navigator.mediaDevices.getUserMedia&&(window.AudioContext||window.webkitAudioContext));
+const VMAX=30;
+function uidOf(t){try{return JSON.parse(atob(t.split('.')[1].replace(/-/g,'+').replace(/_/g,'/'))).user_id}catch(e){return S.uid||''}}
+function toWav(buf){const R=11025,ch=buf.getChannelData(0),k=buf.sampleRate/R,n=Math.floor(ch.length/k),o=new DataView(new ArrayBuffer(44+n*2));
+  const w=(p,s)=>{for(let i=0;i<s.length;i++)o.setUint8(p+i,s.charCodeAt(i))};let pk=0;for(let i=0;i<ch.length;i++)pk=Math.max(pk,Math.abs(ch[i]));const g=pk>0.01?Math.min(8,0.9/pk):1;
+  w(0,'RIFF');o.setUint32(4,36+n*2,true);w(8,'WAVE');w(12,'fmt ');o.setUint32(16,16,true);o.setUint16(20,1,true);o.setUint16(22,1,true);o.setUint32(24,R,true);o.setUint32(28,R*2,true);o.setUint16(32,2,true);o.setUint16(34,16,true);w(36,'data');o.setUint32(40,n*2,true);
+  for(let i=0;i<n;i++){let s=0,a=Math.floor(i*k),b=Math.max(a+1,Math.floor((i+1)*k));for(let j=a;j<b;j++)s+=ch[j]||0;s=s/(b-a)*g;o.setInt16(44+i*2,Math.max(-1,Math.min(1,s))*32767,true)}
+  const u=new Uint8Array(o.buffer);let bin='';for(let i=0;i<u.length;i+=8192)bin+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return btoa(bin)}
+async function voiceAsk(b64){
+  const t=await idt(),id=Date.now().toString(36)+Math.random().toString(36).slice(2,10),H={Authorization:'Bearer '+t,'content-type':'application/json'};
+  await jf(FSB+'rxv/'+id,{method:'PATCH',headers:H,body:JSON.stringify({fields:{u:{stringValue:uidOf(t)},m:{stringValue:'audio/wav'},a:{stringValue:b64},t:{integerValue:String(Date.now())}}})});
+  for(let i=0;i<45;i++){await new Promise(r=>setTimeout(r,i<3?1500:1000));
+    let j;try{j=await jf(FSB+'rxv/'+id,{headers:H})}catch(e){if(e.code===404)break;continue}
+    const r=j.fields&&j.fields.r&&j.fields.r.stringValue;
+    if(r){jf(FSB+'rxv/'+id,{method:'DELETE',headers:H}).catch(()=>{});return JSON.parse(r)}}
+  jf(FSB+'rxv/'+id,{method:'DELETE',headers:H}).catch(()=>{});throw new Error('vaqt')}
 function voice(auto){
-  const can=!!(SR||AND);let rec=null,on=false,base='';
+  const can=!!(MRC||SR||AND);let rec=null,on=false,base='',mr=null,tm=0,sec=0,pre=null;
   const bg=sheet(`<div class="sh-h"><b>🎤 Ovoz yoki matn bilan</b><button class="xb">✕</button></div>
   ${can?`<button class="vbig" id="vb">🎤</button><div class="center s mut" id="vs">Bosing va gapiring</div>`:`<div class="alert">Bu brauzer ovozni taniy olmaydi. Klaviaturadagi 🎤 tugmasi bilan gapiring yoki <a href="https://t.me/${BOT}" target="_blank" rel="noopener">botga ovozli xabar</a> yuboring — u ham shu yerga tushadi.</div>`}
   <textarea class="vtx" id="vt" placeholder="Masalan: 500 mingga mashinaga zapchas oldim, 200 mingga zapravka qildim"></textarea>
@@ -407,10 +425,33 @@ function voice(auto){
   <button class="btn" id="va">Qo'shish</button>`);
   const vt=bg.querySelector('#vt'),vb=bg.querySelector('#vb'),vs=bg.querySelector('#vs');
   const stat=t=>{if(vs)vs.textContent=t};
-  const stop=()=>{on=false;if(vb)vb.classList.remove('on');try{rec&&rec.stop()}catch(e){}};
+  const stop=()=>{on=false;if(vb)vb.classList.remove('on');clearInterval(tm);try{rec&&rec.stop()}catch(e){}try{mr&&mr.state!=='inactive'&&mr.stop()}catch(e){}};
   const done=()=>{stop();if(vt.value.trim())add()};
+  function recStart(){
+    base=vt.value.trim()?vt.value.trim()+', ':'';
+    navigator.mediaDevices.getUserMedia({audio:{channelCount:1,echoCancellation:true,noiseSuppression:true,autoGainControl:true}}).then(st=>{
+      const ch=[];mr=new MediaRecorder(st);mr.ondataavailable=e=>{if(e.data&&e.data.size)ch.push(e.data)};
+      mr.onstop=async()=>{st.getTracks().forEach(t=>t.stop());clearInterval(tm);vb.classList.remove('on');
+        if(sec<1||!bg.isConnected){stat('Bosing va gapiring');return}
+        vb.disabled=true;stat('🎧 Tinglayapman va yozyapman… ⏳');
+        try{const blob=new Blob(ch,{type:mr.mimeType||ch[0]&&ch[0].type||'audio/webm'});const AC=window.AudioContext||window.webkitAudioContext,ac=new AC();
+          const ab=await blob.arrayBuffer();const buf=await new Promise((ok,no)=>{const p=ac.decodeAudioData(ab,ok,no);if(p&&p.then)p.then(ok,no)});try{ac.close()}catch(e){}
+          const r=await voiceAsk(toWav(buf));vb.disabled=false;
+          if(r.tx)vt.value=base+r.tx;
+          if(r.items&&r.items.length){pre=r.items;stat('Bosing va gapiring');return add()}
+          stat(r.tx?'Summani topmadim — matnni tuzatib «Qo\'shish» ni bosing':'Ovoz eshitilmadi — qayta bosing va balandroq gapiring');
+        }catch(e){vb.disabled=false;stat(e.message==='vaqt'?'Internet sekin — qayta urinib ko\'ring':'Xato: '+e.message)}};
+      mr.start(1000);on=true;sec=0;vb.classList.add('on');stat('🔴 Gapiring… tugatgach yana bosing (0 s)');
+      tm=setInterval(()=>{sec++;stat('🔴 Gapiring… tugatgach yana bosing ('+sec+' s)');if(sec>=VMAX)stop()},1000);
+    }).catch(e=>{on=false;vb.classList.remove('on');
+      if(SR||AND){MRC_OFF=true;return start()}
+      stat(/NotAllowed|Permission/i.test(e.name+e.message)?'Mikrofonga ruxsat bering (brauzer sozlamasida)':'Mikrofon ishlamadi: '+e.message)});
+  }
+  let MRC_OFF=false;
   function start(){
-    if(on)return done();
+    if(on)return MRC&&!MRC_OFF&&mr?stop():done();
+    if(vb.disabled)return;
+    if(MRC&&!MRC_OFF)return recStart();
     base=vt.value.trim()?vt.value.trim()+', ':'';on=true;vb.classList.add('on');stat('🔴 Eshityapman… tugatgach yana bosing');
     if(AND){window.onVoice=a=>{vt.value=base+(a&&a[0]||'');on=false;vb.classList.remove('on');stat('Bosing va gapiring');add()};window.onVoiceErr=m=>{on=false;vb.classList.remove('on');stat(m||'Eshitilmadi')};try{Android.listen()}catch(e){stat('Ovoz ishlamadi')}return}
     rec=new SR();rec.lang='uz-UZ';rec.interimResults=true;rec.continuous=true;rec.maxAlternatives=1;
@@ -421,7 +462,7 @@ function voice(auto){
   }
   function add(){
     pill('⏳ Tahlil qilinmoqda…');
-    const it=K.parseText(vt.value);pill('');
+    const it=pre||K.parseText(vt.value);pre=null;pill('');
     if(!it.length)return toast('Summani topmadim. Masalan: «non 5000»',3000);
     const today0=today(),ents=[],dbs=[];
     it.forEach(x=>{const q=K.debtOf(x);if(q)dbs.push(Object.assign({id:K.uid(),d:today0,back:0,ts:Date.now()},q));else ents.push(Object.assign({id:K.uid(),d:today0,ts:Date.now(),src:'ovoz'},x))});
@@ -435,7 +476,7 @@ function voice(auto){
     r.querySelector('#vu').onclick=()=>{const ids=ents.concat(dbs).map(e=>e.id);change(D=>{ids.forEach(i=>D.del[i]=1);D.e=D.e.filter(x=>!ids.includes(x.id));D.debts=D.debts.filter(x=>!ids.includes(x.id))});r.remove();toast('Bekor qilindi')};
   }
   if(vb)vb.onclick=start;bg.querySelector('#va').onclick=()=>{stop();add()};
-  bg.addEventListener('click',e=>{if(e.target===bg||e.target.classList.contains('xb'))stop()},true);
+  bg.addEventListener('click',e=>{if(e.target===bg||e.target.classList.contains('xb')){sec=0;stop()}},true);
   if(auto&&can)setTimeout(start,250);
 }
 function donut(list,tot){
@@ -868,9 +909,17 @@ if('serviceWorker'in navigator&&location.protocol==='https:')addEventListener('l
     var inst = false; try { inst = matchMedia('(display-mode: standalone)').matches || navigator.standalone; } catch (e) {}
     /* APK ichida (WebView: "; wv)") yoki boshqa ilova kirish sahifasida (gate.html?prod=rx|nv|ed|em) — taklif qilinmaydi */
     var wrapped = /; wv\)/.test(navigator.userAgent), other = /gate\.html/.test(location.pathname) && /[?&]prod=(rx|nv|ed|em)/.test(location.search);
-    if (inst || wrapped || other || !/Android/i.test(navigator.userAgent)) return;
+    var ua = navigator.userAgent, isI = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    if (inst || wrapped || other || !(/Android/i.test(ua) || isI)) return;
     var ask = /[?&#]o=1/.test(location.href), EV = null, BAR = null, DK = 'yrd_inst_no';
     function no() { try { return Date.now() - (+localStorage.getItem(DK) || 0) < 3 * 864e5; } catch (e) { return false; } }
+    /* iPhone: Safari o'zi taklif qilmaydi — «Bosh ekranga qo'shish» yo'lini ko'rsatamiz (2026-11-17) */
+    if (isI) { if (!document.querySelector('link[rel="manifest"]') || no()) return;
+      setTimeout(function () { if (BAR) return;
+        bar(/CriOS|FxiOS|Telegram|FBAN|Instagram/.test(ua) || !/Safari/.test(ua) || window.TelegramWebviewProxy || window.TelegramWebviewProxyProto || !('serviceWorker' in navigator)
+          ? '<b style="font-size:17px">📲 Ilovani o\'rnatish</b><br>Bu oynada o\'rnatib bo\'lmaydi — Safari kerak.<a href="x-safari-' + location.href.replace(/"/g, '') + '" style="display:block;margin-top:10px;padding:12px;border-radius:12px;background:#16a34a;color:#fff;font-weight:800;text-align:center;text-decoration:none">📲 O\'rnatish (Safari\'da)</a><small style="color:#6b7280">Keyin pastdagi <b>Ulashish ⬆</b> → <b>«Bosh ekranga qo\'shish»</b>. Safari ochilmasa: pastki o\'ngdagi <b>🧭 kompas</b> (yoki «⋯» → «Safari\'da ochish»).</small>'
+          : '<b style="font-size:17px">📲 Ilovani o\'rnatish</b><br>Pastdagi <b>Ulashish</b> belgisini (⬆ kvadrat) bosing → <b>«Bosh ekranga qo\'shish»</b> (На экран «Домой») → <b>Qo\'shish</b>.<br>Keyin ilovani telefon ekranidagi belgidan oching.'); }, 1500);
+      return; }
     function bar(html) { if (BAR) BAR.remove(); var d = document.createElement('div'); BAR = d; d.id = 'yrdi';
       d.style.cssText = 'position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));max-width:460px;margin:0 auto;z-index:2147482500;background:#fff;color:#14171f;border-radius:16px;padding:14px;box-shadow:0 8px 28px rgba(0,0,0,.35);font:16px/1.45 system-ui,sans-serif';
       d.innerHTML = html + '<div style="display:flex;gap:8px;margin-top:10px"><button data-i="x" style="flex:1;padding:12px;border:0;border-radius:12px;background:#e5e7eb;font-weight:700;font-size:15px">Keyin</button>' + (EV ? '<button data-i="ok" style="flex:2;padding:12px;border:0;border-radius:12px;background:#16a34a;color:#fff;font-weight:800;font-size:16px">📲 O\'rnatish</button>' : '') + '</div>';
