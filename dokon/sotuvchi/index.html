@@ -1616,12 +1616,39 @@ async function gateSeller() {
     if (!REST) { if (s.tab === 'bosh') STK = []; else { STK.push(LAST); if (STK.length > 40) STK.shift(); } } REST = false; LAST = j; }
   function nvOverlay() { if (document.getElementById('ask_n') || document.getElementById('di_o') || document.getElementById('at_n')) return true; try { if (window.AIO) return true; } catch (e) {}
     return [].slice.call(document.body.children).some(function (e) { return /position:\s*fixed;\s*inset:\s*0/.test(e.style.cssText || '') && e.id != 'errbox' && e.id != 'upd'; }); }
+  /* ---------- Umumiy: ustki oyna, «←» tugma, bo'limlar (2026-11-18) ---------- */
+  function vis(e) { if (!e || (e.closest && e.closest(OWN))) return false; var r = e.getBoundingClientRect(); if (r.width < 4 || r.height < 4) return false; var st = getComputedStyle(e); if (st.visibility === 'hidden' || st.display === 'none' || st.opacity === '0') return false; for (var q = e.parentElement; q && q !== document.body; q = q.parentElement) { if (getComputedStyle(q).display === 'none') return false; } return true; }
+  function topOverlay() {
+    var dl = [].slice.call(document.querySelectorAll('dialog[open]')).filter(vis).pop(); if (dl) return dl;
+    var L = document.elementsFromPoint ? document.elementsFromPoint(innerWidth / 2, innerHeight * 0.6) : [];
+    for (var i = 0; i < L.length; i++) { for (var e = L[i]; e && e !== document.body && e !== document.documentElement; e = e.parentElement) {
+      if (e.closest && e.closest(OWN)) break; if (e.id === 'yptr' || e.id === 'micask') break;
+      var st = getComputedStyle(e); if (st.position === 'fixed') { var r = e.getBoundingClientRect(); if (r.width >= innerWidth * 0.6 && r.height >= innerHeight * 0.45) return e; } } }
+    return null; }
+  function inOv(e) { for (var q = e; q && q !== document.body; q = q.parentElement) { if (q.tagName === 'DIALOG') return true; var st = getComputedStyle(q); if (st.position === 'fixed') { var r = q.getBoundingClientRect(); if (r.width >= innerWidth * 0.6 && r.height >= innerHeight * 0.45) return true; } } return false; }
+  /* eng ichkari (oxirgi) ko'rinib turgan «← …» tugma — bir qadam orqaga */
+  function backBtn(root) { var L = [].slice.call((root || document.body).querySelectorAll('button,a,[onclick],[role=button]')).filter(function (e) {
+      var t = (e.textContent || '').replace(/\s+/g, ' ').trim(); return /^(←|‹|⬅|◀|〈)/.test(t) || /^orqaga$/i.test(t) || /^(orqaga|back)$/i.test(e.getAttribute('aria-label') || ''); }).filter(vis);
+    if (!root) L = L.filter(function (e) { return !inOv(e); }); return L.pop() || null; }
+  function closeBtn(root) { return [].slice.call(root.querySelectorAll('button,a,[onclick],[role=button]')).filter(function (e) { var t = (e.textContent || '').replace(/\s+/g, ' ').trim(); return /^(yopish|×|✕|✖|x|bekor)$/i.test(t) || /yop|close/i.test(e.getAttribute('aria-label') || ''); }).filter(vis)[0] || null; }
+  /* bo'limlar qatori: bitta «on» (tanlangan) tugma va yonidagi 2–8 ta tugma bir qatorda */
+  function tabRow(root) { var A = [].slice.call((root || document.body).querySelectorAll('button.on,a.on,[role=tab][aria-selected=true],[aria-current=page]')).filter(vis);
+    if (!root) A = A.filter(function (e) { return !inOv(e); });
+    for (var i = 0; i < A.length; i++) { var a = A[i], par = a.parentElement; if (!par) continue;
+      var sib = [].slice.call(par.children).filter(function (e) { return e.tagName === a.tagName && vis(e); });
+      if (sib.length < 2 || sib.length > 8) continue; var t0 = a.getBoundingClientRect().top;
+      if (!sib.every(function (e) { return Math.abs(e.getBoundingClientRect().top - t0) < 14; })) continue;
+      if (sib.filter(function (e) { return e.classList.contains('on') || e.getAttribute('aria-selected') === 'true' || e.getAttribute('aria-current') === 'page'; }).length !== 1) continue;
+      return { L: sib, i: sib.indexOf(a) }; }
+    return null; }
   var ORIG = window.onBack, ORIGH = window.__back;
   function doBack() {
     if (O) { close(); return true; }
     var dl = document.querySelector('dialog[open]'); if (dl && !ORIGH) { try { dl.close(); } catch (e) {} return true; }
     if (NV) {
-      if (nvOverlay()) return ORIG ? !!ORIG() : false;
+      /* bir qadam orqaga: ochiq oynada «← Ro'yxat» kabi tugma bo'lsa — o'sha (oyna yopilib bosh sahifaga tushib qolmasin) */
+      if (nvOverlay()) { var ov = topOverlay(), ob = ov && backBtn(ov); if (ob) { ob.click(); return true; } return ORIG ? !!ORIG() : false; }
+      var pb = backBtn(null); if (pb) { pb.click(); return true; }
       if (STK.length) { var s = JSON.parse(STK.pop()); REST = true; NVV.forEach(function (k) { if (k in s) window[k] = s[k]; }); try { render(); } catch (e) {} LAST = JSON.stringify(nvSnap()); return true; }
       return ORIG ? !!ORIG() : false;
     }
@@ -1649,6 +1676,33 @@ async function gateSeller() {
       lastEx = Date.now(); tst('Chiqish uchun yana bir marta «Orqaga» ni bosing'); guard();
     });
   }
+
+  /* ---------- ↔ Yonga surish (2026-11-18): bo'limlar bo'lsa — keyingi/oldingi bo'limga; bo'lim yo'q joyda — bir qadam orqaga ---------- */
+  function goBack() {
+    if (O) { close(); return true; }
+    if (BACK_OK[K]) { try { if (doBack()) return true; } catch (e) {} }
+    var ov = topOverlay();
+    if (ov) { var b = backBtn(ov) || closeBtn(ov); if (b) { b.click(); return true; } if (ov.tagName === 'DIALOG') { try { ov.close(); } catch (e) {} return true; } return false; }
+    var pb = backBtn(null); if (pb) { pb.click(); return true; }
+    return false; }
+  window.yGoBack = goBack;
+  (function () {
+    var x0 = null, y0 = 0, t0 = 0, ok = false;
+    function skip(t) { for (var e = t; e && e !== document.body && e.nodeType === 1; e = e.parentElement) {
+        var tg = e.tagName; if (tg === 'INPUT' || tg === 'TEXTAREA' || tg === 'SELECT' || tg === 'CANVAS' || tg === 'IFRAME' || tg === 'VIDEO' || e.isContentEditable) return true;
+        if (e.closest && e.closest(OWN)) return true; if (e.hasAttribute && e.hasAttribute('data-noswipe')) return true;
+        var cn = typeof e.className === 'string' ? e.className : ''; if (/leaflet|ymaps|gm-style|map/i.test(cn + ' ' + (e.id || ''))) return true;
+        if (e.scrollWidth > e.clientWidth + 4) { var ox = getComputedStyle(e).overflowX; if (ox === 'auto' || ox === 'scroll') return true; } }
+      return false; }
+    document.addEventListener('touchstart', function (e) { if (e.touches.length !== 1) { x0 = null; return; } var p = e.touches[0];
+      if (p.clientX < 18 || p.clientX > innerWidth - 18 || skip(e.target)) { x0 = null; return; } x0 = p.clientX; y0 = p.clientY; t0 = Date.now(); }, { passive: true });
+    document.addEventListener('touchend', function (e) { if (x0 === null) return; var p = e.changedTouches[0], dx = p.clientX - x0, dy = p.clientY - y0; x0 = null;
+      if (Date.now() - t0 > 700 || Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.8) return;
+      try { var sel = window.getSelection && String(window.getSelection()); if (sel) return; } catch (er) {}
+      var ov = O ? null : topOverlay(), tr = O ? null : tabRow(ov);
+      if (tr) { var j = tr.i + (dx < 0 ? 1 : -1); if (j >= 0 && j < tr.L.length) { tr.L[j].click(); return; } if (dx > 0 && ov) goBack(); return; }
+      if (dx > 0 || ov) goBack(); }, { passive: true });
+  })();
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 300); }); else setTimeout(init, 300);
 
   /* ---------- ⟳ Barmoq bilan tepadan pastga tortsa — ilova yangilanadi (ma'lumot serverdan qayta olinadi) ----------
