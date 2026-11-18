@@ -1095,5 +1095,99 @@ setTimeout(()=>{try{if(!S.objects.length&&!S.workers.length&&hasB('readBackup'))
       bar('<b style="font-size:17px">📲 O\'rnatish</b><br>Yuqori o\'ngdagi <b>⋮</b> ni bosing → <b>«Ilovani o\'rnatish»</b> yoki <b>«Bosh ekranga qo\'shish»</b> → <b>O\'rnatish</b>.<br><small style="color:#6b7280">Ilova allaqachon o\'rnatilgan bo\'lsa, telefon ekranidagi belgisidan oching.</small>'); }, 4000);
   })();
 })();
+</script><script>/* Hisob-kitob: 🎤 bilan yozish (2026-11-18). Har qanday yozish maydoni bosilganda o'ng pastda 🎤 chiqadi.
+   Bosilsa: ruxsat yo'q bo'lsa — avval «Mikrofonga ruxsat bering», ruxsatdan keyin yozish o'zi boshlanadi.
+   Ovoz WAV ga aylantirilib Firestore rxv/{id} ga qo'yiladi (k:'tx'), Hamyon boti Gemini bilan matnga aylantiradi (har qanday sheva). */
+(function () {
+  if (window.hkMic) return; window.hkMic = 1;
+  var VMAX = 30, cur = null, keep = 0, on = false, mr = null, tm = 0, sec = 0, st = null;
+  var css = document.createElement('style');
+  css.textContent = '#hkm{position:fixed;right:14px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:99990;width:58px;height:58px;border-radius:50%;border:0;background:#dc2626;color:#fff;font-size:28px;box-shadow:0 6px 18px rgba(0,0,0,.3);display:none}' +
+    '#hkm.on{animation:hkmp 1s infinite}@keyframes hkmp{50%{box-shadow:0 0 0 14px rgba(220,38,38,.25)}}' +
+    '#hkmp{position:fixed;left:12px;right:12px;bottom:calc(150px + env(safe-area-inset-bottom,0px));z-index:99991;background:#fff;color:#111;border-radius:16px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.3);font:15px/1.4 system-ui,sans-serif;display:none}' +
+    '#hkmp b{font-weight:800}#hkmp button{margin-top:10px;width:100%;padding:12px;border:0;border-radius:12px;background:#16a34a;color:#fff;font-weight:800;font-size:16px}' +
+    '@media (prefers-color-scheme:dark){#hkmp{background:#1f2937;color:#f9fafb}}';
+  document.head.appendChild(css);
+  var b = document.createElement('button'); b.id = 'hkm'; b.type = 'button'; b.textContent = '🎤'; b.setAttribute('aria-label', 'Ovoz bilan yozish');
+  var pn = document.createElement('div'); pn.id = 'hkmp';
+  function mount() { if (!document.body) return setTimeout(mount, 50); document.body.appendChild(b); document.body.appendChild(pn); }
+  mount();
+  var ok = function (el) { if (!el || el.disabled || el.readOnly) return false; if (el.tagName === 'TEXTAREA') return true; if (el.tagName !== 'INPUT') return el.isContentEditable; return /^(text|search|number|tel|)$/.test(el.type || ''); };
+  function panel(h) { pn.innerHTML = h; pn.style.display = h ? 'block' : 'none'; }
+  document.addEventListener('focusin', function (e) { if (ok(e.target)) { cur = e.target; b.style.display = 'block'; } }, true);
+  document.addEventListener('focusout', function () { setTimeout(function () { if (!on && Date.now() > keep && !ok(document.activeElement)) { b.style.display = 'none'; if (!st) panel(''); } }, 250); }, true);
+  // tugmani bosganda maydon fokusini yo'qotmaymiz
+  b.addEventListener('mousedown', function (e) { e.preventDefault(); keep = Date.now() + 60000; });
+  b.addEventListener('touchstart', function () { keep = Date.now() + 60000; }, { passive: true });
+  b.onclick = function () { keep = Date.now() + 60000; if (on) return stop(); if (st) return; gate(); };
+  var MRC = !!(window.MediaRecorder && navigator.mediaDevices && navigator.mediaDevices.getUserMedia && (window.AudioContext || window.webkitAudioContext));
+  function denied() {
+    panel('<b>🎤 Mikrofon yopiq.</b><br>Oching: <b>Chrome</b> → <b>⋮</b> → <b>Sozlamalar</b> → <b>Sayt sozlamalari</b> → <b>Mikrofon</b> → <b>muhtorxonaxrolxanov-alt.github.io</b> → <b>Ruxsat</b>.<br>Yoki manzil qatoridagi 🔒 → <b>Ruxsatlar</b> → <b>Mikrofon</b>.<br><small>iPhone: Sozlamalar → Safari → Mikrofon → Ruxsat.</small><button type="button" id="hkmx" style="background:#6b7280">Yopish</button>');
+    pn.querySelector('#hkmx').onclick = function () { panel(''); };
+  }
+  function ask() {
+    panel('<div style="text-align:center"><b style="font-size:17px">🎤 Mikrofonga ruxsat bering</b><br>Ovozingizni yozib olish uchun kerak. Tugmani bosing va chiqqan oynada <b>«Ruxsat berish»</b> (Разрешить) ni tanlang — yozish o‘zi boshlanadi.</div><button type="button" id="hkmok">✅ Ruxsat berish</button>');
+    pn.querySelector('#hkmok').onclick = function () { panel('Ruxsat so‘ralyapti…'); rec(); };
+  }
+  function gate() {
+    if (!MRC) return panel('Bu brauzer ovoz yozolmaydi. Klaviaturadagi 🎤 tugmasidan foydalaning.');
+    var q = null; try { q = navigator.permissions && navigator.permissions.query({ name: 'microphone' }); } catch (e) {}
+    if (!q || !q.then) return rec();
+    q.then(function (r) { if (r.state === 'granted') rec(); else if (r.state === 'denied') denied(); else ask(); }, rec);
+  }
+  function stop() { clearInterval(tm); try { if (mr && mr.state !== 'inactive') mr.stop(); } catch (e) {} }
+  function rec() {
+    navigator.mediaDevices.getUserMedia({ audio: { channelCount: 1, echoCancellation: true, noiseSuppression: true, autoGainControl: true } }).then(function (s) {
+      var ch = []; mr = new MediaRecorder(s); mr.ondataavailable = function (e) { if (e.data && e.data.size) ch.push(e.data); };
+      mr.onstop = function () {
+        s.getTracks().forEach(function (t) { t.stop(); }); on = false; b.classList.remove('on');
+        if (sec < 1) return panel('');
+        st = 1; panel('🎧 Tinglayapman va yozyapman… ⏳');
+        var blob = new Blob(ch, { type: mr.mimeType || (ch[0] && ch[0].type) || 'audio/webm' });
+        blob.arrayBuffer().then(function (ab) {
+          var AC = window.AudioContext || window.webkitAudioContext, ac = new AC();
+          return new Promise(function (y, n) { var p = ac.decodeAudioData(ab, y, n); if (p && p.then) p.then(y, n); }).then(function (buf) { try { ac.close(); } catch (e) {} return send(wav(buf)); });
+        }).then(function (tx) {
+          st = null; tx = String(tx || '').trim();
+          if (!tx) return panel('Ovoz eshitilmadi — 🎤 ni qayta bosing va balandroq gapiring.');
+          put(tx); panel('');
+        }).catch(function (e) { st = null; panel(e.message === 'vaqt' ? 'Internet sekin — qayta urinib ko‘ring.' : e.message === 'kirish' ? 'Ovoz uchun bulutga kiring (Sozlamalar → Bulut).' : 'Xato: ' + e.message); });
+      };
+      mr.start(1000); on = true; sec = 0; b.classList.add('on'); panel('🔴 <b>Gapiring…</b> tugatgach 🎤 ni yana bosing (0 s)');
+      tm = setInterval(function () { sec++; panel('🔴 <b>Gapiring…</b> tugatgach 🎤 ni yana bosing (' + sec + ' s)'); if (sec >= VMAX) stop(); }, 1000);
+    }).catch(function (e) { if (/NotAllowed|Permission|Security/i.test(e.name + e.message)) denied(); else panel('Mikrofon ishlamadi: ' + e.message); });
+  }
+  function put(tx) {
+    var el = cur; if (!el || !document.contains(el)) return panel('Yozilgan matn: ' + tx.replace(/[<>&]/g, ''));
+    if (el.type === 'number' || el.type === 'tel') { var d = tx.replace(/[^\d.,]/g, '').replace(',', '.'); if (!d) return panel('Raqam topilmadi: «' + tx.replace(/[<>&]/g, '') + '»'); el.value = d; }
+    else if (el.isContentEditable) { el.focus(); document.execCommand('insertText', false, tx); }
+    else { var a = el.selectionStart, z = el.selectionEnd, v = el.value || ''; if (a == null) { a = z = v.length; }
+      var pre = v.slice(0, a), ins = (pre && !/\s$/.test(pre) ? ' ' : '') + tx; el.value = pre + ins + v.slice(z); try { el.setSelectionRange(a + ins.length, a + ins.length); } catch (e) {} }
+    el.dispatchEvent(new Event('input', { bubbles: true })); el.dispatchEvent(new Event('change', { bubbles: true })); try { el.focus(); } catch (e) {}
+  }
+  function wav(buf) {
+    var R = 11025, ch = buf.getChannelData(0), k = buf.sampleRate / R, n = Math.floor(ch.length / k), o = new DataView(new ArrayBuffer(44 + n * 2)), i, j, pk = 0;
+    function w(p, s) { for (var q = 0; q < s.length; q++) o.setUint8(p + q, s.charCodeAt(q)); }
+    for (i = 0; i < ch.length; i++) pk = Math.max(pk, Math.abs(ch[i])); var g = pk > 0.01 ? Math.min(8, 0.9 / pk) : 1;
+    w(0, 'RIFF'); o.setUint32(4, 36 + n * 2, true); w(8, 'WAVE'); w(12, 'fmt '); o.setUint32(16, 16, true); o.setUint16(20, 1, true); o.setUint16(22, 1, true); o.setUint32(24, R, true); o.setUint32(28, R * 2, true); o.setUint16(32, 2, true); o.setUint16(34, 16, true); w(36, 'data'); o.setUint32(40, n * 2, true);
+    for (i = 0; i < n; i++) { var s = 0, a = Math.floor(i * k), z = Math.max(a + 1, Math.floor((i + 1) * k)); for (j = a; j < z; j++) s += ch[j] || 0; s = s / (z - a) * g; o.setInt16(44 + i * 2, Math.max(-1, Math.min(1, s)) * 32767, true); }
+    var u = new Uint8Array(o.buffer), bin = ''; for (i = 0; i < u.length; i += 8192) bin += String.fromCharCode.apply(null, u.subarray(i, i + 8192)); return btoa(bin);
+  }
+  function jf(u, o) { return fetch(u, o).then(function (r) { if (!r.ok) { var e = new Error('HTTP ' + r.status); e.code = r.status; throw e; } return r.json(); }); }
+  function send(b64) {
+    if (typeof tok !== 'function' || typeof C === 'undefined' || !C.uid || !C.rt) return Promise.reject(new Error('kirish'));
+    return tok().then(function (t) {
+      var FS = 'https://firestore.googleapis.com/v1/projects/' + C.cfg.projectId + '/databases/(default)/documents/rxv/', id = 'tx_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
+      var H = { Authorization: 'Bearer ' + t, 'content-type': 'application/json' }, i = 0;
+      var del = function () { fetch(FS + id, { method: 'DELETE', headers: H }).catch(function () {}); };
+      return jf(FS + id, { method: 'PATCH', headers: H, body: JSON.stringify({ fields: { u: { stringValue: C.uid }, m: { stringValue: 'audio/wav' }, a: { stringValue: b64 }, t: { integerValue: String(Date.now()) } } }) }).then(function poll() {
+        if (++i > 45) { del(); throw new Error('vaqt'); }
+        return new Promise(function (y) { setTimeout(y, i < 3 ? 1500 : 1000); }).then(function () { return jf(FS + id, { headers: H }); }).then(function (j) {
+          var r = j.fields && j.fields.r && j.fields.r.stringValue; if (!r) return poll(); del(); return JSON.parse(r).tx;
+        }, function (e) { if (e.code === 404) throw new Error('vaqt'); return poll(); });
+      });
+    });
+  }
+})();
 </script></body>
 </html>

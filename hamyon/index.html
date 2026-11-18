@@ -444,20 +444,27 @@ function voice(auto){
       mr.start(1000);on=true;sec=0;vb.classList.add('on');stat('🔴 Gapiring… tugatgach yana bosing (0 s)');
       tm=setInterval(()=>{sec++;stat('🔴 Gapiring… tugatgach yana bosing ('+sec+' s)');if(sec>=VMAX)stop()},1000);
     }).catch(e=>{on=false;vb.classList.remove('on');
-      if(SR||AND){MRC_OFF=true;return start()}
-      if(/NotAllowed|Permission/i.test(e.name+e.message)){stat('Mikrofon yopiq');vs.innerHTML='<b>Mikrofon yopiq.</b> Oching: <b>Chrome</b> → <b>⋮</b> → <b>Sozlamalar</b> → <b>Sayt sozlamalari</b> → <b>Mikrofon</b> → <b>muhtorxonaxrolxanov-alt.github.io</b> → <b>Ruxsat</b>. Keyin 🎤 ni qayta bosing.<br><small>iPhone: Sozlamalar → Safari → Mikrofon → Ruxsat.</small>'}
+      if(AND||(SR&&!/NotAllowed|Permission|Security/i.test(e.name+e.message))){MRC_OFF=true;return start()}
+      if(/NotAllowed|Permission/i.test(e.name+e.message)){micDenied()}
       else stat('Mikrofon ishlamadi: '+e.message)});
   }
   let MRC_OFF=false;
+  /* 2026-11-18: ruxsat yo'q bo'lsa — avval «Mikrofonga ruxsat bering» oynasi, «Ruxsat berish» bosilgach brauzer so'raydi va ruxsatdan keyin yozish O'ZI boshlanadi */
+  function micDenied(){on=false;vb.classList.remove('on');vs.innerHTML='<div class="alert" style="text-align:left"><b>🎤 Mikrofon yopiq.</b><br>Oching: <b>Chrome</b> → <b>⋮</b> → <b>Sozlamalar</b> → <b>Sayt sozlamalari</b> → <b>Mikrofon</b> → <b>muhtorxonaxrolxanov-alt.github.io</b> → <b>Ruxsat</b>.<br>Yoki manzil qatoridagi 🔒 belgisi → <b>Ruxsatlar</b> → <b>Mikrofon</b>.<br><small>iPhone: Sozlamalar → Safari → Mikrofon → Ruxsat.</small><br>Keyin 🎤 ni qayta bosing.</div>'}
+  function micAsk(){vs.innerHTML='<div class="alert" style="text-align:center"><b style="font-size:17px">🎤 Mikrofonga ruxsat bering</b><br>Ovozingizni yozib olish uchun kerak. Pastdagi tugmani bosing, keyin chiqqan oynada <b>«Ruxsat berish»</b> (Разрешить) ni tanlang — yozish o&#39;zi boshlanadi.<button class="btn" id="mok" style="margin-top:10px">✅ Ruxsat berish</button></div>';
+    vs.querySelector('#mok').onclick=()=>{stat('Ruxsat so’ralyapti…');recStart()}}
+  function micGate(){let q=null;try{q=navigator.permissions&&navigator.permissions.query({name:'microphone'})}catch(e){}
+    if(!q||!q.then)return recStart();
+    q.then(r=>{if(r.state==='granted')recStart();else if(r.state==='denied')micDenied();else micAsk()},()=>recStart())}
   function start(){
     if(on)return MRC&&!MRC_OFF&&mr?stop():done();
     if(vb.disabled)return;
-    if(MRC&&!MRC_OFF)return recStart();
+    if(MRC&&!MRC_OFF)return micGate();
     base=vt.value.trim()?vt.value.trim()+', ':'';on=true;vb.classList.add('on');stat('🔴 Eshityapman… tugatgach yana bosing');
     if(AND){window.onVoice=a=>{vt.value=base+(a&&a[0]||'');on=false;vb.classList.remove('on');stat('Bosing va gapiring');add()};window.onVoiceErr=m=>{on=false;vb.classList.remove('on');stat(m||'Eshitilmadi')};try{Android.listen()}catch(e){stat('Ovoz ishlamadi')}return}
     rec=new SR();rec.lang='uz-UZ';rec.interimResults=true;rec.continuous=true;rec.maxAlternatives=1;
     rec.onresult=e=>{let s='';for(let i=0;i<e.results.length;i++)s+=e.results[i][0].transcript+' ';vt.value=base+s.trim()};
-    rec.onerror=e=>{stat(e.error==='not-allowed'?'Mikrofonga ruxsat bering':e.error==='language-not-supported'?'Bu telefon o\'zbekcha ovozni tanimaydi — botga ovozli yuboring':e.error==='no-speech'?'Ovoz eshitilmadi':'Xato: '+e.error)};
+    rec.onerror=e=>{if(e.error==='not-allowed')return micDenied();stat(e.error==='language-not-supported'?'Bu telefon o\'zbekcha ovozni tanimaydi — botga ovozli yuboring':e.error==='no-speech'?'Ovoz eshitilmadi':'Xato: '+e.error)};
     rec.onend=()=>{if(on)done();else stat('Bosing va gapiring')};
     try{rec.start()}catch(e){stat('Ovoz ishlamadi')}
   }
@@ -582,7 +589,10 @@ function vSet(){
 }
 render();if(S.rt){tick();licCheck()}
 setInterval(()=>{if(S.rt&&!document.hidden)licCheck()},10*60000);
-if('serviceWorker'in navigator&&location.protocol==='https:')addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+/* 2026-11-18: yangilanish o'zi keladi — har ochilganda/qaytganda yangi versiya tekshiriladi, topilsa sahifa o'zi yangilanadi (ochiq oyna bo'lmasa) */
+if('serviceWorker'in navigator&&location.protocol==='https:')addEventListener('load',()=>{const had=!!navigator.serviceWorker.controller;let rl=false;
+  navigator.serviceWorker.register('sw.js',{updateViaCache:'none'}).then(reg=>{const up=()=>{if(!document.hidden)reg.update().catch(()=>{})};document.addEventListener('visibilitychange',up);setInterval(up,600000)}).catch(()=>{});
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(!had||rl)return;const go=()=>{if(document.querySelector('.sh-bg,.sheet,.vbig.on')){setTimeout(go,3000);return}rl=true;location.reload()};go()})});
 </script><script>window.YAPP="hm";</script><script>/* Yordam: o'ng tepada doimiy sozlamalar va ? tugmasi; ? har bir ekrandagi joylarni birma-bir ko'rsatib tushuntiradi.
  * Ilova yig'ilganda: window.YAPP="tr" + shu fayl. Tugmalar matni yoki selektori bo'yicha topiladi;
  * ekranda yo'q tugma o'tkazib yuboriladi. */
