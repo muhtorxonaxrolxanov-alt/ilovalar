@@ -445,7 +445,8 @@ function voice(auto){
       tm=setInterval(()=>{sec++;stat('🔴 Gapiring… tugatgach yana bosing ('+sec+' s)');if(sec>=VMAX)stop()},1000);
     }).catch(e=>{on=false;vb.classList.remove('on');
       if(SR||AND){MRC_OFF=true;return start()}
-      stat(/NotAllowed|Permission/i.test(e.name+e.message)?'Mikrofonga ruxsat bering (brauzer sozlamasida)':'Mikrofon ishlamadi: '+e.message)});
+      if(/NotAllowed|Permission/i.test(e.name+e.message)){stat('Mikrofon yopiq');vs.innerHTML='<b>Mikrofon yopiq.</b> Oching: <b>Chrome</b> → <b>⋮</b> → <b>Sozlamalar</b> → <b>Sayt sozlamalari</b> → <b>Mikrofon</b> → <b>muhtorxonaxrolxanov-alt.github.io</b> → <b>Ruxsat</b>. Keyin 🎤 ni qayta bosing.<br><small>iPhone: Sozlamalar → Safari → Mikrofon → Ruxsat.</small>'}
+      else stat('Mikrofon ishlamadi: '+e.message)});
   }
   let MRC_OFF=false;
   function start(){
