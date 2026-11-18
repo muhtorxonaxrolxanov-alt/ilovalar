@@ -16,6 +16,15 @@ for d in sys.argv[2:]:
         if os.path.exists(os.path.join(p, n)):
             ic = open(os.path.join(p, n), 'rb').read()
             break
+    # 2026-11-18: katta belgi profilni 400 KB qilib, iPhone'da sekin yuklanardi — 180px ga kichraytiramiz
+    if ic and len(ic) > 60000:
+        try:
+            import io
+            from PIL import Image
+            im = Image.open(io.BytesIO(ic)).convert('RGBA').resize((180, 180), Image.LANCZOS)
+            bo = io.BytesIO(); im.save(bo, 'PNG', optimize=True); ic = bo.getvalue()
+        except Exception as e:
+            print('belgi kichraytirilmadi:', e)
     label = m.get('short_name') or m.get('name') or 'Ilova'
     clip = {
         'PayloadType': 'com.apple.webClip.managed', 'PayloadVersion': 1,

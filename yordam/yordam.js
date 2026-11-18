@@ -73,6 +73,14 @@
       { x: 'Yangi', h: '🆕 Buyurtma holatlari', d: 'Yangi → Qabul qilingan → Yo\'lda → Yetkazilgan. Bosib, shu holatdagi buyurtmalarni ko\'rasiz.' },
       { sel: '[data-act*="set"],[aria-label*="ozlama"]', h: '⚙ Sozlamalar', d: 'Do\'kon nomi, logo, karta raqami, printer, Telegram xabar.' }] },
     /* ---------- Hamyon (kunlik xarajatlar) ---------- */
+    'hk-sx': { t: '📐 Shit sxemasi', i: 'Shitni telefonda yig‘asiz: dinreyka, avtomat, UZO, UKK, nol shina — hammasini xohlagan joyga qo‘yasiz va simlarni ulaysiz. Ilova tekshiradi, keyin rasmini chiqarib shit eshigiga yopishtirasiz va shunga qarab yig‘asiz.', s: [
+      { sel: '#mEdit', h: '✏ Yig‘ish', d: 'Pastdagi ro‘yxatdan qurilmani tanlab dinreykaning istalgan joyiga qo‘ying. «UKK / nol shina» bo‘limida UKK bloklari va dinreykaga o‘rnatiladigan nol shinalar bor — ularni ham xohlagan joyga qo‘yasiz. Simni klemmadan klemmaga tortib ulaysiz.' },
+      { sel: '#mTest', h: '⚡ Tekshiruv', d: 'Ilova sxemani tekshiradi: qisqa tutashuv, ingichka sim, ulanmagan klemma. Avtomatlarni yoqib-o‘chirib, tok qayerga borishini ko‘rasiz.' },
+      { sel: '#mOut', h: '🖨 Chiqarish', d: 'Sxema yig‘ilib, tekshiruvdan o‘tgach bosing. A4 varaq tayyorlanadi: sxema rasmi, qurilmalar ro‘yxati va QR kod. «🖨 Printerdan chiqarish» yoki «📤 Rasm sifatida yuborish». Varaqni shit eshigining ichiga yopishtiring va shunga qarab yig‘ing.' },
+      { sel: '#mOut', h: '🔳 QR kod — 3D', d: 'Varaqdagi QR kodni istalgan telefon kamerasi bilan skaner qilsa, ilovasiz ham shitning haqiqiy 3D ko‘rinishi ochiladi. Mijozga yoki shogirdga ko‘rsatish uchun.' },
+      { sel: '#mOut', h: '✅ Yig‘ish ro‘yxati', d: '«Chiqarish» oynasida. Har bir qurilma (qaysi qator, nechanchi joy) va har bir sim ro‘yxati. Bajarganingizni belgilab borasiz — hammasi tugasa ilova aytadi.' },
+      { sel: '#b3d', h: '🧊 3D', d: 'Shitning 3D ko‘rinishi: barmoq bilan aylantiring, «Rentgen» — ichini ko‘rish.' },
+      { sel: '#bImg', h: '🖼 Rasm', d: 'Faqat sxemaning rasmini yuboradi.' }] },
     hm: { t: '👛 Hamyon', i: 'Kunlik xarajat va kirimlaringizni yozib borasiz. Ilova hisobot beradi, limitdan oshsangiz yoki o\'tgan oydan ko\'p sarflasangiz ogohlantiradi. Telegram bot bilan ma\'lumot bir xil. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi.', s: [
       { sel: '.hero', h: '💰 Shu oy', d: 'Katta raqam — shu oyda jami qancha sarflaganingiz. Pastida: «Bugun» — bugungi xarajat, «Kirim» — shu oy tushgan pul, «Qoldiq» — kirim minus xarajat (minus bo\'lsa, kirimdan ko\'p sarflagansiz). Oq chiziq — oylik limitdan qanchasi ishlatilgani.' },
       { sel: '.alert', h: '⚠️ Ogohlantirish', d: 'Sariq — limitning 80% idan oshdi. Qizil — limitdan oshib ketdi. 📈 — o\'tgan oyning shu kunigacha bo\'lgandan ko\'p sarflayapsiz.' },
@@ -114,7 +122,7 @@
   function key() {
     var a = window.YAPP || '';
     if (a === 'nr') return 'tr'; if (a === 'nh') return 'th';
-    if (a === 'hk') { var p = location.pathname; if (/shogird/.test(p)) return 'hk-sg'; if (/gate/.test(p)) return 'gate'; if (/hisob\.html/.test(p)) return 'hk-h'; if (/(\/|index\.html)$/.test(p)) return 'hk-i'; return 'hk-x'; }
+    if (a === 'hk') { var p = location.pathname; if (/shogird/.test(p)) return 'hk-sg'; if (/gate/.test(p)) return 'gate'; if (/hisob\.html/.test(p)) return 'hk-h'; if (/(\/|index\.html)$/.test(p)) return 'hk-i'; if (/sxema/.test(p)) return 'hk-sx'; return 'hk-x'; }
     return a;
   }
   var K = key(), A = D[K] || { t: '❓ ' + (document.title || 'Yordam'), i: '', s: [] }, C = CFG[K] || {};
@@ -346,7 +354,9 @@
       if (Date.now() - t0 > 700 || Math.abs(dx) < 70 || Math.abs(dx) < Math.abs(dy) * 1.8) return;
       try { var sel = window.getSelection && String(window.getSelection()); if (sel) return; } catch (er) {}
       var ov = O ? null : topOverlay(), tr = O ? null : tabRow(ov);
-      if (tr) { var j = tr.i + (dx < 0 ? 1 : -1); if (j >= 0 && j < tr.L.length) { tr.L[j].click(); return; } if (dx > 0) goBack(); return; }
+      if (tr) { var j = tr.i + (dx < 0 ? 1 : -1); if (j >= 0 && j < tr.L.length) { tr.L[j].click(); return; }
+        /* birinchi bo'limda chapdan o'ngga: oyna ochiq bo'lsa — yopiladi; bo'limlar ostida «←» (masalan obyekt ichidan ro'yxatga) bo'lsa — o'sha; boshqa bo'limga sakramaydi */
+        if (dx > 0) { if (ov) goBack(); else { var bb = backBtn(null); if (bb && bb.getBoundingClientRect().top > tr.L[0].getBoundingClientRect().bottom) bb.click(); } } return; }
       if (dx > 0 || ov) goBack(); }, { passive: true });
   })();
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', function () { setTimeout(init, 300); }); else setTimeout(init, 300);
