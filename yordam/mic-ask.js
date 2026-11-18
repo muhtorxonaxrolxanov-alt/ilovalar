@@ -26,7 +26,7 @@
         s.getTracks().forEach(function (t) { t.stop(); });
         bg.firstChild.innerHTML = '<div style="font-size:46px">✅</div><div style="font-size:18px;font-weight:800">Mikrofon yoqildi</div><div style="opacity:.8">Endi 🎤 ni bosib gapiravering.</div>';
         setTimeout(close, 1600);
-      }, function () { close(); });
+      }, function (e) { var sys = e && /system|OS/i.test(e.message || ''); bg.firstChild.innerHTML = '<div style="font-size:40px">⚠️</div><div style="font-size:17px;font-weight:800">' + (sys ? 'Telefon brauzerga mikrofonni bermagan' : 'Mikrofon yopiq') + '</div><div style="opacity:.85;text-align:left;margin-top:6px">' + (sys ? 'Telefon <b>Sozlamalar</b> → <b>Ilovalar</b> → <b>Chrome</b> → <b>Ruxsatlar</b> → <b>Mikrofon</b> → <b>Ruxsat</b>.' : '<b>Chrome</b> → <b>⋮</b> → <b>Sozlamalar</b> → <b>Sayt sozlamalari</b> → <b>Mikrofon</b> → shu sayt → <b>Ruxsat</b>.') + '</div><button type="button" style="margin-top:12px;width:100%;padding:12px;border:0;border-radius:14px;background:#6b7280;color:#fff;font-weight:800">Yopish</button>'; bg.querySelector('button').onclick = close; });
     };
   }
   function check() {

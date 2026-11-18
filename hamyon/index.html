@@ -445,12 +445,12 @@ function voice(auto){
       tm=setInterval(()=>{sec++;stat('🔴 Gapiring… tugatgach yana bosing ('+sec+' s)');if(sec>=VMAX)stop()},1000);
     }).catch(e=>{on=false;vb.classList.remove('on');
       if(AND||(SR&&!/NotAllowed|Permission|Security/i.test(e.name+e.message))){MRC_OFF=true;return start()}
-      if(/NotAllowed|Permission/i.test(e.name+e.message)){micDenied()}
+      if(/NotAllowed|Permission/i.test(e.name+e.message)){micDenied(e)}
       else stat('Mikrofon ishlamadi: '+e.message)});
   }
   let MRC_OFF=false;
   /* 2026-11-18: ruxsat yo'q bo'lsa — avval «Mikrofonga ruxsat bering» oynasi, «Ruxsat berish» bosilgach brauzer so'raydi va ruxsatdan keyin yozish O'ZI boshlanadi */
-  function micDenied(){on=false;vb.classList.remove('on');vs.innerHTML='<div class="alert" style="text-align:left"><b>🎤 Mikrofon yopiq.</b><br>Oching: <b>Chrome</b> → <b>⋮</b> → <b>Sozlamalar</b> → <b>Sayt sozlamalari</b> → <b>Mikrofon</b> → <b>muhtorxonaxrolxanov-alt.github.io</b> → <b>Ruxsat</b>.<br>Yoki manzil qatoridagi 🔒 belgisi → <b>Ruxsatlar</b> → <b>Mikrofon</b>.<br><small>iPhone: Sozlamalar → Safari → Mikrofon → Ruxsat.</small><br>Agar u yerda ruxsat bor bo&#39;lsa: telefon <b>Sozlamalar</b> → <b>Ilovalar</b> → <b>Chrome</b> → <b>Ruxsatlar</b> → <b>Mikrofon</b> → <b>Ruxsat</b>.<button class="btn" id="mre" style="margin-top:10px">🔄 Qayta urinish</button></div>';vs.querySelector('#mre').onclick=()=>{stat('Ruxsat so’ralyapti…');recStart()}}
+  function micDenied(e){on=false;vb.classList.remove('on');const sys=e&&/system|OS/i.test(e.message||'');vs.innerHTML='<div class="alert" style="text-align:left">'+(sys?'<b>🎤 Telefon Chrome&#39;ga mikrofonni bermagan.</b><br>Oching: telefon <b>Sozlamalar</b> → <b>Ilovalar</b> → <b>Chrome</b> → <b>Ruxsatlar</b> → <b>Mikrofon</b> → <b>Ilova ishlatilayotganda ruxsat</b>.<br>Keyin «Qayta urinish» ni bosing.<button class="btn" id="mre" style="margin-top:10px">🔄 Qayta urinish</button><br><small style="opacity:.6">'+String(e.name+': '+e.message).replace(/[<>&]/g,'')+'</small></div>':'<b>🎤 Mikrofon yopiq.</b><br>Oching: <b>Chrome</b> → <b>⋮</b> → <b>Sozlamalar</b> → <b>Sayt sozlamalari</b> → <b>Mikrofon</b> → <b>muhtorxonaxrolxanov-alt.github.io</b> → <b>Ruxsat</b>.<br>Yoki manzil qatoridagi 🔒 belgisi → <b>Ruxsatlar</b> → <b>Mikrofon</b>.<br><small>iPhone: Sozlamalar → Safari → Mikrofon → Ruxsat.</small><br>Agar u yerda ruxsat bor bo&#39;lsa: telefon <b>Sozlamalar</b> → <b>Ilovalar</b> → <b>Chrome</b> → <b>Ruxsatlar</b> → <b>Mikrofon</b> → <b>Ruxsat</b>.<button class="btn" id="mre" style="margin-top:10px">🔄 Qayta urinish</button>'+(e?'<br><small style="opacity:.6">'+String(e.name+': '+e.message).replace(/[<>&]/g,'')+'</small>':'')+'</div>');vs.querySelector('#mre').onclick=()=>{stat('Ruxsat so’ralyapti…');recStart()}}
   function micAsk(){vs.innerHTML='<div class="alert" style="text-align:center"><b style="font-size:17px">🎤 Mikrofonga ruxsat bering</b><br>Ovozingizni yozib olish uchun kerak. Pastdagi tugmani bosing, keyin chiqqan oynada <b>«Ruxsat berish»</b> (Разрешить) ni tanlang — yozish o&#39;zi boshlanadi.<button class="btn" id="mok" style="margin-top:10px">✅ Ruxsat berish</button></div>';
     vs.querySelector('#mok').onclick=()=>{stat('Ruxsat so’ralyapti…');recStart()}}
   function micGate(){let q=null;try{q=navigator.permissions&&navigator.permissions.query({name:'microphone'})}catch(e){}
@@ -974,7 +974,7 @@ if('serviceWorker'in navigator&&location.protocol==='https:')addEventListener('l
         s.getTracks().forEach(function (t) { t.stop(); });
         bg.firstChild.innerHTML = '<div style="font-size:46px">✅</div><div style="font-size:18px;font-weight:800">Mikrofon yoqildi</div><div style="opacity:.8">Endi 🎤 ni bosib gapiravering.</div>';
         setTimeout(close, 1600);
-      }, function () { close(); });
+      }, function (e) { var sys = e && /system|OS/i.test(e.message || ''); bg.firstChild.innerHTML = '<div style="font-size:40px">⚠️</div><div style="font-size:17px;font-weight:800">' + (sys ? 'Telefon brauzerga mikrofonni bermagan' : 'Mikrofon yopiq') + '</div><div style="opacity:.85;text-align:left;margin-top:6px">' + (sys ? 'Telefon <b>Sozlamalar</b> → <b>Ilovalar</b> → <b>Chrome</b> → <b>Ruxsatlar</b> → <b>Mikrofon</b> → <b>Ruxsat</b>.' : '<b>Chrome</b> → <b>⋮</b> → <b>Sozlamalar</b> → <b>Sayt sozlamalari</b> → <b>Mikrofon</b> → shu sayt → <b>Ruxsat</b>.') + '</div><button type="button" style="margin-top:12px;width:100%;padding:12px;border:0;border-radius:14px;background:#6b7280;color:#fff;font-weight:800">Yopish</button>'; bg.querySelector('button').onclick = close; });
     };
   }
   function check() {

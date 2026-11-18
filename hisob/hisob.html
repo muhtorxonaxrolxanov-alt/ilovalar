@@ -1102,7 +1102,7 @@ setTimeout(()=>{try{if(!S.objects.length&&!S.workers.length&&hasB('readBackup'))
   if (window.hkMic) return; window.hkMic = 1;
   var VMAX = 30, cur = null, keep = 0, on = false, mr = null, tm = 0, sec = 0, st = null;
   var css = document.createElement('style');
-  css.textContent = '#hkm{position:fixed;right:14px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:99990;width:58px;height:58px;border-radius:50%;border:0;background:#dc2626;color:#fff;font-size:28px;box-shadow:0 6px 18px rgba(0,0,0,.3);display:none}' +
+  css.textContent = '#hkm{position:fixed;right:14px;bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:99990;width:58px;height:58px;border-radius:50%;border:0;background:#dc2626;color:#fff;font-size:28px;box-shadow:0 6px 18px rgba(0,0,0,.3);display:block}' +
     '#hkm.on{animation:hkmp 1s infinite}@keyframes hkmp{50%{box-shadow:0 0 0 14px rgba(220,38,38,.25)}}' +
     '#hkmp{position:fixed;left:12px;right:12px;bottom:calc(150px + env(safe-area-inset-bottom,0px));z-index:99991;background:#fff;color:#111;border-radius:16px;padding:14px;box-shadow:0 10px 30px rgba(0,0,0,.3);font:15px/1.4 system-ui,sans-serif;display:none}' +
     '#hkmp b{font-weight:800}#hkmp button{margin-top:10px;width:100%;padding:12px;border:0;border-radius:12px;background:#16a34a;color:#fff;font-weight:800;font-size:16px}' +
@@ -1115,13 +1115,14 @@ setTimeout(()=>{try{if(!S.objects.length&&!S.workers.length&&hasB('readBackup'))
   var ok = function (el) { if (!el || el.disabled || el.readOnly) return false; if (el.tagName === 'TEXTAREA') return true; if (el.tagName !== 'INPUT') return el.isContentEditable; return /^(text|search|number|tel|)$/.test(el.type || ''); };
   function panel(h) { pn.innerHTML = h; pn.style.display = h ? 'block' : 'none'; }
   document.addEventListener('focusin', function (e) { if (ok(e.target)) { cur = e.target; b.style.display = 'block'; } }, true);
-  document.addEventListener('focusout', function () { setTimeout(function () { if (!on && Date.now() > keep && !ok(document.activeElement)) { b.style.display = 'none'; if (!st) panel(''); } }, 250); }, true);
+  document.addEventListener('focusout', function () { setTimeout(function () { if (!on && Date.now() > keep && !ok(document.activeElement)) { if (!st) panel(''); } }, 250); }, true);
   // tugmani bosganda maydon fokusini yo'qotmaymiz
   b.addEventListener('mousedown', function (e) { e.preventDefault(); keep = Date.now() + 60000; });
   b.addEventListener('touchstart', function () { keep = Date.now() + 60000; }, { passive: true });
   b.onclick = function () { keep = Date.now() + 60000; if (on) return stop(); if (st) return; gate(); };
   var MRC = !!(window.MediaRecorder && navigator.mediaDevices && navigator.mediaDevices.getUserMedia && (window.AudioContext || window.webkitAudioContext));
-  function denied() {
+  function denied(e) {
+    if (e && /system|OS/i.test(e.message || '')) { panel('<b>🎤 Telefon brauzerga mikrofonni bermagan.</b><br>Oching: telefon <b>Sozlamalar</b> → <b>Ilovalar</b> → <b>Chrome</b> (yoki shu ilova) → <b>Ruxsatlar</b> → <b>Mikrofon</b> → <b>Ruxsat</b>.<button type="button" id="hkmr">🔄 Qayta urinish</button><button type="button" id="hkmx" style="background:#6b7280">Yopish</button>'); pn.querySelector('#hkmx').onclick = function () { panel(''); }; pn.querySelector('#hkmr').onclick = function () { panel('Ruxsat so‘ralyapti…'); rec(); }; return; }
     panel('<b>🎤 Mikrofon yopiq.</b><br>Oching: <b>Chrome</b> → <b>⋮</b> → <b>Sozlamalar</b> → <b>Sayt sozlamalari</b> → <b>Mikrofon</b> → <b>muhtorxonaxrolxanov-alt.github.io</b> → <b>Ruxsat</b>.<br>Yoki manzil qatoridagi 🔒 → <b>Ruxsatlar</b> → <b>Mikrofon</b>.<br><small>iPhone: Sozlamalar → Safari → Mikrofon → Ruxsat.</small><br>Agar u yerda ruxsat bor bo‘lsa: telefon <b>Sozlamalar</b> → <b>Ilovalar</b> → <b>Chrome</b> → <b>Ruxsatlar</b> → <b>Mikrofon</b> → <b>Ruxsat</b>.<button type="button" id="hkmr">🔄 Qayta urinish</button><button type="button" id="hkmx" style="background:#6b7280">Yopish</button>');
     pn.querySelector('#hkmx').onclick = function () { panel(''); };
     pn.querySelector('#hkmr').onclick = function () { panel('Ruxsat so‘ralyapti…'); rec(); };
@@ -1156,10 +1157,10 @@ setTimeout(()=>{try{if(!S.objects.length&&!S.workers.length&&hasB('readBackup'))
       };
       mr.start(1000); on = true; sec = 0; b.classList.add('on'); panel('🔴 <b>Gapiring…</b> tugatgach 🎤 ni yana bosing (0 s)');
       tm = setInterval(function () { sec++; panel('🔴 <b>Gapiring…</b> tugatgach 🎤 ni yana bosing (' + sec + ' s)'); if (sec >= VMAX) stop(); }, 1000);
-    }).catch(function (e) { if (/NotAllowed|Permission|Security/i.test(e.name + e.message)) denied(); else panel('Mikrofon ishlamadi: ' + e.message); });
+    }).catch(function (e) { if (/NotAllowed|Permission|Security/i.test(e.name + e.message)) denied(e); else panel('Mikrofon ishlamadi: ' + e.message); });
   }
   function put(tx) {
-    var el = cur; if (!el || !document.contains(el)) return panel('Yozilgan matn: ' + tx.replace(/[<>&]/g, ''));
+    var el = cur; if (!el || !document.contains(el)) { panel('<b>Yozilgan matn:</b><br>' + tx.replace(/[<>&]/g, '') + '<button type="button" id="hkmc">📋 Nusxa olish</button><button type="button" id="hkmx" style="background:#6b7280">Yopish</button><br><small>Matn to‘g‘ridan-to‘g‘ri maydonga tushishi uchun avval maydonni bosing, keyin 🎤.</small>'); pn.querySelector('#hkmx').onclick = function () { panel(''); }; pn.querySelector('#hkmc').onclick = function () { try { navigator.clipboard.writeText(tx); } catch (e) {} this.textContent = '✅ Nusxa olindi'; }; return; }
     if (el.type === 'number' || el.type === 'tel') { var d = tx.replace(/[^\d.,]/g, '').replace(',', '.'); if (!d) return panel('Raqam topilmadi: «' + tx.replace(/[<>&]/g, '') + '»'); el.value = d; }
     else if (el.isContentEditable) { el.focus(); document.execCommand('insertText', false, tx); }
     else { var a = el.selectionStart, z = el.selectionEnd, v = el.value || ''; if (a == null) { a = z = v.length; }
@@ -1218,7 +1219,7 @@ setTimeout(()=>{try{if(!S.objects.length&&!S.workers.length&&hasB('readBackup'))
         s.getTracks().forEach(function (t) { t.stop(); });
         bg.firstChild.innerHTML = '<div style="font-size:46px">✅</div><div style="font-size:18px;font-weight:800">Mikrofon yoqildi</div><div style="opacity:.8">Endi 🎤 ni bosib gapiravering.</div>';
         setTimeout(close, 1600);
-      }, function () { close(); });
+      }, function (e) { var sys = e && /system|OS/i.test(e.message || ''); bg.firstChild.innerHTML = '<div style="font-size:40px">⚠️</div><div style="font-size:17px;font-weight:800">' + (sys ? 'Telefon brauzerga mikrofonni bermagan' : 'Mikrofon yopiq') + '</div><div style="opacity:.85;text-align:left;margin-top:6px">' + (sys ? 'Telefon <b>Sozlamalar</b> → <b>Ilovalar</b> → <b>Chrome</b> → <b>Ruxsatlar</b> → <b>Mikrofon</b> → <b>Ruxsat</b>.' : '<b>Chrome</b> → <b>⋮</b> → <b>Sozlamalar</b> → <b>Sayt sozlamalari</b> → <b>Mikrofon</b> → shu sayt → <b>Ruxsat</b>.') + '</div><button type="button" style="margin-top:12px;width:100%;padding:12px;border:0;border-radius:14px;background:#6b7280;color:#fff;font-weight:800">Yopish</button>'; bg.querySelector('button').onclick = close; });
     };
   }
   function check() {
