@@ -3060,6 +3060,9 @@ if(document.body)go();else addEventListener("DOMContentLoaded",go);
   /* bo'limlar qatori: bitta «on» (tanlangan) tugma va yonidagi 2–8 ta tugma bir qatorda */
   function tabRow(root) { var A = [].slice.call((root || document.body).querySelectorAll('button.on,a.on,[role=tab][aria-selected=true],[aria-current=page]')).filter(vis);
     if (!root) A = A.filter(function (e) { return !inOv(e); });
+    /* asosiy bo'limlar (nav, .tabs, #tabs …) birinchi — «Bugun/Hafta/Oy» kabi filtrlar emas */
+    var NAVQ = 'nav,#nav,.nav,.tabs,#tabs,.tabbar,[role=tablist],#bottomNav,.bnav';
+    A.sort(function (a, b) { return (b.parentElement && b.parentElement.closest(NAVQ) ? 1 : 0) - (a.parentElement && a.parentElement.closest(NAVQ) ? 1 : 0); });
     for (var i = 0; i < A.length; i++) { var a = A[i], par = a.parentElement; if (!par) continue;
       var sib = [].slice.call(par.children).filter(function (e) { return e.tagName === a.tagName && vis(e); });
       if (sib.length < 2 || sib.length > 8) continue; var t0 = a.getBoundingClientRect().top;
