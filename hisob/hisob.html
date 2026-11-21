@@ -160,7 +160,7 @@ textarea{width:100%;padding:11px;border-radius:10px;border:1px solid var(--line)
 <main>
 <a class="home" href="index.html">← Bosh sahifa</a>
 <div class="top"><div class="ttlbox"><img class="logo" id="logo" alt="" hidden><h1 id="ttl"></h1></div><button class="gear" data-a="gear" aria-label="Sozlamalar">⚙</button></div>
-<div class="tabs"><button id="t1">Obyektlar</button><button id="t2">Shogirtlar</button><button id="t3">Hisobot</button></div>
+<div class="tabs"><button id="t1">Obyektlar</button><button id="t2">Shogirtlar</button><button id="t4">Xarajatlar</button><button id="t3">Hisobot</button></div>
 <div id="app"></div>
 </main>
 <button class="add" id="addBtn" hidden></button>
@@ -198,7 +198,7 @@ applyTheme();
 
 const hasB=m=>{try{return !!(window.AndroidBridge&&typeof window.AndroidBridge[m]==='function')}catch(e){return false}};
 const KEY='hisobchi_v2';
-let S={objects:[],workers:[],secret:'',accent:'#2563eb',title:'',prof:{name:'',role:'',phone:''},last:null,logo:'',home:''},tab=1,cur=null,cl=false,rep=null,set=false,sec='';
+let S={objects:[],workers:[],secret:'',accent:'#2563eb',title:'',prof:{name:'',role:'',phone:''},last:null,logo:'',home:''},tab=1,cur=null,cl=false,rep=null,set=false,sec='',ecur=null;
 const $=id=>document.getElementById(id);
 function migrate(){try{const o=JSON.parse(localStorage.getItem('hisob_local_db_v1')||'null');if(!o)return;
   S.objects=Object.keys(o.objects||{}).map(id=>Object.assign({id},o.objects[id]));
@@ -217,18 +217,18 @@ if(!S.prof)S.prof={name:'',role:'',phone:''};
 S.objects.forEach(o=>{if(!o.phone&&/^[+\d\s()-]{9,}$/.test(String(o.client||'').trim())){o.phone=o.client.trim();o.client=''}});
 let bkT=0;
 /* Bulut uchun: har bir yozuvda id bo'lishi kerak */
-function ensureIds(){S.del=S.del||{};S.objects.forEach(o=>{o.id=o.id||uid();(o.items=o.items||[]).forEach(i=>{if(!i.id)i.id=uid()});(o.recv=o.recv||[]).forEach(r=>{if(!r.id)r.id=uid()})});S.workers.forEach(w=>{w.id=w.id||uid();(w.entries=w.entries||[]).forEach(e=>{if(!e.id)e.id=uid()});(w.pays=w.pays||[]).forEach(p=>{if(!p.id)p.id=uid()})})}
+function ensureIds(){S.del=S.del||{};S.objects.forEach(o=>{o.id=o.id||uid();(o.items=o.items||[]).forEach(i=>{if(!i.id)i.id=uid()});(o.recv=o.recv||[]).forEach(r=>{if(!r.id)r.id=uid()});(o.exp=o.exp||[]).forEach(x=>{if(!x.id)x.id=uid()})});(S.gexp=S.gexp||[]).forEach(x=>{if(!x.id)x.id=uid()});S.workers.forEach(w=>{w.id=w.id||uid();(w.entries=w.entries||[]).forEach(e=>{if(!e.id)e.id=uid()});(w.pays=w.pays||[]).forEach(p=>{if(!p.id)p.id=uid()})})}
 const tomb=id=>{S.del=S.del||{};S.del[String(id)]=Date.now()};
 let lastHash=null,pushT=0;
-const dataKeys=['objects','workers','title','prof','home','logo','secret'];
+const dataKeys=['objects','workers','gexp','title','prof','home','logo','secret'];
 const dataHash=()=>JSON.stringify(dataKeys.map(k=>S[k]));
 const save=()=>{if(window.ensureIds)ensureIds();if(lastHash===null)lastHash=dataHash();else{const h=dataHash();if(h!==lastHash){lastHash=h;S.upd=Date.now();if(window.cloudPush)cloudPush()}}
   try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}
   /* Telefon ilovasida: har o'zgarishdan keyin zaxira faylga o'zi yoziladi (bo'sh holatda yozilmaydi) */
   if(hasB('saveBackup')&&(S.objects.length||S.workers.length)){clearTimeout(bkT);bkT=setTimeout(()=>{try{AndroidBridge.saveBackup(backupText())}catch(e){}},1500)}};
-const getState=()=>({tab,cur,cl,rep,set,sec});
+const getState=()=>({tab,cur,cl,rep,set,sec,ecur});
 const nav=fn=>{NAVSTACK.push(getState());fn();render()};
-window.__restore=s=>{tab=s.tab;cur=s.cur;cl=s.cl;rep=s.rep;set=s.set;sec=s.sec||'';render()};
+window.__restore=s=>{tab=s.tab;cur=s.cur;cl=s.cl;rep=s.rep;set=s.set;sec=s.sec||'';ecur=s.ecur||null;render()};
 const f=n=>Math.round(n).toLocaleString('ru-RU').replace(/ /g,' ')+" so'm";
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const today=()=>new Date().toISOString().slice(0,10);
@@ -386,9 +386,37 @@ function nrm(s){s=String(s||'').toLowerCase().replace(/[ʻʼ'’`´‘]/g,'').re
 function lev(a,b){if(Math.abs(a.length-b.length)>1)return 9;const d=[];for(let i=0;i<=a.length;i++){d[i]=[i];}for(let j=1;j<=b.length;j++)d[0][j]=j;for(let i=1;i<=a.length;i++)for(let j=1;j<=b.length;j++)d[i][j]=Math.min(d[i-1][j]+1,d[i][j-1]+1,d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));return d[a.length][b.length]}
 function oScore(o,q){const qs=nrm(q).split(' ').filter(Boolean);if(!qs.length)return 1;const words=nrm([o.name,o.client,o.phone,o.addr].join(' ')).split(' ').filter(Boolean);let sc=0;
  for(const t of qs){let best=0;for(const w of words){let s=0;if(w===t)s=4;else if(w.startsWith(t))s=3;else if(t.length>=2&&w.includes(t))s=2;else if(t.length>=4&&lev(w.slice(0,t.length),t)<=1)s=1;if(s>best)best=s}if(!best)return 0;sc+=best}return sc}
+
+/* ===== Xarajatlar (2026-11-21): obyekt bo'yicha, Hamyon'dagidek tez yozish ===== */
+const EXC=[['Material','🧱'],['Yo\'l / transport','🚕'],['Ovqat','🍽'],['Asbob-uskuna','🔧'],['Usta / ish haqi','👷'],['Boshqa','📦']];
+const excIc=c=>{const x=EXC.find(e=>e[0]===c);return x?x[1]:'📦'};
+const expArr=id=>id==='g'?(S.gexp=S.gexp||[]):(()=>{const o=S.objects.find(x=>x.id===id);return o?(o.exp=o.exp||[]):null})();
+const expSum=a=>sm((a||[]).map(x=>+x.a||0));
+const expAll=()=>{const L=[];S.objects.forEach(o=>(o.exp||[]).forEach(x=>L.push(Object.assign({on:o.name},x))));(S.gexp||[]).forEach(x=>L.push(Object.assign({on:'Umumiy'},x)));return L};
+function expByCat(L){const m={};L.forEach(x=>{m[x.cat||'Boshqa']=(m[x.cat||'Boshqa']||0)+(+x.a||0)});return Object.keys(m).sort((a,b)=>m[b]-m[a]).map(k=>row(excIc(k)+' '+esc(k),f(m[k]))).join('')}
+function expView(){
+  const all=expAll(),tot=expSum(all),mon=today().slice(0,7),mt=expSum(all.filter(x=>String(x.date||'').slice(0,7)===mon));
+  if(!ecur){
+    const card=(id,nm,sub,a)=>'<div class="card click" data-eo="'+id+'"><h3>'+nm+'</h3>'+(sub?'<div class="hint" style="margin:0 0 4px">'+sub+'</div>':'')+row('Xarajat',a?f(a):'—',a?'bad':'')+'</div>';
+    return'<div class="card"><h3>💸 Xarajatlar</h3>'+row('Shu oy',f(mt),'bad')+row('Jami',f(tot))+'<div class="hint" style="margin-top:6px">Obyektni bosing va qancha sarflaganingizni yozing. Xarajatlar hisobotga va «O\'zimga qolgan»ga qo\'shiladi.</div></div>'+
+      card('g','📦 Umumiy (obyektsiz)','Asbob, yo\'l, telefon kabi umumiy xarajatlar',expSum(S.gexp))+
+      (S.objects.length?S.objects.map(o=>card(o.id,esc(o.name),o.client?esc(o.client):'',expSum(o.exp))).join(''):'<div class="empty">Hali obyekt yo\'q. «Obyektlar» bo\'limida qo\'shing.</div>');
+  }
+  const arr=expArr(ecur);if(!arr){ecur=null;return expView()}
+  const nm=ecur==='g'?'📦 Umumiy (obyektsiz)':esc((S.objects.find(x=>x.id===ecur)||{}).name);
+  const L=arr.map((x,i)=>({x,i})).sort((a,b)=>String(b.x.date||'').localeCompare(String(a.x.date||'')));
+  return'<div class="acts" style="margin-bottom:10px"><button class="b" data-a="back">← Xarajatlar</button></div>'+
+    '<div class="card"><h3>'+nm+'</h3>'+row('Jami xarajat','<b>'+f(expSum(arr))+'</b>','bad')+
+    '<div class="hint" style="margin:8px 0 4px">Tez yozish — turini bosing:</div><div style="display:flex;flex-wrap:wrap;margin:0 -3px">'+EXC.map((c,k)=>'<button class="b" data-ecat="'+k+'" style="flex:1 1 30%;margin:3px">'+c[1]+' '+c[0]+'</button>').join('')+'</div>'+
+    (arr.length?'<details open><summary>Turlari bo\'yicha</summary>'+expByCat(arr)+'</details><details open><summary>Yozuvlar</summary>'+L.map(({x,i})=>tx(esc(x.date)+' · '+excIc(x.cat)+' '+esc(x.cat||'Boshqa')+(x.n?'<br><small style="color:var(--muted)">'+esc(x.n)+'</small>':''),f(x.a),xb('data-ex="'+i+'"',x.date))).join('')+'</details>':'<div class="hint" style="margin-top:8px">Hali xarajat yozilmagan.</div>')+'</div>';
+}
+function addExp(k){const arr=expArr(ecur);if(!arr)return;const cat=EXC[+k]?EXC[+k][0]:EXC[0][0];
+  ask('Xarajat: '+(ecur==='g'?'Umumiy':esc((S.objects.find(x=>x.id===ecur)||{}).name)),[{k:'a',l:'Summa (so\'m)',t:'number',req:1},{k:'c',l:'Turi',opts:EXC.map(c=>c[0]),v:cat},{k:'n',l:'Nima uchun (ixtiyoriy)'},{k:'d',l:'Sana',t:'date',v:today()}],
+    v=>{const a=+String(v.a).replace(/[\s,]/g,'');if(!(a>0)){toast('Summani yozing');return}arr.push({id:uid(),a,cat:v.c,n:v.n,date:v.d||today()});toast('Yozildi: '+f(a))},'Saqlash')}
+function delExp(i){const arr=expArr(ecur);const x=arr&&arr[i];if(!x)return;delAsk('Xarajat: '+esc(x.date)+' · '+esc(x.cat||'')+'<br>'+f(x.a),()=>{tomb(x.id);arr.splice(i,1)})}
 function objList(){const q=OQ;let L=S.objects.map(o=>({o,s:oScore(o,q)})).filter(x=>x.s>0);if(q.trim())L.sort((a,b)=>b.s-a.s);
  if(!L.length)return'<div class="empty">«'+esc(q)+'» bo\'yicha obyekt topilmadi.</div>';
- return L.map(x=>{const o=x.o,c=oc(o);return'<div class="card click" data-open="'+o.id+'"><h3>'+esc(o.name)+'</h3>'+(o.client?'<div class="hint" style="margin:0 0 4px">'+esc(o.client)+'</div>':'')+row('Jami',f(c.total))+row('Qolgan',f(c.left),c.left>0?'bad':'ok')+'</div>'}).join('')}
+ return L.map(x=>{const o=x.o,c=oc(o);return'<div class="card click" data-open="'+o.id+'"><h3>'+esc(o.name)+'</h3>'+(o.client?'<div class="hint" style="margin:0 0 4px">'+esc(o.client)+'</div>':'')+row('Jami',f(c.total))+row('Qolgan',f(c.left),c.left>0?'bad':'ok')+((o.exp||[]).length?row('Xarajat',f(expSum(o.exp)),'bad'):'')+'</div>'}).join('')}
 document.addEventListener('input',function(e){if(e.target&&e.target.id==='oq'){OQ=e.target.value;const l=document.getElementById('olist');if(l)l.innerHTML=objList()}});
 function objView(){
   const o=S.objects.find(x=>x.id===cur);
@@ -406,9 +434,9 @@ function objView(){
     '<div class="msgbox">'+esc(txt)+'</div></div>';
   }
   return'<div class="acts" style="margin-bottom:10px"><button class="b" data-a="back">← Obyektlar</button><button class="b p" data-a="client">Mijozga ko\'rsatish</button></div><div class="card">'+head+row('Jami narx',f(c.total))+row('Olingan pul',f(c.got),'ok')+'<div class="row"><b>Qolgan pul</b><b class="'+(c.left>0?'bad':'ok')+'">'+f(c.left)+'</b></div>'+
-  
+  ((o.exp||[]).length?row('Xarajatlar',f(expSum(o.exp)),'bad')+row('Olingan pul − xarajat',f(c.got-expSum(o.exp)),c.got-expSum(o.exp)>=0?'ok':'bad'):'')+
   (c.it.length?'<details open><summary>Qilingan ishlar</summary>'+c.it.map((i,n)=>tx(esc(i.d)+' · '+i.q+' x '+f(i.p),f(i.q*i.p),xb('data-ri="'+n+'"',i.d))).join('')+'</details>':'')+
-  (c.rc.length?'<details open><summary>Olingan pullar</summary>'+c.rc.map((x,n)=>tx(esc(x.date),f(x.a),xb('data-rr="'+n+'"',x.date))).join('')+'</details>':'')+objWorkers(o)+'</div>';
+  (c.rc.length?'<details open><summary>Olingan pullar</summary>'+c.rc.map((x,n)=>tx(esc(x.date),f(x.a),xb('data-rr="'+n+'"',x.date))).join('')+'</details>':'')+((o.exp||[]).length?'<details><summary>Xarajatlar ('+f(expSum(o.exp))+')</summary>'+expByCat(o.exp)+'<div class="acts"><button class="b" data-eo="'+o.id+'" data-go4="1">💸 Xarajatlarni ochish</button></div></details>':'')+objWorkers(o)+'</div>';
 }
 function workView(){
   let h='<div class="acts" style="margin:0 0 10px"><button class="b" data-a="import">Telegram yoki shogird xabarini kiritish</button></div>';
@@ -420,7 +448,7 @@ function workView(){
     ((w.pays||[]).length?'<details><summary>Berilgan pullar</summary>'+w.pays.slice().sort(byDate).map(p=>tx(esc(p.date),f(p.a),xb('data-dp="'+w.id+'" data-p="'+p.id+'"',p.date))).join('')+'</details>':'')+'</div>'}).join('');
 }
 function repView(){
-  let gi=0,gt=0,gp=0,gd=0;S.objects.forEach(o=>{const c=oc(o);gi+=c.got;gt+=c.total});S.workers.forEach(w=>{const t=ws(w);gp+=t.paid;gd+=t.debt});
+  let gi=0,gt=0,gp=0,gd=0;S.objects.forEach(o=>{const c=oc(o);gi+=c.got;gt+=c.total});S.workers.forEach(w=>{const t=ws(w);gp+=t.paid;gd+=t.debt});const EA=expAll(),ge=expSum(EA);
   const back='<div class="acts" style="margin:0 0 10px"><button class="b" data-a="repback">← Hisobot</button></div>';
   if(rep==='in'){const L=[];S.objects.forEach(o=>(o.recv||[]).forEach(x=>L.push({date:x.date,n:o.name,a:+x.a||0})));L.sort(byDate);
     return back+'<div class="card"><h3>Olingan pullar</h3>'+row('Jami',f(gi),'ok')+(L.length?L.map(x=>tx(esc(x.date)+' · '+esc(x.n),f(x.a))).join(''):'<div class="hint">Hali yozuv yo\'q</div>')+'</div>'}
@@ -428,13 +456,16 @@ function repView(){
   if(rep==='out'){const L=[];S.workers.forEach(w=>(w.pays||[]).forEach(p=>L.push({date:p.date,n:w.name,a:+p.a||0})));L.sort(byDate);
     return back+'<div class="card"><h3>Shogirtlarga berilgan pullar</h3>'+row('Jami',f(gp))+(L.length?L.map(x=>tx(esc(x.date)+' · '+esc(x.n),f(x.a))).join(''):'<div class="hint">Hali yozuv yo\'q</div>')+'</div>'}
   if(rep==='wobj')return back+repWobj();
+  if(rep==='exp'){const byO={};EA.forEach(x=>{byO[x.on]=(byO[x.on]||0)+(+x.a||0)});
+    return back+'<div class="card"><h3>💸 Xarajatlar</h3>'+row('Jami',f(ge),'bad')+(EA.length?'<details open><summary>Obyektlar bo\'yicha</summary>'+Object.keys(byO).sort((a,b)=>byO[b]-byO[a]).map(k=>row(esc(k),f(byO[k]))).join('')+'</details><details open><summary>Turlari bo\'yicha</summary>'+expByCat(EA)+'</details><details><summary>Hamma yozuvlar</summary>'+EA.slice().sort(byDate).map(x=>tx(esc(x.date)+' · '+esc(x.on)+'<br><small style="color:var(--muted)">'+excIc(x.cat)+' '+esc(x.cat||'')+(x.n?' · '+esc(x.n):'')+'</small>',f(x.a))).join('')+'</details>':'<div class="hint">Hali xarajat yozilmagan. «Xarajatlar» bo\'limida yozing.</div>')+'</div>'}
   if(rep==='debt')return back+'<div class="card"><h3>Shogirtlarga qarz</h3>'+row('Jami',f(gd),gd>0?'bad':'ok')+(S.workers.length?S.workers.map(w=>{const s=ws(w);return tx(esc(w.name)+'<br><small style="color:var(--muted)">'+s.days+' kun · hisoblangan '+f(s.earned)+' · berilgan '+f(s.paid)+'</small>','<b class="'+(s.debt>0?'bad':'ok')+'">'+f(s.debt)+'</b>')}).join(''):'<div class="hint">Hali shogird yo\'q</div>')+'</div>';
   return'<div class="card click" data-rep="in"><h3>Olingan pullar</h3><b class="ok" style="font-size:18px">'+f(gi)+'</b></div>'+
   '<div class="card click" data-rep="left"><h3>Qolgan pullar (mijozlardan)</h3><b class="'+(gt-gi>0?'bad':'')+'" style="font-size:18px">'+f(gt-gi)+'</b></div>'+
   '<div class="card click" data-rep="out"><h3>Berilgan pullar (shogirtlarga)</h3><b style="font-size:18px">'+f(gp)+'</b></div>'+
   '<div class="card click" data-rep="debt"><h3>Shogirtlarga qarz</h3><b class="'+(gd>0?'bad':'')+'" style="font-size:18px">'+f(gd)+'</b></div>'+
+  '<div class="card click" data-rep="exp"><h3>💸 Xarajatlar</h3><b class="'+(ge>0?'bad':'')+'" style="font-size:18px">'+f(ge)+'</b></div>'+
   '<div class="card click" data-rep="wobj"><h3>Shogirdlar вЂ” obyektlar bo\'yicha</h3><div class="hint">Kim qaysi obyektda necha kun ishladi, qancha hisoblandi</div></div>'+
-  '<div class="card"><h3>O\'zimga qolgan</h3><div class="hint">Olingan pul minus shogirtlarga berilgan pul</div><b class="'+(gi-gp>=0?'ok':'bad')+'" style="font-size:18px">'+f(gi-gp)+'</b></div>';
+  '<div class="card"><h3>O\'zimga qolgan</h3><div class="hint">Olingan pul minus shogirtlarga berilgan pul'+(ge?' minus xarajatlar':'')+'</div><b class="'+(gi-gp-ge>=0?'ok':'bad')+'" style="font-size:18px">'+f(gi-gp-ge)+'</b></div>';
 }
 
 /* Sozlamalar: bo'limlar */
@@ -483,24 +514,29 @@ function setView(){
 function render(){
   $('ttl').textContent=S.title||'Hisob-kitob';
   const lg=$('logo');if(S.logo){lg.src=S.logo;lg.hidden=false}else lg.hidden=true;
-  for(let n=1;n<=3;n++)$('t'+n).className=(!set&&tab==n)?'on':'';
+  for(let n=1;n<=4;n++)$('t'+n).className=(!set&&tab==n)?'on':'';
   const add=$('addBtn');add.hidden=set||!((tab==1&&!cur)||tab==2);add.textContent=tab==2?"+ Shogird qo'shish":"+ Yangi obyekt";
   {const o=S.objects.find(x=>x.id===cur);let h='';
    if(!set&&tab==1&&cur&&o){
      if(cl)h='<button class="b" data-a="back">← Orqaga</button><button class="b p" data-a="share" style="flex:2">Ulashish</button>';
      else{const ph=String(o.phone||'').replace(/[^\d+]/g,'');h='<button class="b p" data-a="additem">+ Ish / tochka</button><button class="b p" data-a="addrecv">+ Olingan pul</button>'+(ph?'<a class="b ic" href="tel:'+ph+'" aria-label="Qo\'ng\'iroq qilish">📞</a>':'')+'<button class="b ic" data-a="more" aria-label="Yana">⋯</button>'}}
+   if(!set&&tab==4&&ecur&&expArr(ecur))h='<button class="b p" data-a="addexp" style="flex:1">+ Xarajat yozish</button>';
    $('dock').hidden=!h;$('dockIn').innerHTML=h}
-  $('app').innerHTML=set?'<div class="acts" style="margin:0 0 10px"><button class="b" data-a="back">← '+(sec?'Sozlamalar':'Orqaga')+'</button></div>'+setView():tab==1?objView():tab==2?workView():repView();
+  $('app').innerHTML=set?'<div class="acts" style="margin:0 0 10px"><button class="b" data-a="back">← '+(sec?'Sozlamalar':'Orqaga')+'</button></div>'+setView():tab==1?objView():tab==2?workView():tab==4?expView():repView();
 }
-for(let n=1;n<=3;n++)$('t'+n).onclick=()=>nav(()=>{tab=n;rep=null;cl=false;set=false;sec=''});
+for(let n=1;n<=4;n++)$('t'+n).onclick=()=>nav(()=>{tab=n;rep=null;cl=false;set=false;sec='';ecur=null});
 $('addBtn').onclick=()=>tab==2?
   ask('Yangi shogird',[{k:'n',l:'Shogird ismi',req:1},{k:'p',l:'Telefon raqami (ilovaga taklif yuboriladi)',t:'tel',v:'+998'},{k:'k',l:'Kunlik haqi (so\'m)',t:'number'},{k:'r',l:'Lavozimi (Shogird, Usta, Yordamchi...)',v:'Shogird'}],v=>{const w={id:uid(),name:v.n,role:v.r||'Shogird',phone:v.p.length>5?v.p:'',rate:+v.k||0,entries:[],pays:[]};S.workers.push(w);if(w.phone)setTimeout(()=>crewInvite(w),300)}):
   ask('Yangi obyekt',[{k:'n',l:'Obyekt nomi',req:1},{k:'c',l:'Mijoz ismi (ixtiyoriy)'},{k:'p',l:'Mijoz telefon raqami (hisobni yuborish uchun)',t:'tel',v:'+998'}],v=>{const o={id:uid(),name:v.n,client:v.c,phone:v.p.length>5?v.p:'',items:[],recv:[]};S.objects.push(o);NAVSTACK.push(getState());cur=o.id;cl=false});
 document.addEventListener('click',e=>{
-  const t=e.target.closest('[data-a],[data-open],[data-rep],[data-ri],[data-rr],[data-day],[data-pay],[data-delw],[data-de],[data-dp],[data-rate],[data-phone],[data-role],[data-invite],[data-sec],[data-cinv]');
+  const t=e.target.closest('[data-a],[data-open],[data-rep],[data-ri],[data-rr],[data-day],[data-pay],[data-delw],[data-de],[data-dp],[data-rate],[data-phone],[data-role],[data-invite],[data-sec],[data-cinv],[data-eo],[data-ecat],[data-ex]');
   if(!t)return;const d=t.dataset,o=S.objects.find(x=>x.id===cur);
   const W=id=>S.workers.find(x=>x.id===id);
   if(d.cinv){const w=W(d.cinv);if(w)crewInvite(w);return}
+  if(d.eo){nav(()=>{if(d.go4){tab=4;cur=null}ecur=d.eo});return}
+  if(d.ecat!==undefined){addExp(d.ecat);return}
+  if(d.ex!==undefined){delExp(+d.ex);return}
+  if(d.a==='addexp'){addExp(0);return}
   if(d.open)nav(()=>{cur=d.open;cl=false})
   else if(d.sec==='help')location.href='murojaat.html?app=hk&back='+encodeURIComponent(location.pathname)
   else if(d.sec)nav(()=>{sec=d.sec})
@@ -589,10 +625,11 @@ function mergeData(A,B,ua,ub){
   const byId=(y,x)=>sid(y)===sid(x);
   base.objects=base.objects||[];base.workers=base.workers||[];
   base.objects=addMissing(base.objects,other.objects,byId);
-  base.objects.forEach(o=>{const oo=(other.objects||[]).find(x=>byId(x,o));if(oo){o.items=addMissing(o.items||[],oo.items,byId);o.recv=addMissing(o.recv||[],oo.recv,byId)}else{o.items=(o.items||[]).filter(x=>!dead(x));o.recv=(o.recv||[]).filter(x=>!dead(x))}});
+  base.objects.forEach(o=>{const oo=(other.objects||[]).find(x=>byId(x,o));if(oo){o.items=addMissing(o.items||[],oo.items,byId);o.recv=addMissing(o.recv||[],oo.recv,byId);o.exp=addMissing(o.exp||[],oo.exp,byId)}else{o.items=(o.items||[]).filter(x=>!dead(x));o.recv=(o.recv||[]).filter(x=>!dead(x));o.exp=(o.exp||[]).filter(x=>!dead(x))}});
   const wm=(y,x)=>byId(y,x)||lc(y.name)===lc(x.name);
   base.workers=addMissing(base.workers,other.workers,wm);
   base.workers.forEach(w=>{const ow=(other.workers||[]).find(x=>wm(x,w));if(ow){w.entries=addMissing(w.entries||[],ow.entries,byId);w.pays=addMissing(w.pays||[],ow.pays,byId)}else{w.entries=(w.entries||[]).filter(x=>!dead(x));w.pays=(w.pays||[]).filter(x=>!dead(x))}});
+  base.gexp=addMissing(base.gexp||[],other.gexp,byId);
   ['title','prof','home','logo','secret'].forEach(k=>{if(base[k]==null||base[k]==='')if(other[k]!=null)base[k]=other[k]});
   base.del=del;return base;
 }
@@ -787,6 +824,8 @@ setTimeout(()=>{try{if(!S.objects.length&&!S.workers.length&&hasB('readBackup'))
       { sel: '#addBtn', h: '➕ Qo\'shish', d: 'Yangi obyekt (yoki Shogirtlar bo\'limida — yangi shogird) qo\'shish.' },
       { sel: '[data-a="additem"]', h: '➕ Ish / tochka', d: 'Qilingan ish: nima ish, nechta, bittasi necha pul.' },
       { sel: '[data-a="addrecv"]', h: '💵 Olingan pul', d: 'Mijozdan olingan pulni yozasiz. Keyin mijozga chek yuborish taklif qilinadi.' },
+      { sel: '#t4', h: '💸 Xarajatlar', d: 'Rasxodlaringizni yozib borasiz. Obyektni (yoki «📦 Umumiy») bosing, turini tanlang — 🧱 Material, 🚕 Yo’l, 🍽 Ovqat, 🔧 Asbob, 👷 Usta, 📦 Boshqa — summani yozib «Saqlash». Xarajat obyekt sahifasida, Hisobotda va «O’zimga qolgan»da hisoblanadi. Mijozga ko’rsatiladigan hisobda chiqmaydi.' },
+      { sel: '[data-ecat]', h: '⚡ Tez yozish', d: 'Turini bosing — oyna o’sha tur bilan ochiladi, faqat summani yozasiz. Noto’g’ri yozilganini ✕ bilan o’chirasiz.' },
       { sel: '#t2', h: '👷 Shogirtlar', d: 'Shogirtlar: kunlik haqi, ishlagan kunlari, berilgan pul va qarz. «📤 Ilovaga taklif» bilan shogirdga havola yuborasiz.' },
       { sel: '[data-cinv]', h: '📤 Ilovaga taklif', d: 'Shogirdga havola yuboradi. U havolani ochib, parol qo\'yadi va obyektlaringizda «ishladim» deb yoza oladi.' },
       { sel: '#t3', h: '📊 Hisobot', d: 'Jami olingan pul, mijozlardan qolgan qarz, shogirtlarga berilgan pul va qarz, obyektlar bo\'yicha shogirdlar.' },
