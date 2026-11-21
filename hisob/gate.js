@@ -40,7 +40,7 @@
     /* req bilan birga server vaqti (t) yoziladi: bot faqat yangi so'rovlarni so'raydi (bepul limit tejaladi) */
     var base='projects/'+CFG.projectId+'/databases/(default)/documents';
     return Promise.all([gtok(),encReq(obj)]).then(function(a){var t=a[0];return jf('https://firestore.googleapis.com/v1/'+base+':commit',{method:'POST',headers:{'content-type':'application/json',Authorization:'Bearer '+t},
-      body:JSON.stringify({writes:[{update:{name:base+'/gate/'+phone,fields:{req:{stringValue:JSON.stringify(a[1])}}},updateMask:{fieldPaths:['req']},updateTransforms:[{fieldPath:'t',setToServerValue:'REQUEST_TIME'}]}]})})}).then(function(){return window.HK.poll(phone,n,maxMs)})};
+      body:JSON.stringify({writes:[{update:{name:base+'/gate/'+phone,fields:{req:{stringValue:JSON.stringify(a[1])}}},updateMask:{fieldPaths:['req']},updateTransforms:[{fieldPath:'t',setToServerValue:'REQUEST_TIME'}]}]})})}).then(function(){/* 2026-11-21: bot Google'da — so'rovni darhol ishlashi uchun uyg'otamiz (javobni kutmaymiz) */try{fetch('https://script.google.com/macros/s/AKfycbw_Gy-DwwIU98V1WrA1e-dP5oDWX2748vyuXBJihUFpKu4UXXt0mLhODlSr1prvfCw/exec?darvoza=1',{mode:'no-cors',cache:'no-store'}).catch(function(){})}catch(e){}return window.HK.poll(phone,n,maxMs)})};
   /* SHA-256 (parol xeshi: telefon+parol; bot uni yana alohida saqlaydi) */
   function sha(s){var u=unescape(encodeURIComponent(s)),b=[],i,K=[],H=[],w=[];for(i=0;i<u.length;i++)b[i>>2]|=u.charCodeAt(i)<<(24-8*(i%4));
     var L=u.length*8;b[L>>5]|=0x80<<(24-L%32);b[(((L+64)>>9)<<4)+15]=L;

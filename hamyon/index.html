@@ -411,6 +411,7 @@ function toWav(buf){const R=11025,ch=buf.getChannelData(0),k=buf.sampleRate/R,n=
 async function voiceAsk(b64){
   const t=await idt(),id=Date.now().toString(36)+Math.random().toString(36).slice(2,10),H={Authorization:'Bearer '+t,'content-type':'application/json'};
   await jf(FSB+'rxv/'+id,{method:'PATCH',headers:H,body:JSON.stringify({fields:{u:{stringValue:uidOf(t)},m:{stringValue:'audio/wav'},a:{stringValue:b64},t:{integerValue:String(Date.now())}}})});
+  /* 2026-11-21: bot Google'da — ovozli so'rovni darhol ishlashi uchun uyg'otamiz */try{fetch('https://script.google.com/macros/s/AKfycbwup1N4Wcnm55MNxYe4VHIEr873WDwRkND9XG4UFci1-9F2qhCdJMtpagsbseszsNs/exec?ovoz=1',{mode:'no-cors',cache:'no-store'}).catch(()=>{})}catch(e){}
   for(let i=0;i<45;i++){await new Promise(r=>setTimeout(r,i<3?1500:1000));
     let j;try{j=await jf(FSB+'rxv/'+id,{headers:H})}catch(e){if(e.code===404)break;continue}
     const r=j.fields&&j.fields.r&&j.fields.r.stringValue;
