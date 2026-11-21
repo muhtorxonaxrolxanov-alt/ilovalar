@@ -460,8 +460,17 @@ async function api(action, data) {
 let _toastT = null;
 function toast(t, bad, ms) { const el = $('#toast'); el.textContent = t; el.className = 'toast' + (bad ? ' bad' : ''); el.hidden = false; clearTimeout(_toastT); _toastT = setTimeout(() => el.hidden = true, ms || 2800); }
 function errToast(e) { toast(e && e.code === 'net' ? "Internet yo'q yoki server javob bermadi. Qayta urinib ko'ring." : ((e && e.message) || 'Xatolik'), true, 4500); }
-function openSheet(html) { $('#sheetBody').innerHTML = html; $('#sheet').hidden = false; }
-function closeSheet() { $('#sheet').hidden = true; $('#sheetBody').innerHTML = ''; }
+/* 2026-11-21: oyna ichidan boshqa oyna ochilsa — oldingisi eslab qolinadi; «✕», tashqarini bosish va «Orqaga» — bitta qadam orqaga
+   (oldingi oynaga), eng birinchisida — yopiladi. Saqlashdan keyingi closeSheet() — hammasini yopadi. */
+let _shStk = [];
+const _shT = h => { const m = /<h2>([\s\S]*?)<\/h2>/.exec(h || ''); return m ? m[1] : ''; };
+function openSheet(html) { const b = $('#sheetBody'), cur = b.innerHTML;
+  if (!$('#sheet').hidden && cur && _shT(cur) !== _shT(html)) { const fr = document.createDocumentFragment(); while (b.firstChild) fr.appendChild(b.firstChild); _shStk.push({f: fr, y: b.parentElement ? b.parentElement.scrollTop : 0}); if (_shStk.length > 12) _shStk.shift(); }
+  else if ($('#sheet').hidden) _shStk = [];
+  b.innerHTML = html; $('#sheet').hidden = false; }
+function closeSheet() { _shStk = []; $('#sheet').hidden = true; $('#sheetBody').innerHTML = ''; }
+function sheetBack() { if ($('#sheet').hidden) return false; const p = _shStk.pop(); if (!p) { closeSheet(); return true; }
+  $('#sheetBody').innerHTML = ''; $('#sheetBody').appendChild(p.f); try { $('#sheetBody').parentElement.scrollTop = p.y; } catch (e) {} return true; }
 const sheetHead = t => '<div class="sheet-h"><h2>' + t + '</h2><button class="iconbtn" data-act="closeSheet" aria-label="Yopish">✕</button></div>';
 const loading = t => '<div class="empty"><b>' + (t || 'Yuklanmoqda…') + '</b></div>';
 const IMGERR = ' onerror="this.style.display=\'none\'" referrerpolicy="no-referrer"';
@@ -502,10 +511,10 @@ function catChips(list, cur) {
   return '<div class="chips"><button class="chip' + (cur === 'all' ? ' on' : '') + '" data-act="cat" data-k="all">Hammasi<span class="c">' + list.length + '</span></button>' +
     Object.keys(cats).sort().map(c => '<button class="chip' + (cur === c ? ' on' : '') + '" data-act="cat" data-k="' + h(c) + '">' + h(c) + '<span class="c">' + cats[c] + '</span></button>').join('') + '</div>';
 }
-document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#sheet').hidden) closeSheet(); });
-document.addEventListener('DOMContentLoaded', () => { $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet') closeSheet(); }); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#sheet').hidden) sheetBack(); });
+document.addEventListener('DOMContentLoaded', () => { $('#sheet').addEventListener('click', e => { if (e.target.id === 'sheet') sheetBack(); }); });
 // Android "orqaga" tugmasi: avval oynani yopadi
-window.onBack = function () { if (!$('#sheet').hidden) { closeSheet(); return true; } return window.appBack ? window.appBack() : false; };
+window.onBack = function () { if (!$('#sheet').hidden) { sheetBack(); return true; } return window.appBack ? window.appBack() : false; };
 
 /* ===== Elektr Do'kon — umumiy qism, 2 (v1.1) ===== */
 I.search = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
@@ -1187,7 +1196,7 @@ document.addEventListener('click', async ev => {
     case 'reloadAcc': S.loaded.acc = 0; loadAccount(); render(); break;
     case 'inc': case 'dec': { const n = N(S.cart[id]) + (a === 'inc' ? 1 : -1); if (n <= 0) delete S.cart[id]; else S.cart[id] = n; save('cart'); render(); if (el.dataset.in) cartSheet(); break; }
     case 'openCart': cartSheet(); break;
-    case 'closeSheet': closeSheet(); break;
+    case 'closeSheet': sheetBack(); break;
     case 'clearCart': S.cart = {}; save('cart'); closeSheet(); render(); break;
     case 'copyCard': { const v = String(S.shop.card || '').replace(/\s/g, ''); try { await navigator.clipboard.writeText(v); toast('Karta raqami nusxalandi'); } catch (e) { toast(v); } break; }
     case 'rmRcpt': S.creceipt = null; cartSheet(); break;
@@ -1284,11 +1293,11 @@ lockNow();
   if (window.__yordam) return; window.__yordam = 1;
   var D = {
     /* ---------- Nonvoyxona: rahbar ---------- */
-    tr: { t: '🥖 Nonvoyxona — rahbar', i: 'Nonvoyxonaning hamma hisob-kitobi: do\'konlarga berilgan non, pul, nasiya, mashina, kassa, hodimlar va hisobot. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi.', s: [
+    tr: { t: '🥖 Nonvoyxona — rahbar', i: 'Nonvoyxonaning hamma hisob-kitobi: do\'konlarga berilgan non, pul, nasiya, mashina, kassa, hodimlar va hisobot. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi. ✕ Yarim ekran oynani yopsangiz («Yopish», «✕» yoki tashqarisini bosish) — bitta qadam orqaga: oldingi oyna qaytadi, bosh menyuga chiqib ketmaydi.', s: [
       { x: 'Do\'konlar', h: '🏪 Do\'konlar', d: 'Har bir do\'konga qancha non berildi, qancha qaytdi, qancha pul olindi yoki nasiya qoldi — shu yerda yoziladi. Do\'konni bossangiz, uning to\'liq hisobi chiqadi.' },
       { x: 'Olma', h: '🍏 Olma do\'koni', d: 'Xalq Retail (Olma) buyurtmalari. Excel faylni tashlaysiz — ilova o\'zi «berish kerak / berildi / qoldi» deb hisoblaydi. Har do’kon yonida 📅 sana turadi: «berish kerak» — qaysi kun uchun, «berildi» — qaysi kuni nechta berilgan (bugun, kecha yoki 18.11 kabi).' },
       { x: 'berilgan — sonini', h: '✏️ Berilgan — sonini o’zgartirish', d: 'Olma do’koniga oxirgi marta berilgan non (bugun yoki o’tgan kun — ilova o’zi «berildi» qilgan bo’lsa ham, sanasi yoziladi). Ko’p yoki kam yozilgan bo’lsa, sonini to’g’rilab «💾 Saqlash» ni bosing. 0 yozsangiz, o’sha non o’chadi. Toshkent va Namangan ilovasida bir xil.' },
-      { x: 'Yopish', h: '✖ Yopish', d: 'Oynadagi «Yopish» bitta qadam orqaga qaytaradi: masalan do’kon oynasidan — do’konlar ro’yxatiga, ro’yxatdan — oyna yopiladi. Oynaning tashqarisini bossangiz ham shunday.' },
+      { x: 'Yopish', h: '✖ Yopish', d: 'Oynadagi «Yopish» bitta qadam orqaga qaytaradi: masalan do’kon oynasidan — do’konlar ro’yxatiga; oyna ichidan boshqa oyna ochilgan bo’lsa — oldingisiga (yozganlaringiz saqlanadi); eng birinchisida — oyna yopiladi. Oynaning tashqarisini yoki telefonning «Orqaga» tugmasini bossangiz ham shunday. Hodim ilovasida ham bir xil.' },
       { x: 'Adashib berilgan', h: '↩️ Adashib berilgan', d: 'Non boshqa do’konga adashib «berildi» qilingan bo’lsa, shu tugmani bosing: bugungi berilganlar bekor bo’ladi va buyurtma yana «berish kerak» ro’yxatiga qaytadi.' },
       { x: 'Namangan', h: '🏭 Namangan', d: 'Namangan ilovasi xuddi shu ilovaning o’zi, tugmalari ham, ishlashi ham bir xil. Farqi bitta: Namangan ma’lumoti Toshkent ilovasiga boradi va shu yerda (Hisobot → 🏭 Namangan) ko’rinadi. Non nomlari (Patir, Lepeshka…) Namangan’da ham Toshkentdagidek chiqadi. Bir marta ulansangiz bo’ldi: ilova yangilansa ham, qayta ochilsa ham ulanish saqlanadi; uzilib qolsa, ilova o’zi qayta ulanadi va qayta kod so’ramaydi.' },
       { x: 'Mashina', h: '🚚 Mashina', d: 'Mashinaga nechta non yuklandi, do\'konlarga nechtasi berildi va mashinada nechtasi qoldi. Yetmasa ogohlantiradi.' },
@@ -1301,7 +1310,7 @@ lockNow();
       { sel: '#fab', h: '🎤 Ovozli yordamchi', d: 'Bosing va gapiring: «Anorga 15 ta patir berildi». Yordamchi nima qilishini ko\'rsatadi, «Ha» desangiz bajaradi.' },
       { sel: '#gear', h: '⚙ Sozlamalar', d: 'Nonvoyxona nomi, bildirishnomalar, ko\'rinish va boshqa sozlamalar.' }] },
     /* ---------- Nonvoyxona: hodim ---------- */
-    th: { t: '🥖 Nonvoyxona — hodim', i: 'Hodim ilovasi: hamirchi, yopuvchi yoki sotuvchi ishini yozadi. Yozganlaringiz rahbarga o\'zi boradi. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi.', s: [
+    th: { t: '🥖 Nonvoyxona — hodim', i: 'Hodim ilovasi: hamirchi, yopuvchi yoki sotuvchi ishini yozadi. Yozganlaringiz rahbarga o\'zi boradi. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi. ✕ Yarim ekran oynani yopsangiz («Yopish», «✕» yoki tashqarisini bosish) — bitta qadam orqaga: oldingi oyna qaytadi, bosh menyuga chiqib ketmaydi.', s: [
       { sel: '#ph', h: '📱 Rahbar raqami', d: 'Birinchi marta: rahbaringizning telefon raqamini yozing (o\'zingiznikini emas).' },
       { sel: '#cd2', h: '🔑 Kod', d: 'Rahbar Sizga bergan shaxsiy kodni yozing va «Kirish» ni bosing.' },
       { x: 'Hamir', h: '🥣 Hamir', d: 'Hamirchi: nechta qop hamir qilganingizni yozasiz. Vazifa bajarilsa salyut chiqadi.' },
@@ -1309,13 +1318,13 @@ lockNow();
       { x: 'Kassa', h: '💵 Kassa', d: 'Kun oxirida kassadagi pulni yozasiz. Kassadan pul olinsa, shu yerda belgilaysiz.' },
       { x: 'Yuborish', h: '📤 Yuborish', d: 'Internet bo\'lmasa yozuvlar telefonda saqlanadi. Internet kelganda o\'zi yoki shu tugma bilan rahbarga ketadi.' }] },
     /* ---------- Hisob-kitob ---------- */
-    'hk-i': { t: '⚡ Hisob-kitob', i: 'Usta uchun: obyektlar, qilingan ishlar, olingan pul, shogirtlar va hisobot. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi.', s: [
+    'hk-i': { t: '⚡ Hisob-kitob', i: 'Usta uchun: obyektlar, qilingan ishlar, olingan pul, shogirtlar va hisobot. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi. ✕ Yarim ekran oynani yopsangiz («Yopish», «✕» yoki tashqarisini bosish) — bitta qadam orqaga: oldingi oyna qaytadi, bosh menyuga chiqib ketmaydi.', s: [
       { x: 'Shit sxemasi', h: '📐 Shit sxemasi', d: 'Shitni haqiqiy avtomatlar bilan yig\'ib, narxini hisoblaydi.' },
       { x: 'Santexnika', h: '🚿 Santexnika sxemasi', d: 'Qozonxona, kollektor va quvurlar bilan sxema va narx.' },
       { x: 'Hisob-kitob', h: '🧾 Hisob-kitob', d: 'Asosiy bo\'lim: obyektlar, ishlar, pullar, shogirtlar.' },
       { sel: '#payb', h: '💳 To\'lov', d: 'Obunani uzaytirish: tarifni tanlab, kartaga o\'tkazasiz va chek rasmini yuborasiz.' },
       { sel: '#prof', h: '👤 Profil', d: 'Sohangiz, parolni o\'zgartirish va ilovadan chiqish.' }] },
-    'hk-h': { t: '🧾 Hisob-kitob', i: 'Obyektlar, shogirtlar va hisobot. Hamma yozuv bulutga o\'zi saqlanadi. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi.', s: [
+    'hk-h': { t: '🧾 Hisob-kitob', i: 'Obyektlar, shogirtlar va hisobot. Hamma yozuv bulutga o\'zi saqlanadi. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi. ✕ Yarim ekran oynani yopsangiz («Yopish», «✕» yoki tashqarisini bosish) — bitta qadam orqaga: oldingi oyna qaytadi, bosh menyuga chiqib ketmaydi.', s: [
       { sel: '#hkm', h: '🎤 Ovoz bilan yozish', d: 'O’ng pastdagi qizil 🎤. Avval yozmoqchi bo’lgan maydonni bosing, keyin 🎤 ni bosib gapiring, tugatgach yana bosing — gap shu maydonga yoziladi (raqam maydoniga faqat son). Birinchi marta «Mikrofonga ruxsat berasizmi?» chiqadi — «Ruxsat berish» ni bosing.' },
       { sel: '#t1', h: '🏗 Obyektlar', d: 'Ish qilayotgan joylaringiz. Obyektni bossangiz: qilingan ishlar va olingan pullar.' },
       { sel: '#oq', h: '🔍 Qidiruv', d: 'Obyektni nomi, mijoz ismi yoki raqami bo\'yicha tez topish.' },
@@ -1326,17 +1335,17 @@ lockNow();
       { sel: '[data-cinv]', h: '📤 Ilovaga taklif', d: 'Shogirdga havola yuboradi. U havolani ochib, parol qo\'yadi va obyektlaringizda «ishladim» deb yoza oladi.' },
       { sel: '#t3', h: '📊 Hisobot', d: 'Jami olingan pul, mijozlardan qolgan qarz, shogirtlarga berilgan pul va qarz, obyektlar bo\'yicha shogirdlar.' },
       { sel: '[data-a="gear"]', h: '⚙ Sozlamalar', d: 'Profil, ilova nomi va belgisi, ko\'rinish, zaxira nusxa.' }] },
-    'hk-sg': { t: '👷 Shogird', i: 'Ustangizning obyektlarida ishlagan kunlaringizni yozasiz. Ustangiz ham ko\'radi. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi.', s: [
+    'hk-sg': { t: '👷 Shogird', i: 'Ustangizning obyektlarida ishlagan kunlaringizni yozasiz. Ustangiz ham ko\'radi. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi. ✕ Yarim ekran oynani yopsangiz («Yopish», «✕» yoki tashqarisini bosish) — bitta qadam orqaga: oldingi oyna qaytadi, bosh menyuga chiqib ketmaydi.', s: [
       { sel: '.obj', h: '🏗 Obyekt', d: 'Qaysi obyektda ishlagan bo\'lsangiz, shuni bosing → necha kun → «Yozish».' },
       { sel: '#tM', h: '💰 Hisobim', d: 'Kunlik haqingiz, ishlagan kunlaringiz, olgan va olishingiz kerak bo\'lgan pul.' },
       { sel: '#tS', h: '⚙ Sozlamalar', d: 'Yangilash va ilovadan chiqish.' }] },
-    gate: { t: '🔐 Kirish', i: 'Birinchi marta «Ro\'yxatdan o\'tish», keyingi safar «Kirish» (raqam va parol). ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi.', s: [
+    gate: { t: '🔐 Kirish', i: 'Birinchi marta «Ro\'yxatdan o\'tish», keyingi safar «Kirish» (raqam va parol). ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi. ✕ Yarim ekran oynani yopsangiz («Yopish», «✕» yoki tashqarisini bosish) — bitta qadam orqaga: oldingi oyna qaytadi, bosh menyuga chiqib ketmaydi.', s: [
       { sel: '#tL', h: 'Kirish', d: 'Oldin ro\'yxatdan o\'tgan bo\'lsangiz: telefon raqam va parol.' },
       { sel: '#tR', h: 'Ro\'yxatdan o\'tish', d: 'Birinchi marta shu yerni bosing.' },
       { sel: '#forgot', h: 'Parolni unutdim', d: 'Telegramga kod keladi, u bilan yangi parol qo\'yasiz.' },
       { sel: '#toJoin', h: '🤝 Taklif kodi', d: 'Ustangiz taklif qilgan bo\'lsa, shu yerga taklif kodini yozasiz.' }] },
     /* ---------- Elektr Do'kon ---------- */
-    em: { t: '💡 Elektr Do\'kon', i: 'Tovarlarni ko\'rib, savatchaga solib, buyurtma berasiz. Do\'kon manzilingizga olib boradi. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi.', s: [
+    em: { t: '💡 Elektr Do\'kon', i: 'Tovarlarni ko\'rib, savatchaga solib, buyurtma berasiz. Do\'kon manzilingizga olib boradi. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi. ✕ Yarim ekran oynani yopsangiz («Yopish», «✕» yoki tashqarisini bosish) — bitta qadam orqaga: oldingi oyna qaytadi, bosh menyuga chiqib ketmaydi.', s: [
       { x: 'Ro\'yxatdan o\'tish', h: 'Ro\'yxatdan o\'tish', d: 'Birinchi marta: raqam va parol. Bepul.' },
       { x: 'Kirish', h: 'Kirish', d: 'Keyingi safar: raqam va parol. Parolni unutsangiz — kod bilan tiklanadi.' },
       { sel: 'input[type=search],input[placeholder*="idir"]', h: '🔍 Qidiruv', d: 'Tovar nomini yozing (masalan «kabel»). Xato yozsangiz ham topadi.' },
@@ -1345,7 +1354,7 @@ lockNow();
       { x: 'Buyurtmalarim', h: '📦 Buyurtmalarim', d: 'Buyurtmangiz qayerdaligi: qabul qilindi → yo\'lda → yetib keldi.' },
       { x: 'Hisobim', h: '💳 Hisobim', d: 'Qarzingiz va to\'lovlaringiz.' },
       { x: 'Profil', h: '👤 Profil', d: 'Manzilingiz, xaritadagi joyingiz, parol.' }] },
-    es: { t: '🧾 Do\'kon Sotuvchi', i: 'Buyurtmalarni qabul qilish, yetkazish, mijozlar, tovarlar va hisobot. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi.', s: [
+    es: { t: '🧾 Do\'kon Sotuvchi', i: 'Buyurtmalarni qabul qilish, yetkazish, mijozlar, tovarlar va hisobot. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi. ✕ Yarim ekran oynani yopsangiz («Yopish», «✕» yoki tashqarisini bosish) — bitta qadam orqaga: oldingi oyna qaytadi, bosh menyuga chiqib ketmaydi.', s: [
       { x: 'Buyurtmalar', h: '📦 Buyurtmalar', d: 'Yangi buyurtmalar. Ketma-ket: Qabul qilish → Yo\'lga chiqdim → Yetkazildi → Chek.' },
       { x: 'Mijozlar', h: '👥 Mijozlar', d: 'Mijozlar ro\'yxati, qarzlari, to\'lovlari. Mijozni bossangiz — to\'liq hisobi.' },
       { x: 'Tovarlar', h: '📦 Tovarlar', d: 'Tovar qo\'shish va tahrirlash: narx, rasm, video, aksiya.' },
@@ -1361,7 +1370,7 @@ lockNow();
       { sel: '#mOut', h: '✅ Yig‘ish ro‘yxati', d: '«Chiqarish» oynasida. Har bir qurilma (qaysi qator, nechanchi joy) va har bir sim ro‘yxati. Bajarganingizni belgilab borasiz — hammasi tugasa ilova aytadi.' },
       { sel: '#b3d', h: '🧊 3D', d: 'Shitning 3D ko‘rinishi: barmoq bilan aylantiring, «Rentgen» — ichini ko‘rish.' },
       { sel: '#bImg', h: '🖼 Rasm', d: 'Faqat sxemaning rasmini yuboradi.' }] },
-    hm: { t: '👛 Hamyon', i: 'Kunlik xarajat va kirimlaringizni yozib borasiz. Ilova hisobot beradi, limitdan oshsangiz yoki o\'tgan oydan ko\'p sarflasangiz ogohlantiradi. Telegram bot bilan ma\'lumot bir xil. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi.', s: [
+    hm: { t: '👛 Hamyon', i: 'Kunlik xarajat va kirimlaringizni yozib borasiz. Ilova hisobot beradi, limitdan oshsangiz yoki o\'tgan oydan ko\'p sarflasangiz ogohlantiradi. Telegram bot bilan ma\'lumot bir xil. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi. ✕ Yarim ekran oynani yopsangiz («Yopish», «✕» yoki tashqarisini bosish) — bitta qadam orqaga: oldingi oyna qaytadi, bosh menyuga chiqib ketmaydi.', s: [
       { sel: '.hero', h: '💰 Shu oy', d: 'Katta raqam — shu oyda jami qancha sarflaganingiz. Pastida: «Bugun» — bugungi xarajat, «Kirim» — shu oy tushgan pul, «Qoldiq» — kirim minus xarajat (minus bo\'lsa, kirimdan ko\'p sarflagansiz). Oq chiziq — oylik limitdan qanchasi ishlatilgani.' },
       { sel: '.alert', h: '⚠️ Ogohlantirish', d: 'Sariq — limitning 80% idan oshdi. Qizil — limitdan oshib ketdi. 📈 — o\'tgan oyning shu kunigacha bo\'lgandan ko\'p sarflayapsiz.' },
       { sel: '.day', h: '📅 Kun', d: 'Yozuvlar kunlar bo\'yicha guruhlangan. O\'ngdagi raqam — shu kungi jami xarajat.' },
@@ -1581,14 +1590,14 @@ lockNow();
     var dl = document.querySelector('dialog[open]'); if (dl && !ORIGH) { try { dl.close(); } catch (e) {} return true; }
     if (NV) {
       /* bir qadam orqaga: ochiq oynada «← Ro'yxat» kabi tugma bo'lsa — o'sha (oyna yopilib bosh sahifaga tushib qolmasin) */
-      if (nvOverlay()) { var ov = topOverlay(), ob = ov && backBtn(ov); if (ob) { ob.click(); return true; } return ORIG ? !!ORIG() : false; }
+      if (nvOverlay()) { try { if (window.nvSheetBack && window.nvSheetBack()) return true; } catch (e) {} var ov = topOverlay(), ob = ov && backBtn(ov); if (ob) { ob.click(); return true; } return ORIG ? !!ORIG() : false; }
       var pb = backBtn(null); if (pb) { pb.click(); return true; }
       if (STK.length) { var s = JSON.parse(STK.pop()); REST = true; NVV.forEach(function (k) { if (k in s) window[k] = s[k]; }); try { render(); } catch (e) {} LAST = JSON.stringify(nvSnap()); return true; }
       return ORIG ? !!ORIG() : false;
     }
     if (ORIGH) return !!ORIGH();
     if (K === 'em' || K === 'es') {
-      var sh = document.getElementById('sheet'); if (sh && !sh.hidden) { try { closeSheet(); } catch (e) { sh.hidden = true; } return true; }
+      var sh = document.getElementById('sheet'); if (sh && !sh.hidden) { try { if (typeof sheetBack === 'function') sheetBack(); else closeSheet(); } catch (e) { sh.hidden = true; } return true; }
       var b = document.querySelector('button.back:not([data-act="openCust"])'); if (b && b.getBoundingClientRect().width) { b.click(); return true; }
       var st = gS(), home = K === 'em' ? 'shop' : 'orders';
       if (st && st.tab && st.tab !== home) { var t = document.querySelector('[data-act="tab"][data-k="' + home + '"]'); if (t) t.click(); else { st.tab = home; render(); } return true; }
