@@ -32,7 +32,7 @@ body.ctlon #log{max-height:24vh}
 <div id="ctl"><button class="btn" data-c="__ekran">📸 Ekranni ko'rish</button><button class="btn" data-c="__qulf">🔒 Qulflash</button><button class="btn" data-c="__ochir">⏻ O'chirish</button><button class="btn" data-c="__bekor">✋ Bekor qilish</button></div>
 <div class="ovl" id="ul"><div class="bx"><h2>📱 Jarvis'ni ulash</h2><div>Bu Sizning shaxsiy Jarvis'ingiz. Uni ishlatish uchun bir marta ulash kerak:</div><ol style="padding-left:20px;margin:10px 0"><li>Kompyuterda <b>Jarvis</b>ni oching (ish stolidagi belgi).</li><li>Tepada <b>«📱 Telefonga ulash»</b> → <b>«Telegramga yuborish»</b> ni bosing.</li><li>Telegram'ga kelgan <b>«📱 Jarvis'ni telefonda ochish»</b> tugmasini telefonda bosing.</li></ol><div class="mu">Shundan keyin qayta so'ralmaydi.</div><p class="mu" style="font-size:13px;margin-bottom:4px">iPhone bosh ekranidan ochgan bo'lsangiz: Telegram'dagi tugmani bosib turing → «Nusxalash», keyin shu yerga qo'ying:</p><div style="display:flex;gap:6px"><input id="ulk" placeholder="Havolani shu yerga qo'ying" style="padding:9px 10px"><button class="btn" id="ulb">Ulash</button></div></div></div>
 <div class="ovl" id="tp"><div class="bx"><h2>📱 Telefonga ulash</h2><div id="tps" class="mu">Tekshiryapman…</div><p>Telefonda ham Jarvis va Agentlarni ishlatish: havola Telegram'ingizga (Hisob boti) keladi — uni telefonda bosasiz, bo'ldi.</p><p><label style="display:flex;gap:8px;align-items:flex-start;cursor:pointer"><input type="checkbox" id="tpa" style="flex:none;width:18px;height:18px;margin-top:3px;padding:0"><span>Kompyuter yoqilganda Jarvis fonda o'zi ishga tushsin <span class="mu">(telefondan doim boshqarish uchun; aks holda kompyuterda Jarvis'ni bir marta ochib qo'yish kerak)</span></span></label></p><button class="btn" id="tpg">📨 Telegramga yuborish</button> <button class="btn" id="tpc">📋 Havolani nusxalash</button><p class="mu" style="font-size:13px">Havola — kalit. Uni hech kimga bermang. Telefon yo'qolsa: <a href="#" id="tpn" style="color:var(--c1)">🔁 kalitni almashtirish</a> (eski havola ishlamay qoladi).</p><button class="btn" id="tpx">✕ Yopish</button></div></div>
-<div class="ovl" id="st"><div class="bx"><h2>⚙ Sozlamalar</h2><p><b>Buyruqlar qayerda bajarilsin</b></p><div><button class="btn" data-rj="avto">🔄 Avto</button> <button class="btn" data-rj="pc">🖥 Kompyuter</button> <button class="btn" data-rj="tel">📱 Telefon</button></div><p class="mu" style="font-size:13px">Avto — kompyuter yoqiq bo'lsa unda (Claude), o'chiq bo'lsa bulutda (Gemini). Kompyuter — faqat kompyuterda. Telefon — telefonda va bulutda (kompyuterga tegmaydi).</p><p><b>Ovozli javob</b> <button class="btn" id="ovz">🔊 Yoqiq</button></p><p><button class="btn" id="uz">🔌 Bu telefonni uzish</button></p><div class="mu" id="sth" style="font-size:13px"></div><p><button class="btn" id="stx">✕ Yopish</button></p></div></div>
+<div class="ovl" id="st"><div class="bx"><h2>⚙ Sozlamalar</h2><p><b>🗣 Jarvis ovozi</b> <span class="mu" style="font-size:13px">(tirik odam ovozi, bosib eshitib ko'ring)</span></p><div id="vos"><button class="btn" data-vo="Charon">👨 Erkak — chuqur</button> <button class="btn" data-vo="Achird">🙂 Erkak — do'stona</button> <button class="btn" data-vo="Sulafat">👩 Ayol — iliq</button></div><p><b>💬 Suhbat rejimi</b> <button class="btn" id="sbt">…</button></p><p class="mu" style="font-size:13px;margin-top:-6px">Yoqiq bo'lsa — javobdan keyin Jarvis o'zi yana tinglaydi, tugmani bosmasdan odam bilan gaplashgandek davom etasiz. «Rahmat», «bo'ldi» yoki «xayr» desangiz to'xtaydi.</p><div id="strj"><p><b>Buyruqlar qayerda bajarilsin</b></p><div><button class="btn" data-rj="avto">🔄 Avto</button> <button class="btn" data-rj="pc">🖥 Kompyuter</button> <button class="btn" data-rj="tel">📱 Telefon</button></div><p class="mu" style="font-size:13px">Avto — kompyuter yoqiq bo'lsa unda, o'chiq bo'lsa bulutda. Kompyuter — faqat kompyuterda. Telefon — telefonda va bulutda (kompyuterga tegmaydi).</p></div><p><b>Ovozli javob</b> <button class="btn" id="ovz">🔊 Yoqiq</button></p><p><button class="btn" id="uz">🔌 Bu telefonni uzish</button></p><div class="mu" id="sth" style="font-size:13px"></div><p><button class="btn" id="stx">✕ Yopish</button></p></div></div>
 <div id="kir">⚠️ AI javoblari uchun bir marta Claude hisobingizga kiring. <button class="btn" id="kirb">Kirish</button></div>
 <div id="state">Mikrofonni bosing yoki yozing</div>
 <div id="log"></div>
@@ -60,8 +60,36 @@ let HIST=[],MUTE=localStorage.getItem('jv_mute')==='1',REJ=localStorage.getItem(
 /* ---------- ovoz: gapirish ---------- */
 let VO=null;function pickVoice(){const v=speechSynthesis.getVoices();VO=v.find(x=>/^uz/i.test(x.lang))||v.find(x=>/^tr/i.test(x.lang))||v.find(x=>/^ru/i.test(x.lang))||v[0]||null}
 if('speechSynthesis'in window){speechSynthesis.onvoiceschanged=pickVoice;pickVoice()}
-function say(t){return new Promise(ok=>{if(!('speechSynthesis'in window)||MUTE){ok();return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(String(t).replace(/[*#`_>|]/g,'').slice(0,600));if(VO){u.voice=VO;u.lang=VO.lang}u.rate=1.02;
-  let iv=setInterval(()=>{LVL=Math.min(1,LVL+0.5)},120);u.onend=u.onerror=()=>{clearInterval(iv);ok()};setMode('speak','Gapiryapman…');speechSynthesis.speak(u)})}
+function sayBrowser(t){return new Promise(ok=>{if(!('speechSynthesis'in window)){ok();return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);if(VO){u.voice=VO;u.lang=VO.lang}u.rate=1.02;
+  let iv=setInterval(()=>{LVL=Math.min(1,LVL+0.5)},120),dn=false;const end=()=>{if(dn)return;dn=true;clearInterval(iv);ok()};u.onend=u.onerror=end;setTimeout(end,2500+t.length*110);speechSynthesis.speak(u)})} // ovoz yo'q brauzerda osilib qolmasin
+/* tirik ovoz: javob gaplarga bo'linadi, hammasi birdan so'raladi, birinchisi kelishi bilan gapira boshlaydi */
+let VOICE=localStorage.getItem('jv_voice')||'Charon',SUHBAT=localStorage.getItem('jv_suhbat')!=='0',AC=null,SRC=null,SPK=0;
+function ac(){if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(C)AC=new C()}if(AC&&AC.state==='suspended')AC.resume();return AC}
+addEventListener('pointerdown',()=>ac(),{once:true});
+function b64ab(b){const s=atob(b),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u.buffer}
+async function decode(j){const c=ac();if(!c)return null;const ab=b64ab(j.pcm),h=new Uint8Array(ab,0,4);
+  if(String.fromCharCode(h[0],h[1],h[2],h[3])==='RIFF')return await c.decodeAudioData(ab);
+  const dv=new DataView(ab),n=ab.byteLength>>1,buf=c.createBuffer(1,n,24000),ch=buf.getChannelData(0);for(let i=0;i<n;i++)ch[i]=dv.getInt16(i*2,true)/32768;return buf}
+function play(buf){return new Promise(ok=>{const c=ac(),s=c.createBufferSource(),an=c.createAnalyser();an.fftSize=256;s.buffer=buf;s.connect(an);an.connect(c.destination);SRC=s;const d=new Uint8Array(an.frequencyBinCount);let on=true;
+  (function m(){if(!on)return;an.getByteTimeDomainData(d);let x=0;for(const v of d)x=Math.max(x,Math.abs(v-128));LVL=Math.min(1,x/45);requestAnimationFrame(m)})();s.onended=()=>{on=false;if(SRC===s)SRC=null;ok()};s.start()})}
+function stopSpeak(){SPK++;LVL=0;try{SRC&&SRC.stop()}catch(e){}SRC=null;try{speechSynthesis.cancel()}catch(e){}}
+const TTSC={};
+function ttsGet(t,keep){const k=VOICE+'|'+t;if(TTSC[k])return TTSC[k];
+  let p;const ls='jvf|'+k,old=keep&&localStorage.getItem(ls);
+  if(old)p=decode({pcm:old}).catch(()=>null);
+  else p=Promise.race([JV.tts(t,VOICE),new Promise(r=>setTimeout(()=>r(null),12000))]).then(j=>{if(!(j&&j.ok&&j.pcm))return null;if(keep)try{localStorage.setItem(ls,j.pcm)}catch(e){}return decode(j)}).catch(()=>null);
+  TTSC[k]=p;p.then(b=>{if(!b)delete TTSC[k]});return p}
+function parts(t){t=String(t||'').replace(/```[\s\S]*?```/g,' ').replace(/[*#`_>|]/g,'').replace(/https?:\/\/\S+/g,'havola').replace(/\s+/g,' ').trim().slice(0,900);const L=t.match(/[^.!?…]+[.!?…]*/g)||[t],o=[];
+  for(const x of L){const y=x.trim();if(!y)continue;if(o.length&&o.length>1&&o[o.length-1].length+y.length<160)o[o.length-1]+=' '+y;else o.push(y)}return o.slice(0,7)}
+function uzVoice(){if(!('speechSynthesis'in window))return null;const v=speechSynthesis.getVoices().filter(x=>/^uz/i.test(x.lang)&&/natural|online|neural/i.test(x.name));const fem=VOICE==='Sulafat';return v.find(x=>(fem?/Madina/i:/Sardor/i).test(x.name))||v[0]||null}
+function sayQueue(P,v){return new Promise(ok=>{speechSynthesis.cancel();let left=P.length,dn=false,iv=setInterval(()=>{LVL=Math.min(1,LVL+0.45)},110);const end=()=>{if(dn)return;dn=true;clearInterval(iv);ok()};
+  P.forEach(x=>{const u=new SpeechSynthesisUtterance(x);u.voice=v;u.lang=v.lang;u.rate=1.03;u.onend=u.onerror=()=>{if(--left<=0)end()};speechSynthesis.speak(u)});setTimeout(end,4000+P.join(' ').length*130)})}
+async function say(t){if(MUTE||!t)return;const my=++SPK,P=parts(t);if(!P.length)return;setMode('speak','Gapiryapman…');
+  const nv=uzVoice();if(nv){await sayQueue(P,nv);return}
+  const jobs=P.map(x=>ttsGet(x));for(let i=0;i<P.length;i++){const b=await jobs[i];if(my!==SPK)return;if(b)await play(b);else await sayBrowser(P[i]);if(my!==SPK)return}}
+const FILL=['Hmm, bir soniya.','Xo\'p, hozir.','Tushundim, qarab chiqaman.'],HA='Ha, eshityapman.';
+function prefetch(){if(MUTE||uzVoice())return;[...FILL,HA].forEach(x=>ttsGet(x,true))}
+setTimeout(prefetch,1500);
 /* ---------- buyruq ---------- */
 /* telefonda bajariladigan tez buyruqlar (telefon rejimi yoki kompyuter o'chiq) */
 const OY=['yanvar','fevral','mart','aprel','may','iyun','iyul','avgust','sentabr','oktabr','noyabr','dekabr'];
@@ -75,21 +103,25 @@ function tezTel(t){const s=t.toLowerCase().replace(/[’'`ʻʼ]/g,"'").trim();
   if(/\b(och|ochib ber|ishga tushir)\b/.test(s))for(const[re,u,n]of TS)if(re.test(s)){if(u==='jamoa.html')location.href=u;else open(u,'_blank');return n+' ochilmoqda.'}
   return null}
 const joy=()=>JV.LOCAL?'pc':REJ==='tel'?'tel':REJ==='pc'?'pc':(PC?'pc':'tel');
-async function cmd(t,yashir){t=t.trim();if(!t)return;if(!yashir)add(t,1);setMode('think',JV.LOCAL||joy()==='tel'?'O\'ylayapman…':'Kompyuterga yubordim…');
+const XAYR=/^(rahmat|raxmat|bo'?ldi|xayr|yetarli|to'?xta|stop|hammasi shu)\b/i;
+async function cmd(t,yashir,ovoz){t=t.trim();if(!t)return;stopSpeak();if(!yashir)add(t,1);setMode('think',JV.LOCAL||joy()==='tel'?'O\'ylayapman…':'Kompyuterga yubordim…');
+  const tug=ovoz&&XAYR.test(t.toLowerCase().replace(/[’'`ʻʼ]/g,"'"));let fill=null,done=false;
+  const ft=setTimeout(()=>{if(!done&&!MUTE&&!/^__/.test(t))fill=say(FILL[Math.floor(Math.random()*FILL.length)])},900);
   try{let r=null;if(!JV.LOCAL&&joy()==='tel'&&!/^__/.test(t)){const z=tezTel(t);if(z)r={javob:z}}
-    if(!r)r=await JV.buyruq(t,JV.LOCAL?'':REJ,HIST.slice(0,-1));
-    add(r.javob,0,r.img);if(r.login){$('kir').style.display='block'}await say(r.javob)}catch(e){add(JV.LOCAL?'Server bilan aloqa yo\'q. Jarvis belgisini qayta bosing.':'Aloqa yo\'q. Internetni tekshiring.')}
+    if(!r)r=await JV.buyruq(t,JV.LOCAL?'':REJ,HIST.slice(0,-1));done=true;clearTimeout(ft);if(fill)await fill;
+    add(r.javob,0,r.img);if(r.login){$('kir').style.display='block'}await say(r.javob)}catch(e){done=true;clearTimeout(ft);add(JV.LOCAL?'Server bilan aloqa yo\'q. Jarvis belgisini qayta bosing.':'Aloqa yo\'q. Internetni tekshiring.')}
+  if(ovoz&&SUHBAT&&!tug&&!WAKE&&SR){setMode('listen','💬 Eshityapman… (davom eting)');listen(false,true);return}
   setMode(WAKE?'listen':'idle',WAKE?'«Jarvis» deb chaqiring…':'Mikrofonni bosing yoki yozing');if(WAKE)listen(true)}
 $('f').onsubmit=e=>{e.preventDefault();const v=$('t').value;$('t').value='';cmd(v)};
 /* ---------- ovoz: eshitish (Chrome: uz-UZ) ---------- */
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null,WAKE=false,busy=false;
-function listen(wake){if(!SR){add('Bu brauzerda ovozni tanish yo\'q — Chrome\'da oching.');return}if(rec)try{rec.abort()}catch(e){}
+function listen(wake,davom){if(!SR){add('Bu brauzerda ovozni tanish yo\'q — Chrome\'da oching.');return}if(rec)try{rec.abort()}catch(e){}
   rec=new SR();rec.lang='uz-UZ';rec.interimResults=true;rec.continuous=!!wake;let fin='';$('mic').classList.add('on');setMode('listen',wake?'«Jarvis» deb chaqiring…':'Eshityapman…');
   rec.onresult=e=>{LVL=1;let s='';for(let i=e.resultIndex;i<e.results.length;i++){s+=e.results[i][0].transcript;if(e.results[i].isFinal)fin+=e.results[i][0].transcript+' '}
-    stEl.textContent='🎤 '+s;if(wake&&fin){const m=fin.toLowerCase().match(/(?:jarvis|jarvi?s|джарвис|jar ?vis)[,\s]*(.*)/);if(m){const q=m[1].trim();fin='';if(q){rec.abort();cmd(q)}else{rec.abort();say('Ha, eshityapman').then(()=>listen(false))}}else fin=''}};
-  rec.onend=()=>{$('mic').classList.remove('on');if(!wake&&fin.trim())cmd(fin);else if(wake&&WAKE&&MODE!=='think'&&MODE!=='speak')setTimeout(()=>listen(true),300);else if(!wake)setMode('idle','Mikrofonni bosing yoki yozing')};
+    stEl.textContent='🎤 '+s;if(wake&&fin){const m=fin.toLowerCase().match(/(?:jarvis|jarvi?s|джарвис|jar ?vis)[,\s]*(.*)/);if(m){const q=m[1].trim();fin='';if(q){rec.abort();cmd(q,false,true)}else{rec.abort();say(HA).then(()=>listen(false))}}else fin=''}};
+  rec.onend=()=>{$('mic').classList.remove('on');if(!wake&&fin.trim())cmd(fin,false,true);else if(davom&&!fin.trim()){setMode('idle','💬 Suhbat tugadi — mikrofonni bosing yoki yozing')}else if(wake&&WAKE&&MODE!=='think'&&MODE!=='speak')setTimeout(()=>listen(true),300);else if(!wake)setMode('idle','Mikrofonni bosing yoki yozing')};
   rec.onerror=e=>{if(e.error==='not-allowed')add('Mikrofonga ruxsat bering (manzil satridagi 🔒 → Mikrofon → Ruxsat).')};rec.start()}
-$('mic').onclick=()=>{speechSynthesis.cancel();listen(false)};
+$('mic').onclick=()=>{stopSpeak();ac();listen(false)};
 $('wake').onclick=()=>{WAKE=!WAKE;$('wake').textContent='👂 Doim tinglash: '+(WAKE?'yoqiq':'o\'chiq');if(WAKE)listen(true);else{try{rec.abort()}catch(e){}setMode('idle','Mikrofonni bosing yoki yozing')}};
 $('kirb').onclick=async()=>{const r=await JV.kirish();add(JV.LOCAL?'Brauzerda Claude kirish sahifasi ochildi. Kirib bo\'lgach, savolingizni qaytaring.':(r&&r.javob)||'Kompyuterda kirish sahifasi ochildi.');$('kir').style.display='none'};
 $('agl').href=JV.jamoaUrl;
@@ -117,6 +149,12 @@ if(JV.LOCAL){$('tel').style.display='';
   rejBtn();setInterval(holat,15000);
   if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
 }
+/* ovoz va suhbat sozlamalari — kompyuterda ham, telefonda ham */
+$('gear').style.display='';if(JV.LOCAL){$('strj').style.display='none';$('uz').style.display='none';$('gear').onclick=window.JV_SOZ=()=>{$('st').style.display='flex'};$('stx').onclick=()=>$('st').style.display='none';
+  $('ovz').textContent=MUTE?'🔇 O\'chiq':'🔊 Yoqiq';$('ovz').onclick=()=>{MUTE=!MUTE;localStorage.setItem('jv_mute',MUTE?'1':'0');$('ovz').textContent=MUTE?'🔇 O\'chiq':'🔊 Yoqiq';if(MUTE)stopSpeak()}}
+function vosBtn(){document.querySelectorAll('[data-vo]').forEach(b=>b.style.background=b.dataset.vo===VOICE?'rgba(34,211,238,.4)':'');$('sbt').textContent=SUHBAT?'💬 Yoqiq':'O\'chiq'}
+document.querySelectorAll('[data-vo]').forEach(b=>b.onclick=()=>{VOICE=b.dataset.vo;localStorage.setItem('jv_voice',VOICE);vosBtn();ac();stopSpeak();say('Salom, Muhtorxon aka! Mana shunday gapiraman. Yoqdimi?').then(prefetch)});
+$('sbt').onclick=()=>{SUHBAT=!SUHBAT;localStorage.setItem('jv_suhbat',SUHBAT?'1':'0');vosBtn()};vosBtn();
 holat();
 addEventListener('keydown',e=>{if(e.key===' '&&document.activeElement!==$('t')){e.preventDefault();$('mic').click()}});
 add('Salom! Men Jarvisman. Gapiring yoki yozing. Masalan: «YouTube\'ni och», «soat nechchi», «eslatma yoz: ertaga 9 da uchrashuv», yoki istalgan savol va ish.');
@@ -133,11 +171,16 @@ add('Salom! Men Jarvisman. Gapiring yoki yozing. Masalan: «YouTube\'ni och», �
       { sel: '#rej', h: '🔄 Qayerda bajariladi', d: '🟢 — kompyuter yoqiq va ulangan, ⚪ — o\'chiq. Bosing: Avto (kompyuter bo\'lsa unda, bo\'lmasa bulutda), 🖥 Kompyuter (faqat kompyuterda), 📱 Telefon (telefonda: saytlar telefonda ochiladi, javob bulutdan).' },
       { sel: '#ctl', h: '🖥 Kompyuterni boshqarish', d: 'Kompyuter ulangan bo\'lsa chiqadi. 📸 Ekranni ko\'rish — kompyuter ekranining hozirgi rasmi keladi (bosib kattalashtirasiz). 🔒 Qulflash — kompyuter qulflanadi. ⏻ O\'chirish — 1 daqiqadan keyin o\'chadi. ✋ Bekor qilish — o\'chirishni to\'xtatadi.' },
       { sel: '#wake', h: '👂 Doim tinglash', d: 'Yoqilsa, ilova ochiq turganda «Jarvis, …» deb chaqirsangiz o\'zi eshitadi. Telefon ekrani o\'chsa tinglash to\'xtaydi.' },
-      { sel: '#agl', h: '🤖 Agentlar', d: 'AI Agentlar jamoasi: vazifa berasiz, Direktor uni Marketolog, Kopirayter, SMM, Dizayner, Montajchi va Targetologga bo\'lib beradi.' },
+      { sel: '#agl', h: '🤖 Agentlar', d: 'AI Agentlar jamoasi — kosmosdagi 3D ofis: 8 ta agent (Direktor, Strateg, Ssenarist, Progrevchi, Montajer, Dizayner, Targetolog, Yuklovchi). Vazifa berasiz, Direktor uni bo\'lib beradi.' },
+      { sel: '#gear', h: '⚙ Ovoz va suhbat', d: '🗣 Jarvis ovozi: «Erkak — chuqur», «Erkak — do\'stona» yoki «Ayol — iliq» — bossangiz o\'sha ovozda gapirib beradi (tirik odam ovozi, internet kerak). 💬 Suhbat rejimi (yoqiq): javobdan keyin Jarvis o\'zi yana tinglaydi — tugmani bosmasdan odam bilan gaplashgandek davom etasiz; «rahmat», «bo\'ldi» yoki «xayr» desangiz to\'xtaydi, jim tursangiz ham to\'xtaydi. 🔊/🔇 — ovozli javobni yoqish/o\'chirish.' },
       { sel: '#kir', h: '⚠️ Kirish', d: 'Kompyuterdagi Claude hisobiga kirilmagan. «Kirish» ni bossangiz kompyuterda kirish sahifasi ochiladi — kompyuter oldida bir marta kirasiz.' }] },
     'jv-j': { t: '🏢 AI Agentlar jamoasi', i: 'Vazifa berasiz — Direktor uni agentlarga bo\'lib beradi, ular bir vaqtda 3 tadan ishlaydi, oxirida Direktor xulosa yozadi. Kompyuter yoqiq bo\'lsa kompyuterdagi Claude bajaradi, o\'chiq bo\'lsa bulutda (☁️ belgisi).', s: [
-      { sel: '#t', h: '✍️ Vazifa', d: 'Nima kerakligini yozing va «Yuborish» ni bosing. Masalan: «Elektrik xizmatim uchun Instagram\'da 1 oylik reklama kampaniyasi».' },
-      { sel: '.desk', h: '🪑 Agent stoli', d: 'Ustidagi yorliq: bo\'sh, navbatda, ishlayapti (sariq), tayyor (yashil), xato (qizil). Bossangiz — agent bajargan ishlari, o\'rtacha vaqti va natijalari chiqadi.' },
+      { sel: '[data-go="brief"]', h: '📋 Briefing — vazifa', d: 'Bosing, nima kerakligini yozing yoki 🎤 bilan ayting va «Yuborish» ni bosing. Masalan: «Elektrik xizmatim uchun Instagram\'da 1 oylik reklama kampaniyasi». Tayyor misollarni bossangiz ham bo\'ladi. Kamera Direktor xonasiga o\'tadi — u vazifani agentlarga bo\'lib beradi.' },
+      { sel: '#cv', h: '🏢 3D ofis', d: 'Kosmosdagi ofis: har xonada bitta agent-robot ishlaydi. Barmoq bilan surib aylantirasiz, ikki barmoq bilan (kompyuterda g\'ildirak bilan) yaqinlashtirasiz. Xonani bossangiz — kamera o\'sha xonaga kiradi. Robot ishlayotganda boshini qimirlatib yozadi, ekranlari miltillaydi.' },
+      { sel: '.pill', h: '🏷 Agent yorlig\'i', d: 'Xona ustidagi nom. Oxiridagi nuqta — holat: kulrang — bo\'sh, ko\'k — navbatda, sariq (miltillaydi) — ishlayapti, yashil — tayyor, qizil — xato. Bossangiz — o\'sha xonaga kirasiz.' },
+      { sel: '#bar', h: '⬇️ Pastki panel', d: '«Ofis» — umumiy ko\'rinish. «📋 Briefing» — jamoaga vazifa berish (yozasiz yoki 🎤 bilan aytasiz). «🔻 Voronka» — hamma vazifalar va har agent holati, natijani «ochish». Keyin har bir agent nomi — bossangiz o\'sha xonaga kirasiz.' },
+      { sel: '#dash', h: '📊 Bugun', d: 'Bugun nechta ish bajarildi, hozir nechtasi ishlayapti va navbatda, jami vazifalar, bitta ishga o\'rtacha vaqt va xatolar soni.' },
+      { sel: '.acard', h: '🧑‍💼 Agent kartasi', d: 'Xonaga kirganda chiqadi: agent nechta ish bajargani, o\'rtacha vaqti, bugungi ishlari va hozir nima qilayotgani. «Kabinetni ochish» — agentning to\'liq sahifasi: samaradorlik (o\'rtacha vaqt, necha foiz bajarildi, eng tezi), hozirgi ishi, qobiliyatlari va barcha ishlari (Dizaynerda — tayyor post rasmlari). Ishni bossangiz — to\'liq natija, «📋 Nusxa» bilan nusxalaysiz.' },
       { sel: '#pcs', h: '🟢 Kompyuter holati', d: '🟢 — kompyuter ulangan, vazifani Claude bajaradi. ⚪ — o\'chiq, vazifa bulutda bajariladi va kompyuter yoqilganda unga ham o\'tadi.' },
       { sel: '[data-f]', h: '📄 Natija', d: 'Agent yozgan to\'liq natijani ochadi (matn, reja, ssenariy).' },
       { sel: '#jvl', h: '🔵 Jarvis', d: 'Ovozli yordamchiga qaytish.' }] },
@@ -181,6 +224,8 @@ add('Salom! Men Jarvisman. Gapiring yoki yozing. Masalan: «YouTube\'ni och», �
       { sel: '[data-a="additem"]', h: '➕ Ish / tochka', d: 'Qilingan ish: nima ish, nechta, bittasi necha pul.' },
       { sel: '[data-a="addrecv"]', h: '💵 Olingan pul', d: 'Mijozdan olingan pulni yozasiz. Keyin mijozga chek yuborish taklif qilinadi.' },
       { sel: '#t4', h: '💸 Xarajatlar', d: 'Rasxodlaringizni yozib borasiz. Obyektni (yoki «📦 Umumiy») bosing, turini tanlang — 🧱 Material, 🚕 Yo’l, 🍽 Ovqat, 🔧 Asbob, 👷 Usta, 📦 Boshqa — summani yozib «Saqlash». Xarajat obyekt sahifasida, Hisobotda va «O’zimga qolgan»da hisoblanadi. Mijozga ko’rsatiladigan hisobda chiqmaydi.' },
+      { sel: '.bzbig', h: '🛒 Bozordan olingan tovarlar', d: 'Bozordan material olsangiz shu yerga yozasiz. Bosing → «📷 Rasmga olish» (chek, nakladnoy yoki qo‘lda yozilgan qog‘oz) — sun’iy intellekt rasmni o‘qib, har bir tovarni nomi, soni va 1 dona narxi bilan ro‘yxat qiladi, summani o‘zi hisoblaydi (10–30 soniya). «🖼 Rasm tanlash» — galereyadagi rasm (bir nechtasini birdan tanlasa bo‘ladi). «✍️ Matndan» — har qatorga bitta tovar yozasiz, masalan «rozetka 5 ta 25 ming». Ro‘yxatni tekshiring: noto‘g‘ri bo‘lsa katakni bosib to‘g‘rilang, «✕» — qatorni o‘chirish, «+ Qator qo‘shish» — qo‘lda qo‘shish. Narxi yozilmagan tovar qizil ramkada. Oxirida «✓ Saqlash».' },
+      { sel: '.bzmz', h: '🏠 Mijoz to‘laydi', d: 'Belgi qo‘yilgan bo‘lsa (odatda shunday), bozor ro‘yxati uy egasiga yuboriladigan hisobda («Mijozga ko‘rsatish», rasm va matn) alohida «🛒 Bozordan olingan tovarlar» bo‘limi bo‘lib chiqadi: har bir tovar, soni, narxi va «Bozor jami». Bu summa «Jami narx» va «Qolgan pul»ga qo‘shiladi. Belgini olib tashlasangiz — faqat o‘zingizning xarajatingiz bo‘lib qoladi.' },
       { sel: '[data-ecat]', h: '⚡ Tez yozish', d: 'Turini bosing — oyna o’sha tur bilan ochiladi, faqat summani yozasiz. Noto’g’ri yozilganini ✕ bilan o’chirasiz.' },
       { sel: '#t2', h: '👷 Shogirtlar', d: 'Shogirtlar: kunlik haqi, ishlagan kunlari, berilgan pul va qarz. «📤 Ilovaga taklif» bilan shogirdga havola yuborasiz.' },
       { sel: '[data-cinv]', h: '📤 Ilovaga taklif', d: 'Shogirdga havola yuboradi. U havolani ochib, parol qo\'yadi va obyektlaringizda «ishladim» deb yoza oladi.' },
@@ -250,7 +295,7 @@ add('Salom! Men Jarvisman. Gapiring yoki yozing. Masalan: «YouTube\'ni och», �
   function clk(sel) { return function () { var e = document.querySelector(sel); if (e) e.click(); }; }
   function vis0(sel) { var e = document.querySelector(sel); return !!(e && e.getBoundingClientRect().width > 0); }
   var CFG = {
-    jv: { hide: '#gear', on: function () { return true; }, set: function () { if (window.JV_SOZ) window.JV_SOZ(); }, gd: 'Buyruqlar qayerda bajarilishi (Avto / Kompyuter / Telefon), ovozli javob va telefonni uzish.' },
+    jv: { hide: '#gear', on: function () { return true; }, set: function () { if (window.JV_SOZ) window.JV_SOZ(); }, gd: 'Jarvis ovozi (erkak/ayol), 💬 suhbat rejimi, buyruqlar qayerda bajarilishi (Avto / Kompyuter / Telefon), ovozli javob va telefonni uzish.' },
     'jv-j': { on: function () { return true; }, set: function () { location.href = './'; }, gd: 'Sozlamalar Jarvis sahifasida (⚙).' },
     tr: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('set'); }, gd: 'Nonvoyxona nomi, filiallar, bildirishnomalar, ko\'rinish va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
     th: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('yub'); }, gd: 'Akaunt, ovoz, til va boshqa sozlamalar. Har ekranda shu yerda turadi.' },

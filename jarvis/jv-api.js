@@ -10,13 +10,15 @@ window.JV = (function () {
   addEventListener('hashchange', function () { if (/k=[A-Za-z0-9_-]{24,}/.test(location.hash)) location.reload(); }); // sahifa ochiq turganda havola bosilsa
   var KEY = function () { return LS.g('jv_key'); };
   var AGENTS = [
-    { id: 'direktor', n: 'Direktor', e: '🧭', r: 'Jamoa boshlig\'i: vazifani tahlil qiladi, kimga nima qilishni bo\'lib beradi, oxirida yakuniy xulosa yozadi.' },
-    { id: 'marketolog', n: 'AI Marketolog', e: '📈', r: 'Strategiya: maqsadli auditoriya, raqobatchilar, taklif (offer), reja.' },
-    { id: 'kopirayter', n: 'AI Kopirayter', e: '✍️', r: 'Matnlar: post, reklama matni, sarlavhalar (o\'zbek tilida, 2-3 variant).' },
-    { id: 'smm', n: 'AI SMM menejer', e: '📅', r: 'Kontent-reja: 7 kunlik jadval, har kuni qaysi post/reels, soati, hashtaglar.' },
-    { id: 'dizayner', n: 'AI Dizayner', e: '🎨', r: 'Vizual: rasm va banner uchun batafsil promptlar (AI rasm generatorlari uchun), rang va kompozitsiya.' },
-    { id: 'montajchi', n: 'AI Montajchi', e: '🎬', r: 'Video: Reels/Shorts ssenariysi kadrma-kadr (0-3 s xuk, sahnalar, subtitr matni, musiqa tavsiyasi).' },
-    { id: 'targetolog', n: 'AI Targetolog', e: '🎯', r: 'Reklama: auditoriya sozlamalari, byudjet taqsimoti, 3 ta reklama varianti va kutiladigan natija.' }];
+    { id: 'direktor', n: 'Direktor', e: '🧭', c: '#f97316', k: 'Jamoa boshlig\'i va rejachi', q: ['Vazifani tahlil qilish', 'Har agentga aniq topshiriq', 'Natijalarni jamlash', 'Yakuniy xulosa va keyingi 5 qadam'], r: 'Jamoa boshlig\'i: vazifani tahlil qiladi, har bir agentga aniq topshiriq beradi, oxirida yakuniy xulosa va keyingi qadamlarni yozadi.' },
+    { id: 'strateg', n: 'Strateg', e: '♟️', c: '#ef4444', k: 'Marketing strategiyasi', q: ['Maqsadli auditoriya va og\'riqlari', 'Raqobatchilar tahlili', 'Kuchli taklif (offer)', '30 kunlik reja va maqsadlar'], r: 'Strategiya: maqsadli auditoriya va uning og\'riqlari, raqobatchilar, kuchli taklif (offer), 30 kunlik reja va o\'lchanadigan maqsadlar.' },
+    { id: 'ssenarist', n: 'Ssenarist', e: '✍️', c: '#3b82f6', k: 'Ssenariy va matnlar', q: ['Reels/Shorts ssenariysi (0–3 s xuk)', 'Post va reklama matnlari', 'Sarlavhalar — 2–3 variant', 'O\'zbek tilida, sodda'], r: 'Matn va ssenariy: Reels/Shorts ssenariylari (0–3 soniya «xuk», sahnalar, aytiladigan gaplar), post matnlari, sarlavhalar — har biridan 2–3 variant, o\'zbek tilida.' },
+    { id: 'progrevchi', n: 'Progrevchi', e: '🔥', c: '#e11d48', k: 'Auditoriyani isitish', q: ['7 kunlik stories zanjiri', 'Qiziqtirish → ishonch → taklif', 'Har kun nima va qaysi soatda', 'So\'rovnoma va savollar'], r: 'Progrev: auditoriyani sotuvga tayyorlash — 7 kunlik stories va post zanjiri (qiziqtirish → ishonch → taklif), har kuni nima joylanadi va qaysi soatda.' },
+    { id: 'montajer', n: 'Montajer', e: '🎬', c: '#a855f7', k: 'Video montaj', q: ['Kadrma-kadr montaj rejasi', 'Subtitr matni', 'Musiqa va ovoz effektlari', 'CapCut\'da qadamlar'], r: 'Montaj: videoni kadrma-kadr yig\'ish rejasi — qaysi kadr necha soniya, o\'tishlar, subtitr matni, musiqa va ovoz effekti, CapCut\'da qanday qilish.' },
+    { id: 'dizayner', n: 'Dizayner', e: '🎨', c: '#22c55e', k: 'Post va banner dizayni', q: ['Tayyor post dizayni (1080×1080)', 'Rang va shrift tanlash', 'AI rasm uchun prompt', 'Banner va obloshka'], r: 'Dizayn: post va banner. Har vazifada kamida bitta TAYYOR Instagram post dizaynini 1080×1080 SVG kodida ber (```svg bloki ichida: viewBox="0 0 1080 1080", gradient fon, katta o\'zbekcha sarlavha, qisqa matn va chaqiruv; tashqi rasm va shrift ulama). Keyin rang va shrift izohi hamda AI rasm generatori uchun ingliz tilida prompt.' },
+    { id: 'targetolog', n: 'Targetolog', e: '🎯', c: '#6366f1', k: 'Target reklama', q: ['Auditoriya sozlamalari', 'Byudjet taqsimoti', '3 ta reklama varianti', 'Kutiladigan natija (narx, mijoz)'], r: 'Target reklama: auditoriya sozlamalari (yosh, hudud, qiziqishlar), byudjet taqsimoti, 3 ta reklama varianti va kutiladigan natija (bir mijoz narxi, mijozlar soni).' },
+    { id: 'yuklovchi', n: 'Yuklovchi', e: '📤', c: '#eab308', k: 'Joylash va jadval', q: ['Qaysi platforma, qachon', 'Tayyor izoh (caption)', 'Heshteglar', 'Joylashdan oldin tekshiruv'], r: 'Joylash: qaysi platformaga (Instagram, Telegram, YouTube Shorts, TikTok) qachon joylash jadvali, har biri uchun tayyor izoh (caption), heshteglar va joylashdan oldingi tekshiruv ro\'yxati.' }
+  ];
   function rq(o, ms) {
     var c = new AbortController(), t = setTimeout(function () { c.abort(); }, ms || 45000); o.key = KEY();
     return fetch(URL, { method: 'POST', body: JSON.stringify(o), signal: c.signal }).then(function (r) { return r.json(); }).finally(function () { clearTimeout(t); })
@@ -37,7 +39,7 @@ window.JV = (function () {
     var A = function (id) { return AGENTS.filter(function (a) { return a.id === id; })[0]; };
     setA('direktor', 'ishlayapti', { t0: Date.now() });
     var list = AGENTS.slice(1).map(function (a) { return a.id + ' — ' + a.r; }).join('\n');
-    var p = await ai('Vazifa: «' + matn + '»\n\nJamoa:\n' + list + '\n\nHar bir agentga shu vazifa bo\'yicha aniq topshiriq yoz. FAQAT JSON qaytar: {"tahlil":"1-2 gap","topshiriqlar":{"marketolog":"...","kopirayter":"...", ...}}. Kerak bo\'lmagan agentni qo\'shma.', 'Sen marketing jamoasining Direktorisan. O\'zbek tilida yoz.', true);
+    var p = await ai('Vazifa: «' + matn + '»\n\nJamoa:\n' + list + '\n\nHar bir agentga shu vazifa bo\'yicha aniq topshiriq yoz. FAQAT JSON qaytar: {"tahlil":"1-2 gap","topshiriqlar":{"strateg":"...","ssenarist":"...", ...}}. Kerak bo\'lmagan agentni qo\'shma.', 'Sen marketing jamoasining Direktorisan. O\'zbek tilida yoz.', true);
     if (!p.ok) { setA('direktor', 'xato'); v.holat = 'xato'; saveBul(); upd && upd(); return v; }
     var P = null; try { P = JSON.parse(p.text.slice(p.text.indexOf('{'), p.text.lastIndexOf('}') + 1)); } catch (e) { /* */ }
     if (!P || !P.topshiriqlar) { P = { tahlil: '', topshiriqlar: {} }; AGENTS.slice(1).forEach(function (a) { P.topshiriqlar[a.id] = matn; }); }
@@ -64,7 +66,7 @@ window.JV = (function () {
     holat: function () { return LOCAL ? get('/api/holat').then(function (j) { return { pc: true, kirgan: j.kirgan }; }) : rq({ jv: 'holat' }, 30000); },
     // rejim: 'avto' | 'pc' | 'tel'
     buyruq: async function (text, rejim, hist) {
-      if (LOCAL) return post('/api/buyruq', { text: text });
+      if (LOCAL) return post('/api/buyruq', { text: text, hist: hist || [] });
       var id = 'c' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
       var j = await rq({ jv: 'cmd', id: id, text: text, rejim: rejim === 'avto' ? '' : rejim, hist: hist || [] }, 60000);
       if (!j || !j.ok) return { javob: 'Aloqa yo\'q. Internetni tekshiring.' };
@@ -90,6 +92,8 @@ window.JV = (function () {
       bulutJamoa(matn, upd); return { ok: true, via: 'ai' };
     },
     natija: function (f) { return LOCAL ? fetch('/natija/' + f).then(function (r) { return r.text(); }) : Promise.resolve(LAST.matnlar[f] || 'Natija topilmadi (kompyuter o\'chiq bo\'lsa, uning natijalari 6 soatgacha saqlanadi).'); },
+    // tabiiy ovoz (Gemini TTS): {ok, pcm(base64 WAV yoki PCM), mime}
+    tts: function (text, voice) { return LOCAL ? post('/api/tts', { text: text, voice: voice }) : rq({ jv: 'tts', text: text, voice: voice }, 40000); },
     kirish: function () { return LOCAL ? post('/api/kirish') : this.buyruq('__kirish', 'pc'); }
   };
 })();
