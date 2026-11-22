@@ -1292,6 +1292,21 @@ lockNow();
 (function () {
   if (window.__yordam) return; window.__yordam = 1;
   var D = {
+    /* ---------- Jarvis (shaxsiy yordamchi, telefon + kompyuter) ---------- */
+    jv: { t: '🔵 Jarvis', i: 'Shaxsiy ovozli yordamchingiz. Telefondan gapirasiz yoki yozasiz — kompyuter yoqiq bo\'lsa buyruq kompyuterdagi Jarvis\'ga boradi (Claude bajaradi, kompyuterda dastur va saytlarni ochadi), kompyuter o\'chiq bo\'lsa javobni bulutdagi AI (Gemini) beradi. Javobni ovoz bilan o\'qib beradi.', s: [
+      { sel: '#mic', h: '🎤 Gapirish', d: 'Bosing va gapiring (o\'zbekcha). Gapirib bo\'lgach o\'zi yuboradi. Birinchi marta telefon mikrofonga ruxsat so\'raydi — «Ruxsat berish» ni bosing.' },
+      { sel: '#t', h: '⌨️ Yozish', d: 'Buyruqni yozib ➤ ni bosing. Masalan: «soat nechchi», «YouTube\'ni och», «Google\'da elektr narxi qidir», «ertangi ish rejamni yoz» yoki istalgan savol.' },
+      { sel: '#rej', h: '🔄 Qayerda bajariladi', d: '🟢 — kompyuter yoqiq va ulangan, ⚪ — o\'chiq. Bosing: Avto (kompyuter bo\'lsa unda, bo\'lmasa bulutda), 🖥 Kompyuter (faqat kompyuterda), 📱 Telefon (telefonda: saytlar telefonda ochiladi, javob bulutdan).' },
+      { sel: '#ctl', h: '🖥 Kompyuterni boshqarish', d: 'Kompyuter ulangan bo\'lsa chiqadi. 📸 Ekranni ko\'rish — kompyuter ekranining hozirgi rasmi keladi (bosib kattalashtirasiz). 🔒 Qulflash — kompyuter qulflanadi. ⏻ O\'chirish — 1 daqiqadan keyin o\'chadi. ✋ Bekor qilish — o\'chirishni to\'xtatadi.' },
+      { sel: '#wake', h: '👂 Doim tinglash', d: 'Yoqilsa, ilova ochiq turganda «Jarvis, …» deb chaqirsangiz o\'zi eshitadi. Telefon ekrani o\'chsa tinglash to\'xtaydi.' },
+      { sel: '#agl', h: '🤖 Agentlar', d: 'AI Agentlar jamoasi: vazifa berasiz, Direktor uni Marketolog, Kopirayter, SMM, Dizayner, Montajchi va Targetologga bo\'lib beradi.' },
+      { sel: '#kir', h: '⚠️ Kirish', d: 'Kompyuterdagi Claude hisobiga kirilmagan. «Kirish» ni bossangiz kompyuterda kirish sahifasi ochiladi — kompyuter oldida bir marta kirasiz.' }] },
+    'jv-j': { t: '🏢 AI Agentlar jamoasi', i: 'Vazifa berasiz — Direktor uni agentlarga bo\'lib beradi, ular bir vaqtda 3 tadan ishlaydi, oxirida Direktor xulosa yozadi. Kompyuter yoqiq bo\'lsa kompyuterdagi Claude bajaradi, o\'chiq bo\'lsa bulutda (☁️ belgisi).', s: [
+      { sel: '#t', h: '✍️ Vazifa', d: 'Nima kerakligini yozing va «Yuborish» ni bosing. Masalan: «Elektrik xizmatim uchun Instagram\'da 1 oylik reklama kampaniyasi».' },
+      { sel: '.desk', h: '🪑 Agent stoli', d: 'Ustidagi yorliq: bo\'sh, navbatda, ishlayapti (sariq), tayyor (yashil), xato (qizil). Bossangiz — agent bajargan ishlari, o\'rtacha vaqti va natijalari chiqadi.' },
+      { sel: '#pcs', h: '🟢 Kompyuter holati', d: '🟢 — kompyuter ulangan, vazifani Claude bajaradi. ⚪ — o\'chiq, vazifa bulutda bajariladi va kompyuter yoqilganda unga ham o\'tadi.' },
+      { sel: '[data-f]', h: '📄 Natija', d: 'Agent yozgan to\'liq natijani ochadi (matn, reja, ssenariy).' },
+      { sel: '#jvl', h: '🔵 Jarvis', d: 'Ovozli yordamchiga qaytish.' }] },
     /* ---------- Nonvoyxona: rahbar ---------- */
     tr: { t: '🥖 Nonvoyxona — rahbar', i: 'Nonvoyxonaning hamma hisob-kitobi: do\'konlarga berilgan non, pul, nasiya, mashina, kassa, hodimlar va hisobot. ↔ Barmoq bilan yonga suring: o‘ngdan chapga — keyingi bo‘lim, chapdan o‘ngga — oldingi bo‘lim; bo‘limi yo‘q ichki oynada — bir qadam orqaga. «Orqaga» tugmasi ham har safar bitta qadam qaytaradi. ⟳ Tepadan pastga tortsangiz — ma‘lumot serverdan yangilanadi, turgan joyingiz o‘zgarmaydi. ✕ Yarim ekran oynani yopsangiz («Yopish», «✕» yoki tashqarisini bosish) — bitta qadam orqaga: oldingi oyna qaytadi, bosh menyuga chiqib ketmaydi.', s: [
       { x: 'Do\'konlar', h: '🏪 Do\'konlar', d: 'Har bir do\'konga qancha non berildi, qancha qaytdi, qancha pul olindi yoki nasiya qoldi — shu yerda yoziladi. Do\'konni bossangiz, uning to\'liq hisobi chiqadi.' },
@@ -1401,6 +1416,8 @@ lockNow();
   function clk(sel) { return function () { var e = document.querySelector(sel); if (e) e.click(); }; }
   function vis0(sel) { var e = document.querySelector(sel); return !!(e && e.getBoundingClientRect().width > 0); }
   var CFG = {
+    jv: { hide: '#gear', on: function () { return true; }, set: function () { if (window.JV_SOZ) window.JV_SOZ(); }, gd: 'Buyruqlar qayerda bajarilishi (Avto / Kompyuter / Telefon), ovozli javob va telefonni uzish.' },
+    'jv-j': { on: function () { return true; }, set: function () { location.href = './'; }, gd: 'Sozlamalar Jarvis sahifasida (⚙).' },
     tr: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('set'); }, gd: 'Nonvoyxona nomi, filiallar, bildirishnomalar, ko\'rinish va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
     th: { hide: '#gear', on: function () { var s = gS(); return !!(s && s.tok); }, set: function () { go('yub'); }, gd: 'Akaunt, ovoz, til va boshqa sozlamalar. Har ekranda shu yerda turadi.' },
     'hk-i': { on: function () { return !!document.getElementById('prof'); }, set: clk('#prof'), gd: 'Sozlamalar: raqamingiz va muddatingiz, 💳 To\'lov, 🆘 Yordam markazi, soha, parolni o\'zgartirish va ilovadan chiqish.' },
@@ -1412,6 +1429,7 @@ lockNow();
   };
   function key() {
     var a = window.YAPP || '';
+    if (a === 'jv') return /jamoa/.test(location.pathname) ? 'jv-j' : 'jv';
     if (a === 'nr') return 'tr'; if (a === 'nh') return 'th';
     if (a === 'hk') { var p = location.pathname; if (/shogird/.test(p)) return 'hk-sg'; if (/gate/.test(p)) return 'gate'; if (/hisob\.html/.test(p)) return 'hk-h'; if (/(\/|index\.html)$/.test(p)) return 'hk-i'; if (/sxema/.test(p)) return 'hk-sx'; return 'hk-x'; }
     return a;
