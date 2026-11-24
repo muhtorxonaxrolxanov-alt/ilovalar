@@ -1,5 +1,5 @@
 /* tez.py: avval saqlangan nusxa, yangisi orqada. Versiya — fayllar mazmuni xeshi. */
-const P='jarvis-',C=P+'0251ff71ba85',FILES=["./icon-192.png", "./icon-512.png", "./", "./jamoa.html", "./jv-api.js", "./manifest.webmanifest"];
+const P='jarvis-',C=P+'70f8c4773e7b',FILES=["./icon-192.png", "./icon-512.png", "./", "./jamoa.html", "./jv-api.js", "./manifest.webmanifest"];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>Promise.all(FILES.map(f=>fetch(new Request(f,{cache:'reload'})).then(r=>{if(!r.ok)throw 0;return c.put(new Request(new URL(f,self.registration.scope).href),r)})))).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith(P)&&k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET')return;const u=new URL(r.url);if(u.origin!==location.origin||!u.href.startsWith(self.registration.scope))return;
