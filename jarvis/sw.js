@@ -1,4 +1,4 @@
-const C='jarvis-1795357235';
+const C='jarvis-1795540900';
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./','./jamoa.html','./jv-api.js','./manifest.webmanifest','./icon-192.png'])).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith('jarvis-')&&k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 // avval internetdan (yangi versiya darhol), internet yo'q bo'lsa — saqlangan nusxa
