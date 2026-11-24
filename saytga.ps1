@@ -36,6 +36,8 @@ New-Item -ItemType Directory -Force "$site\yuklash\apk" | Out-Null
 Get-ChildItem "$site\android\out\*.apk" | Group-Object { $_.Name -replace '-[\d.]+\.apk$', '' } | ForEach-Object {
   $f = $_.Group | Sort-Object LastWriteTime -Descending | Select-Object -First 1
   Copy-Item $f.FullName "$site\yuklash\apk\$($_.Name).apk" -Force }
+# 2c) Hamma ilova darhol ochilsin: avval telefondagi nusxa, ochilish ekrani (2026-11-24)
+python "$site\yordam\tez.py" $site
 # 3) Yuborish
 Set-Location $site
 git add -A

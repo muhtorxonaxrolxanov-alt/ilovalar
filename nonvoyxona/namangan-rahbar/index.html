@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uz"><head><meta charset="utf-8"><script>(function(){if(location.protocol==="file:"||/[?&]sub=/.test(location.search))return;var l=null;try{l=JSON.parse(localStorage.getItem("nv_lic")||"null")}catch(e){}if(!(l&&l.ok&&l.until>Date.now())){location.replace("/ilovalar/hisob/gate.html?prod=nv&back="+encodeURIComponent(location.pathname))}})();</script><script>(function(){window.__realLS=window.localStorage;var l=null;try{l=JSON.parse(localStorage.getItem("nv_lic")||"null")}catch(e){}if(!l||!l.phone)return;var p=String(l.phone).replace(/\D/g,"");if(["998913454115"].indexOf(p)>=0)return;var MU="https://script.google.com/macros/s/AKfycbzpYQh9vO6_HsGL8n_zKZqDHeYhWIiT2J8C1upzlxOXY0hSRpnG77uLcFgMoLth2T1s/exec";if(!MU){window.NVTERR=1;return}var g=String(l.g||"").split("|");if(g.length!=4||+g[2]<Date.now()){localStorage.removeItem("nv_lic");location.replace("/ilovalar/hisob/gate.html?prod=nv&back="+encodeURIComponent(location.pathname));return}window.NVMT=MU+"?t="+p;window.NVT=p;window.NVG=l.g})();</script><meta name="theme-color" content="#7c2d12"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Namangan rahbar"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" type="image/png" href="icon-192.png"><script>window.NVAPP="nr";window.NVVER="4.8";window.NVOWN=["998913454115"];</script><script>/* Nonvoyxona — veb-ilova (iPhone, kompyuter, brauzer) uchun Android ko'prigi o'rnini bosuvchi.
+<html lang="uz"><head><meta charset="utf-8"><script>(function(){if(location.protocol==="file:"||/[?&]sub=/.test(location.search))return;var l=null;try{l=JSON.parse(localStorage.getItem("nv_lic")||"null")}catch(e){}if(!(l&&l.ok&&l.until>Date.now())){location.replace("/ilovalar/hisob/gate.html?prod=nv&back="+encodeURIComponent(location.pathname))}})();</script><script>(function(){window.__realLS=window.localStorage;var l=null;try{l=JSON.parse(localStorage.getItem("nv_lic")||"null")}catch(e){}if(!l||!l.phone)return;var p=String(l.phone).replace(/\D/g,"");if(["998913454115"].indexOf(p)>=0)return;var MU="https://script.google.com/macros/s/AKfycbzpYQh9vO6_HsGL8n_zKZqDHeYhWIiT2J8C1upzlxOXY0hSRpnG77uLcFgMoLth2T1s/exec";if(!MU){window.NVTERR=1;return}var g=String(l.g||"").split("|");if(g.length!=4||+g[2]<Date.now()){localStorage.removeItem("nv_lic");location.replace("/ilovalar/hisob/gate.html?prod=nv&back="+encodeURIComponent(location.pathname));return}window.NVMT=MU+"?t="+p;window.NVT=p;window.NVG=l.g})();</script><meta name="theme-color" content="#7c2d12"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Namangan rahbar"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" type="image/png" href="icon-192.png"><script>window.NVAPP="nr";window.NVVER="4.9";window.NVOWN=["998913454115"];</script><script>/* Nonvoyxona — veb-ilova (iPhone, kompyuter, brauzer) uchun Android ko'prigi o'rnini bosuvchi.
  * Faqat window.Android YO'Q joyda ishlaydi (haqiqiy Android ilovaga ta'sir qilmaydi).
  * build_web.py har bir ilova sahifasining eng boshiga qo'yadi; undan oldin window.NVAPP va window.NVVER beriladi. */
 (function () {
@@ -144,11 +144,18 @@ try{var ls=window.localStorage,ow=ls.getItem("nv_url"),d=ls.getItem("nv_dataurl"
 var wipe=bad(ow)||bad(S1&&S1.url),ks=[];for(var i=0;i<ls.length;i++)ks.push(ls.key(i));
 ks.forEach(function(k){if(/@/.test(k)&&/^(nv|nonvoyxona)/.test(k))ls.removeItem(k);else if(wipe&&/^(nv|nonvoyxona|ishchi)/.test(k)&&!/^nv_(bright|bg|col|pf)$/.test(k))ls.removeItem(k)});
 ls.removeItem("nv_prof");ls.removeItem("nv_profs");if(NU)ls.setItem("nv_dataurl",NU)}catch(e){}})();
-</script><script id="pend">(function(){try{var ls=window.localStorage,sn=ls.getItem("nvx_snap");if(!sn)return;var o=JSON.parse(sn),ks=[];for(var i=0;i<ls.length;i++)ks.push(ls.key(i));
+</script><script id="pend">/* 2026-11-24 (4.9): tezlik — bir xil hisob qayta-qayta qilinmasin */
+/* xotiraga yozish ekranni to'xtatmasin: 150 ms da bir marta; ilova yopilsa/fonga ketsa — darhol */
+(function(){var T=0,F={};function fl(){clearTimeout(T);T=0;var f=F;F={};for(var k in f)try{localStorage.setItem(k,JSON.stringify(f[k]()))}catch(e){}}
+window.nvStore=function(k,g){F[k]=g;if(!T)T=setTimeout(fl,150)};window.nvStoreNow=fl;addEventListener("pagehide",fl);addEventListener("beforeunload",fl);document.addEventListener("visibilitychange",function(){if(document.hidden)fl()})})();
+window.nvZSig=function(){try{var L=S.zkL||[],n=L.length,k=0;for(var i=0;i<n;i++)k+=(L[i].O||[]).length*(i+7);return n+"_"+k+"_"+(n?L[n-1].id:"")}catch(e){return Math.random()}};
+(function(){var M={},ref=null,sg="",tick=0;window.nvMemoZ=function(k,f){var c=window.S;try{c=S}catch(e){}if(!tick){tick=1;Promise.resolve().then(function(){tick=0});var s=nvZSig();if(c&&c.zkL!==ref||s!==sg){M={};ref=c&&c.zkL;sg=s}}else if(c&&c.zkL!==ref){M={};ref=c.zkL;sg=nvZSig()}
+if(!(k in M))M[k]=f();return M[k]}})();
+(function(){try{var ls=window.localStorage,sn=ls.getItem("nvx_snap");if(!sn)return;var o=JSON.parse(sn),ks=[];for(var i=0;i<ls.length;i++)ks.push(ls.key(i));
 var EX=/^nv_(aicfg|aimods|aislow|aifh|vdone|prof|profs|dataurl|aio|rem|zkm|url)$/;ks.forEach(function(k){if(/^nv_/.test(k)&&k.indexOf("@")<0&&!EX.test(k)&&!(k in o))ls.removeItem(k)});
 Object.keys(o).forEach(function(k){ls.setItem(k,o[k])});ls.removeItem("nvx_snap")}catch(e){}})();
 
-window.NVBUILD=1795544583994;window.nvNorm=function(v){return String(v==null?"":v).replace(/,/g,".").replace(/[^\d.]/g,"").replace(/\.{2,}/g,".").replace(/^\.+|\.+$/g,"")};window.nvNewer=function(x){if(!x)return false;var a=nvNorm(x.v),b=nvNorm(typeof APPV!="undefined"?APPV:"");if(!a||a==b)return false;try{return newer(a,b)}catch(e){return false}};
+window.NVBUILD=1795546015300;window.nvNorm=function(v){return String(v==null?"":v).replace(/,/g,".").replace(/[^\d.]/g,"").replace(/\.{2,}/g,".").replace(/^\.+|\.+$/g,"")};window.nvNewer=function(x){if(!x)return false;var a=nvNorm(x.v),b=nvNorm(typeof APPV!="undefined"?APPV:"");if(!a||a==b)return false;try{return newer(a,b)}catch(e){return false}};
 </script><script id="prof">(function(){
 var DEFNAME="Namangan nonvoyxona",OTHER="",OTHERU="";
 var LS=window.localStorage,SP=Storage.prototype,gI=SP.getItem,sI=SP.setItem,rI=SP.removeItem;
@@ -206,7 +213,7 @@ input,select{width:100%;margin:3px 0}
 h2{font-size:17px;margin:18px 0 4px}.empty{color:var(--mu);padding:8px 0}
 table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:6px 4px;border-bottom:1px solid var(--bd);text-align:right}th:first-child,td:first-child{text-align:left}
 .w{overflow-x:auto}
-</style><style id="gearfix">#gear{position:fixed!important;top:calc(8px + env(safe-area-inset-top,0px))!important;right:10px!important;width:42px!important;height:42px!important;border-radius:50%!important;padding:0!important;margin:0!important;font-size:22px!important;z-index:6;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.25)}</style></head><body>
+</style><style id="gearfix">#gear{position:fixed!important;top:calc(8px + env(safe-area-inset-top,0px))!important;right:10px!important;width:42px!important;height:42px!important;border-radius:50%!important;padding:0!important;margin:0!important;font-size:22px!important;z-index:6;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px rgba(0,0,0,.25)}</style></head><body><div id="ysp" style="position:fixed;inset:0;z-index:2147483600;display:flex;align-items:center;justify-content:center;background:#F6EFE3"><style>@media(prefers-color-scheme:dark){#ysp{background:#14110f!important}}</style><img alt="" width="112" height="112" style="border-radius:26px" src="data:image/webp;base64,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"></div><script>(function(){var d=0,r=function(){if(d)return;d=1;requestAnimationFrame(function(){requestAnimationFrame(function(){var e=document.getElementById("ysp");if(e)e.remove()})})};document.addEventListener("DOMContentLoaded",function(){setTimeout(r,0)});setTimeout(r,6000)})()</script>
 <h1 style="display:flex;justify-content:space-between;align-items:center"><span id="brsw"></span><button id="gear" onclick="go('set')" style="padding:6px 14px" aria-label="Sozlamalar">⚙</button></h1><div class="sub" id="date" style="display:none"></div>
 <main id="app"></main><nav id="nav"></nav>
 <script>
@@ -221,7 +228,7 @@ function r3(v){return Math.round(v*1000)/1000}
 function toast(t){var e=document.createElement("div");e.textContent=t;e.style.cssText="position:fixed;left:16px;right:16px;bottom:80px;background:#2b1d12;color:#fff;padding:12px;border-radius:8px;z-index:9;text-align:center";document.body.appendChild(e);setTimeout(function(){e.remove()},2500)}
 function ask(msg,withInp,cb){var o=document.createElement("div");o.style.cssText="position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;padding:20px;z-index:9";o.innerHTML='<div class="tile" style="width:100%;max-width:340px"><div style="margin-bottom:8px">'+msg+'</div>'+(withInp?'<input id="ask_v" type="number" inputmode="decimal" step="any">':'')+'<div class="two" style="margin-top:8px"><button id="ask_n">Bekor</button><button class="b" id="ask_y" style="margin:0">OK</button></div></div>';document.body.appendChild(o);var c=function(){document.body.removeChild(o)};document.getElementById("ask_n").onclick=c;document.getElementById("ask_y").onclick=function(){var v=withInp?+document.getElementById("ask_v").value:1;c();cb(v)};if(withInp)document.getElementById("ask_v").focus()}
 function dinp(id,ph){return '<input id="'+id+'" placeholder="'+ph+'" type="number" inputmode="decimal" step="any">'}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}render()}
+function save(){nvStore(KEY,function(){return S});render()}
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
 function m(n){return Math.round(n).toLocaleString("ru-RU")+" so'm"}
 function uid(){return Date.now()+""+Math.floor(Math.random()*999)}
@@ -408,7 +415,7 @@ b.slice().reverse().forEach(function(d){h+=row(esc(bn(d.b)),W(d)+d.bags+" qop"+(
 h+='<h2>Bugun sotilgan</h2>';if(!s.length)h+='<div class="empty">'+"Yo'q."+'</div>';
 s.slice().reverse().forEach(function(d){h+=row(esc(bn(d.b))+" \u00d7 "+d.qty,W(d)+tm(d.t),m(d.amt),"sell",d.i)});return h}
 function aPer(id){ask("1 qop uchun qancha sarf bo'ladi?",1,function(v){var m0=S.mats.find(function(y){return y.id==id});m0.per=v>0?v:0;save()})}
-function persist(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function persist(){nvStore(KEY,function(){return S})}
 function rmQ(id){S.bake=S.bake.filter(function(x){return x.i!=id});S.sell=S.sell.filter(function(x){return x.i!=id})}
 function recAll(L){var R={};L.filter(function(x){return x.k=="rec"}).sort(function(p,q){return p.t-q.t}).forEach(function(x){var b=R[x.b]=R[x.b]||{};(b[x.n]=b[x.n]||[]).push({t:x.t,per:+x.per||0})});return R}
 function skCalc(a){var gone={};a.forEach(function(x){if(x.k=="del")gone[x.x]=1});
@@ -426,10 +433,10 @@ return{rec:0,list:[]}}
 function sync(man){if(!SU){if(man)toast("Avval server manzilini kiriting");return}
 fetch(SU).then(function(r){return r.json()}).then(function(a){if(!Array.isArray(a))throw 0;S.srv=a;S.gone=S.gone||[];var cb=0,cs=0,cd=0;
 a.forEach(function(x){
-if(x.k=="del"){if(S.gone.indexOf(x.x)<0){S.gone.push(x.x);rmQ(x.x);cd++}return}
-if(S.gone.indexOf(x.i)>=0)return;
-if(x.k=="bake"&&!S.bake.some(function(y){return y.i==x.i})){S.bake.push({i:x.i,t:x.t,w:x.w,r:x.r,b:x.b,bags:x.bags,qty:x.qty,brak:x.brak,used:[],f:x.f||"1"});cb++}
-if(x.k=="sell"&&!S.sell.some(function(y){return y.i==x.i})){S.sell.push({i:x.i,t:x.t,w:x.w,b:x.b,qty:x.qty,amt:x.amt,f:x.f||"1",pay:x.pay||"n"});cs++}
+if(x.k=="del"){if(!GN[x.x]){GN[x.x]=1;S.gone.push(x.x);if(BK[x.x]||SL[x.x]){rmQ(x.x);cd++}}return}
+if(GN[x.i])return;
+if(x.k=="bake"&&!BK[x.i]){BK[x.i]=1;S.bake.push({i:x.i,t:x.t,w:x.w,r:x.r,b:x.b,bags:x.bags,qty:x.qty,brak:x.brak,used:[],f:x.f||"1"});cb++}
+if(x.k=="sell"&&!SL[x.i]){SL[x.i]=1;S.sell.push({i:x.i,t:x.t,w:x.w,b:x.b,qty:x.qty,amt:x.amt,f:x.f||"1",pay:x.pay||"n"});cs++}
 });
 syncMsg="Yangilandi "+tm(Date.now())+(cb+cs?": +"+cb+" yopish, +"+cs+" sotuv":"");
 if(cb||cs||cd)save();else{persist();if(tab=="qab"||tab=="hisob")render()}
@@ -504,7 +511,7 @@ function onVoiceErr(m){setL(0);vmsg(m)}
 var ov0=onVoice;onVoice=function(a){setL(0);ov0(a)};
 function onBack(){var c=document.getElementById("ask_n");if(c){c.click();return true}if(typeof S!="undefined"&&S.wn===""||(typeof S!="undefined"&&S.url===""))return false;if(tab!="bosh"){go("bosh");return true}return false}
 (function(){var s=document.createElement("style");s.textContent=".sc{flex:1;text-align:center;font-size:12px;line-height:1.3}.sc svg{width:100%;height:86px}.sc.idle svg{filter:grayscale(1);opacity:.5}.sc.on .kn{animation:kn .45s infinite alternate ease-in-out}.sc.on .fl{animation:fl .35s infinite alternate}.sc.on .hd{animation:hd .7s infinite alternate}@keyframes kn{from{transform:rotate(-22deg)}to{transform:rotate(18deg)}}@keyframes fl{from{transform:scale(1,1)}to{transform:scale(1.18,.82)}}@keyframes hd{from{transform:rotate(-8deg)}to{transform:rotate(22deg)}}#hbt{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom,0px));width:64px;height:64px;border-radius:18px;background:var(--sf);color:var(--tx);border:1px solid var(--bd);box-shadow:0 4px 14px rgba(0,0,0,.25);z-index:5;display:none;flex-direction:column;align-items:center;justify-content:center;padding:0;gap:2px;font-size:11px}.bt{position:relative;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px;border-radius:14px;border:2px solid var(--bd);background:var(--sf);color:var(--tx)}.bt.sel{border-color:var(--ac)}.bd{position:absolute;top:6px;right:6px;background:var(--ac);color:#fff;border-radius:12px;min-width:26px;padding:2px 7px;font-weight:bold;z-index:1}.pn{position:fixed;left:0;right:0;bottom:0;background:var(--sf);border-top:1px solid var(--bd);padding:10px 12px calc(10px + env(safe-area-inset-bottom,0px));z-index:6}.ch{width:auto!important;flex:1;padding:9px 6px}";document.head.appendChild(s)})();
-var APPV="4.8",skipV="";
+var APPV="4.9",skipV="";
 function qh(s){return String(s).replace(/[&<>"]/g,"")}
 function newer(a,b){var x=String(a).trim().replace(/[^0-9.]+/g,".").split(".").map(Number),y=String(b).trim().replace(/[^0-9.]+/g,".").split(".").map(Number);for(var i=0;i<4;i++){var p=x[i]||0,q=y[i]||0;if(p!=q)return p>q}return false}
 function dlU(u){u=String(u||"");var m=u.match(/\/d\/([\w-]+)/)||u.match(/[?&]id=([\w-]+)/);return (/drive\.google\.com/.test(u)&&m)?"https://drive.google.com/uc?export=download&confirm=t&id="+m[1]:u}
@@ -793,7 +800,7 @@ function uxNtH(){return '<h2>🔔 Bildirishnomalar</h2>'+uxSw(pfOn("nt"),"ntTog(
 setInterval(sync,20000);sync();
 SUB.nonlar=["\ud83c\udf5e","Yangi non \u00b7 Narx \u00b7 O'chirish"];
 var BL=[];
-function brList(){var A=S.srv||[],g={},M={};A.forEach(function(x){if(x.k=="del")g[x.x]=1});A.filter(function(x){return x.k=="bread"&&!g[x.i]}).sort(function(p,q){return p.t-q.t}).forEach(function(x){M[x.n]=x});return Object.keys(M).map(function(n){return M[n]})}
+function brList(){var A=S.srv||[];if(brList.a===A&&brList.l===A.length&&brList.t===A[A.length-1])return brList.r.slice();var r=brList0();brList.a=A;brList.l=A.length;brList.t=A[A.length-1];brList.r=r;return r.slice()}function brList0(){var A=S.srv||[],g={},M={};A.forEach(function(x){if(x.k=="del")g[x.x]=1});A.filter(function(x){return x.k=="bread"&&!g[x.i]}).sort(function(p,q){return p.t-q.t}).forEach(function(x){M[x.n]=x});return Object.keys(M).map(function(n){return M[n]})}
 function postItems(a){S.srv=(S.srv||[]).concat(a);if(SU)fetch(SU,{method:"POST",body:JSON.stringify({items:a})}).catch(function(){toast("Yuborilmadi, internetni tekshiring")});else toast("Server manzili kiritilmagan");save()}
 function nAdd(){var n=V("bn1"),p=N("bp1");if(!n||!(p>0))return toast("Nomi va narxini yozing");postItems([{i:uid(),k:"bread",n:n,p:p,t:Date.now()}])}
 function nPrice(i){var b=BL[i];ask("\u00ab"+esc(b.n)+"\u00bb yangi narxi (so'm)",1,function(v){if(v>0)postItems([{i:uid(),k:"bread",n:b.n,p:v,t:Date.now()}])})}
@@ -815,7 +822,7 @@ function isEmptyLocal(){return !SF.some(function(k){return(S[k]||[]).length})}
 function snapStr(){var d={};SF.forEach(function(k){d[k]=S[k]||[]});return JSON.stringify(d)}
 function snapPush(){if(!SU||!S.tok||snapBusy)return;var s=snapStr();if(s===lastStr){S.dirty=0;return}snapBusy=1;
 api(SU,"snapput",{tok:S.tok,data:s}).then(function(r){snapBusy=0;if(r.ok){S.snapTs=r.ts;S.dirty=0;lastStr=s;try{nvSnapBase(s)}catch(e){}persist()}else if(r.err=="auth")authLost()}).catch(function(){snapBusy=0})}
-function snapSoon(){S.dirty=1;clearTimeout(snapT);snapT=setTimeout(snapPush,4000)}
+function snapSoon(){S.dirty=1;clearTimeout(snapT);snapT=setTimeout(snapPush,6000)}
 function snapPull(force){if(!SU||!S.tok||(S.dirty&&!force))return;
 api(SU,"snapget",{tok:S.tok}).then(function(r){if(!r.ok)return;if(!r.data){if(!isEmptyLocal())snapSoon();return}
 if(r.ts>(S.snapTs||0)){var d=JSON.parse(r.data),mg=0;if(window.nvSnapMerge&&!isEmptyLocal())mg=nvSnapMerge(d);else{SF.forEach(function(k){S[k]=(k in d)?(d[k]||[]):(S[k]||[])});try{nvSnapBase(r.data)}catch(e){}}S.snapTs=r.ts;if(mg){lastStr="";persist();render();snapSoon()}else{S.dirty=0;lastStr=snapStr();persist();render()}}
@@ -847,12 +854,12 @@ function postItems(a){S.srv=(S.srv||[]).concat(a);if(!SU||!S.tok)toast("Avval ak
 function pubVer(){var v=V("vv"),u=V("vu");if(!v||!u)return toast("Versiya va havolani yozing");postItems([{i:uid(),k:"ver",v:v,u:u,w:V("vw"),t:Date.now()}]);toast("E'lon qilindi \u2713")}
 function rm(c,i){ask("O'chirilsinmi?",0,function(){if(c=="bake"||c=="sell"){S.gone=S.gone||[];S.gone.push(i);var t={i:uid(),k:"del",x:i,t:Date.now()};S.srv=(S.srv||[]).concat([t]);if(SU&&S.tok)api(SU,"put",{tok:S.tok,items:[t]}).catch(function(){})}S[c]=S[c].filter(function(x){return x.i!=i});save()})}
 function sync(man){if(!SU||!S.tok){if(man)toast("Avval akauntga kiring");return}
-api(SU,"get",{tok:S.tok}).then(function(r){if(r.err=="auth"){authLost();throw 0}if(!r.ok||!Array.isArray(r.items)){syncMsg=emsg(r);if(tab=="set")render();return}var a=r.items;(S.outq||[]).forEach(function(y){if(!a.some(function(z){return z.i==y.i}))a.push(y)});S.srv=a;S.gone=S.gone||[];var cb=0,cs=0,cd=0;
+api(SU,"get",{tok:S.tok}).then(function(r){if(r.err=="auth"){authLost();throw 0}if(!r.ok||!Array.isArray(r.items)){syncMsg=emsg(r);if(tab=="set")render();return}if(r.same){syncMsg="Yangilandi "+tm(Date.now());return}var a=r.items,hv={};a.forEach(function(z){hv[z.i]=1});(S.outq||[]).forEach(function(y){if(!hv[y.i])a.push(y)});S.srv=a;S.gone=S.gone||[];var cb=0,cs=0,cd=0,GN={},BK={},SL={};S.gone.forEach(function(g){GN[g]=1});S.bake.forEach(function(y){BK[y.i]=1});S.sell.forEach(function(y){SL[y.i]=1});
 a.forEach(function(x){
-if(x.k=="del"){if(S.gone.indexOf(x.x)<0){S.gone.push(x.x);rmQ(x.x);cd++}return}
-if(S.gone.indexOf(x.i)>=0)return;
-if(x.k=="bake"&&!S.bake.some(function(y){return y.i==x.i})){S.bake.push({i:x.i,t:x.t,w:x.w,r:x.r,b:x.b,bags:x.bags,qty:x.qty,brak:x.brak,used:[],f:x.f||"1"});cb++}
-if(x.k=="sell"&&!S.sell.some(function(y){return y.i==x.i})){S.sell.push({i:x.i,t:x.t,w:x.w,b:x.b,qty:x.qty,amt:x.amt,f:x.f||"1",pay:x.pay||"n"});cs++}
+if(x.k=="del"){if(!GN[x.x]){GN[x.x]=1;S.gone.push(x.x);if(BK[x.x]||SL[x.x]){rmQ(x.x);cd++}}return}
+if(GN[x.i])return;
+if(x.k=="bake"&&!BK[x.i]){BK[x.i]=1;S.bake.push({i:x.i,t:x.t,w:x.w,r:x.r,b:x.b,bags:x.bags,qty:x.qty,brak:x.brak,used:[],f:x.f||"1"});cb++}
+if(x.k=="sell"&&!SL[x.i]){SL[x.i]=1;S.sell.push({i:x.i,t:x.t,w:x.w,b:x.b,qty:x.qty,amt:x.amt,f:x.f||"1",pay:x.pay||"n"});cs++}
 });
 syncMsg="Yangilandi "+tm(Date.now())+(cb+cs?": +"+cb+" yopish, +"+cs+" sotuv":"");
 if(cb||cs||cd)save();else{persist();if(tab=="qab"||tab=="hisob")render()}
@@ -958,7 +965,7 @@ SUB.vaz=["\ud83d\udcdd","Hamirchiga vazifa \u00b7 Necha qop \u00b7 Qanday non"];
 var rn4=render;render=function(){rn4();if(tab=="vaz"&&S.acc)document.getElementById("app").innerHTML+=vazH()};
 SUB.zk=["\ud83d\udce5","Excel zakazni yuklash \u00b7 qaysi nondan nechta"];
 var ZK=null,ZKM={};try{ZKM=JSON.parse(localStorage.getItem("nv_zkm")||"{}")}catch(e){}
-function zkTr(s){var M={"а":"a","б":"b","в":"v","г":"g","д":"d","е":"e","ё":"yo","ж":"j","з":"z","и":"i","й":"y","к":"k","л":"l","м":"m","н":"n","о":"o","п":"p","р":"r","с":"s","т":"t","у":"u","ф":"f","х":"x","ц":"ts","ч":"ch","ш":"sh","щ":"sh","ъ":"","ы":"i","ь":"","э":"e","ю":"yu","я":"ya","ў":"o","қ":"q","ғ":"g","ҳ":"h"};return String(s||"").toLowerCase().replace(/[\u0400-\u04ff]/g,function(c){return M[c]!==undefined?M[c]:c})}
+function zkTr(s){var c=zkTr.c||(zkTr.c=Object.create(null)),k=String(s||"");if(c[k]!==undefined)return c[k];if((zkTr.n=(zkTr.n||0)+1)>8000){zkTr.c=c=Object.create(null);zkTr.n=0}return c[k]=zkTr0(k)}function zkTr0(s){var M={"а":"a","б":"b","в":"v","г":"g","д":"d","е":"e","ё":"yo","ж":"j","з":"z","и":"i","й":"y","к":"k","л":"l","м":"m","н":"n","о":"o","п":"p","р":"r","с":"s","т":"t","у":"u","ф":"f","х":"x","ц":"ts","ч":"ch","ш":"sh","щ":"sh","ъ":"","ы":"i","ь":"","э":"e","ю":"yu","я":"ya","ў":"o","қ":"q","ғ":"g","ҳ":"h"};return String(s||"").toLowerCase().replace(/[\u0400-\u04ff]/g,function(c){return M[c]!==undefined?M[c]:c})}
 function zkNorm(s){return zkTr(s).replace(/\bsht\b|\bdona\b|\bta\b/g," ").replace(/[^a-z0-9]+/g,"")}
 function zkBread(n){if(ZKM[n])return ZKM[n];var k=zkNorm(n),L=brList();for(var i=0;i<L.length;i++){var b=zkNorm(L[i].n);if(b&&(b==k||k.indexOf(b)==0||b.indexOf(k)==0))return L[i].n}var t=zkTr(n).replace(/\bsht\b/g,"").replace(/[^a-z0-9' ]+/g," ").trim();return t.charAt(0).toUpperCase()+t.slice(1)}
 function zkNum(x){var n=parseFloat(String(x==null?"":x).replace(/\s|\u00a0/g,"").replace(",","."));return isNaN(n)?0:n}
@@ -1432,7 +1439,7 @@ setInterval(function(){try{if(window.Android&&Android.wakeResume&&!AIMODE&&!AIBU
 var fb=document.createElement("button");fb.id="aib";fb.setAttribute("aria-label","Yordamchi");fb.textContent="✨";
 fb.style.cssText="position:fixed;top:calc(8px + env(safe-area-inset-top,0px));left:10px;width:42px;height:42px;border-radius:50%;padding:0;margin:0;font-size:22px;z-index:6;background:var(--ac);color:#fff;border:0;box-shadow:0 3px 10px rgba(0,0,0,.35);display:none;align-items:center;justify-content:center";
 fb.onclick=open;document.body.appendChild(fb);
-setInterval(function(){var on=!!(S&&S.tok);fb.style.display=(on&&!AIO)?"flex":"none";var p=on?"54px":"";if(document.body.style.paddingTop!==p)document.body.style.paddingTop=p},600);
+var fbT=function(){var on=!!(S&&S.tok);fb.style.display=(on&&!AIO)?"flex":"none";var p=on?"54px":"";if(document.body.style.paddingTop!==p)document.body.style.paddingTop=p};fbT();setInterval(fbT,600);
 
 /* sozlama (rahbar) */
 if(!WK){
@@ -1640,7 +1647,7 @@ person(cx2,cy2,{shirt:"#d9809f",hair:"#6b3f1f",f:Math.floor(t/180),carry:carry,d
 if(p>.48&&p<.62){var cp=(p-.48)/.14;circ(144,88-cp*8,2,"#f2c230");circ(144,88-cp*8,1.2,"#ffe27a");g.fillStyle="#b88a10";g.font="bold 2.2px sans-serif";g.fillText("$",143.3,88.8-cp*8)}}
 }
 var t=0,last=0,RM=window.matchMedia&&matchMedia("(prefers-reduced-motion: reduce)").matches;
-function frame(ts){requestAnimationFrame(frame);var c=document.getElementById("pxc");if(!c)return;if(ts-last<(RM?2000:50))return;last=ts;t=RM?0:ts;g=c.getContext("2d");g.setTransform(K,0,0,K,0,0);g.imageSmoothingEnabled=true;g.lineJoin="round";
+function frame(ts){requestAnimationFrame(frame);var c=document.getElementById("pxc");if(!c)return;if(ts-last<(RM?2000:70))return;if(document.getElementById("di_o")||document.getElementById("wk_o")||document.getElementById("ai_o"))return;var cr=c.getBoundingClientRect();if(cr.bottom<0||cr.top>innerHeight)return;last=ts;t=RM?0:ts;g=c.getContext("2d");g.setTransform(K,0,0,K,0,0);g.imageSmoothingEnabled=true;g.lineJoin="round";
 try{floor();wall(t);plant(70,40);plant(100,136);plant(92,72);cat(60,136,t);ombor(t);hamir(t);tandir(t);dokon(t)}catch(e){}}
 requestAnimationFrame(frame);
 try{var e=document.getElementById("scene");if(e)e.innerHTML=sceneInner()}catch(e){}
@@ -1651,7 +1658,7 @@ S.shopC=S.shopC||{};
 var BOT=lsG0("nv_tgbot","");
 function lsG0(k,d){try{var v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}}
 function lsS0(k,v){try{localStorage.setItem(k,v)}catch(e){}}
-function zkSet(){var o={};(S.zkL||[]).forEach(function(E){(E.O||[]).forEach(function(x){if(x.shop){o[String(x.shop).toLowerCase()]=1;try{o[String(zkShop(x.shop)).toLowerCase()]=1}catch(e){}}})});return o}
+function zkSet(){return nvMemoZ('st',zkSet1)}function zkSet1(){var o={};(S.zkL||[]).forEach(function(E){(E.O||[]).forEach(function(x){if(x.shop){o[String(x.shop).toLowerCase()]=1;try{o[String(zkShop(x.shop)).toLowerCase()]=1}catch(e){}}})});return o}
 function KEY(s){return(!s||s=="*"||zkSet()[String(s).toLowerCase()])?"*":s}
 function C(s){var k=KEY(s);return S.shopC[k]||(S.shopC[k]={})}
 window.shopKey=KEY;
@@ -1854,7 +1861,7 @@ if(q>have)ask("Mashinada «"+e3(b)+"» faqat "+f3(have)+" ta. Baribir "+f3(q)+" 
 window.unlDel=function(id){ask("Yozuv o'chirilsinmi?",0,function(){tDel("unl",id);tFresh()})};
 window.truckDel=function(id){ask("Yozuv o'chirilsinmi?",0,function(){tDel("load",id);tFresh()})};
 /* ===== 4. Do'konlar: tartib, Excel do'konlari ro'yxatdan chiqmasin ===== */
-function zkShops(){var o={};(S.zkL||[]).forEach(function(E){(E.O||[]).forEach(function(x){if(x.shop){o[String(x.shop).toLowerCase()]=1;try{o[String(zkShop(x.shop)).toLowerCase()]=1}catch(e){}}})});return o}
+function zkShops(){return nvMemoZ('zs',zkShops1)}function zkShops1(){var o={};(S.zkL||[]).forEach(function(E){(E.O||[]).forEach(function(x){if(x.shop){o[String(x.shop).toLowerCase()]=1;try{o[String(zkShop(x.shop)).toLowerCase()]=1}catch(e){}}})});return o}
 var sl0=shopsList;shopsList=function(){var Z=zkShops(),L=S.shops.filter(function(s){return!Z[String(s).toLowerCase()]});return '<datalist id="sl">'+L.map(function(s){return '<option value="'+e3(s)+'">'}).join("")+'</datalist><input id="sh" list="sl" placeholder="Do\'kon nomi">'};
 zkDokPut=function(){var app=document.getElementById("app");if(!app||app.querySelector("[data-zkd]"))return;var h=zkDokH();if(!h)return;var hs=[].slice.call(app.querySelectorAll("h2")).filter(function(x){return/^(Berilgan nonlar|Bugun berilgan)/.test(x.textContent.trim())})[0];var w=document.createElement("div");w.setAttribute("data-zkd","1");w.innerHTML=h;if(hs)app.insertBefore(w,hs);else app.appendChild(w)};
 var rnX=render;render=function(){rnX();try{
@@ -2135,8 +2142,8 @@ function tm(t){var d=new Date(t);return("0"+d.getDate()).slice(-2)+"."+("0"+(d.g
 function bnm(b){var r;try{r=bn(b)}catch(e){}if(!r||r=="?"||r=="undefined")r=(b&&String(b))||"Non";return r}
 function breads(){try{return brList().map(function(x){return x.n})}catch(e){return[]}}
 function pr(n){try{if(window.dokPrice)return+dokPrice(n)||0;var b=brList().filter(function(x){return x.n==n})[0];return b?(+b.dp||+b.p||0):0}catch(e){return 0}}
-function zk(){var o={};(S.zkL||[]).forEach(function(E){(E.O||[]).forEach(function(x){if(x.shop){var n=x.shop;try{n=zkShop(x.shop)||x.shop}catch(e){}o[n]=1}})});return Object.keys(o)}
-function isZ(s){var z={};zk().forEach(function(n){z[String(n).toLowerCase()]=1});try{if(window.shopKey&&shopKey(s)=="*")return true}catch(e){}return!!z[String(s).toLowerCase()]}
+function zk(){return nvMemoZ('zk',zk1).slice()}function zk1(){var o={};(S.zkL||[]).forEach(function(E){(E.O||[]).forEach(function(x){if(x.shop){var n=x.shop;try{n=zkShop(x.shop)||x.shop}catch(e){}o[n]=1}})});return Object.keys(o)}
+function isZ(s){var z=nvMemoZ('isz',function(){var z={};zk().forEach(function(n){z[String(n).toLowerCase()]=1});return z});try{if(window.shopKey&&shopKey(s)=="*")return true}catch(e){}return!!z[String(s).toLowerCase()]}
 function allShops(){var o={},r=[];(S.shops||[]).concat((S.del||[]).map(function(d){return d.shop})).concat((S.olm||[]).map(function(d){return d.shop})).forEach(function(s){if(s&&!o[s]){o[s]=1;r.push(s)}});return r}
 function OL(){return S.olm||(S.olm=[])}
 function pdt(v){v=String(v||"").trim();var m=v.match(/(\d{1,2})[.\/-](\d{1,2})(?:[.\/-](\d{2,4}))?/);if(!m)return 0;var y=m[3]?(+m[3]<100?2000+ +m[3]:+m[3]):new Date().getFullYear();var t=new Date(y,+m[2]-1,+m[1]).getTime();return isNaN(t)?0:t}
@@ -2298,7 +2305,8 @@ try{var wkL=wk;wk=function(r){var res=wkL.apply(this,arguments);try{if(r=="o"){v
 /* Do'konlar bo'limi: katakchalar */
 try{zkDokPut=function(){}}catch(e){}
 var HIDE=["sl","sh","nl","b","pr","q","pd"];
-var r0=render;render=function(){if(zkDedupe()|olmMove()|olmNorm()|zkAutoAll()|olmClean())try{persist();snapSoon()}catch(e){}var inj=(tab=="bosh"||tab=="hisob")&&OL().length,keep=S.del;if(inj)S.del=S.del.concat(OL().map(function(d){return{i:d.i,t:d.t,shop:d.shop,b:d.b,qty:d.qty,amt:0,paid:true,pt:d.t,pm:"o",f:d.f,_inj:1}}));var r;try{r=r0.apply(this,arguments)}finally{if(inj)S.del=keep}try{if(tab=="hisob"&&S.acc&&!document.getElementById("olmh")){var ap=document.getElementById("app"),oh=olmaH();if(ap&&oh){var dv=document.createElement("div");dv.innerHTML=oh;var qz=[].slice.call(ap.children).filter(function(e){return/^⚠️ Qarzlar/.test((e.textContent||"").trim())})[0];while(dv.firstChild){if(qz)ap.insertBefore(dv.firstChild,qz);else ap.appendChild(dv.firstChild)}}}}catch(e){}try{if(tab=="dokon"&&S.acc&&!document.getElementById("dkt")){var app=document.getElementById("app");
+var OSG='';function osig(){return nvZSig()+'|'+(S.olm||[]).length+'|'+(S.del||[]).length+'|'+(S.srv||[]).length+'|'+new Date().toDateString()+'|'+(S.snapTs||0)+'|'+(S.breads||[]).length}
+var r0=render;render=function(){var og=osig();if(og!==OSG){if(zkDedupe()|olmMove()|olmNorm()|zkAutoAll()|olmClean())try{persist();snapSoon()}catch(e){}OSG=osig()}var inj=(tab=="bosh"||tab=="hisob")&&OL().length,keep=S.del;if(inj)S.del=S.del.concat(OL().map(function(d){return{i:d.i,t:d.t,shop:d.shop,b:d.b,qty:d.qty,amt:0,paid:true,pt:d.t,pm:"o",f:d.f,_inj:1}}));var r;try{r=r0.apply(this,arguments)}finally{if(inj)S.del=keep}try{if(tab=="hisob"&&S.acc&&!document.getElementById("olmh")){var ap=document.getElementById("app"),oh=olmaH();if(ap&&oh){var dv=document.createElement("div");dv.innerHTML=oh;var qz=[].slice.call(ap.children).filter(function(e){return/^⚠️ Qarzlar/.test((e.textContent||"").trim())})[0];while(dv.firstChild){if(qz)ap.insertBefore(dv.firstChild,qz);else ap.appendChild(dv.firstChild)}}}}catch(e){}try{if(tab=="dokon"&&S.acc&&!document.getElementById("dkt")){var app=document.getElementById("app");
 HIDE.forEach(function(i){var e=app.querySelector("#"+i);if(e&&e.parentNode==app)e.style.display="none"});(function(){var ch=[].slice.call(app.children);for(var k=0;k<ch.length;k++){var e=ch[k];if(e.tagName=="H2")break;if(e.id=="dkph"||e.id=="dkt"||(e.tagName=="BUTTON"&&/Bosh sahifa/.test(e.textContent)))continue;e.style.display="none"}})();var sb=[].slice.call(app.children).filter(function(e){return e.tagName=="BUTTON"&&/^Saqlash$/.test(e.textContent.trim())})[0];if(sb)sb.style.display="none";var old=document.getElementById("srb");if(old)old.remove();var pb0=document.getElementById("pulb");if(pb0)pb0.style.display="none";[/^Berilgan nonlar/,/^Bugun berilgan/].forEach(function(rx){var hb=[].slice.call(app.querySelectorAll("h2")).filter(function(x){return rx.test(x.textContent.trim())})[0];if(!hb)return;var n=hb;while(n){var nx=n.nextElementSibling;if(n!==hb&&n.tagName=="H2")break;n.style.display="none";n=nx}});(function(){var hn=[].slice.call(app.querySelectorAll("h2")).filter(function(x){return/^Nasiyalar/.test(x.textContent.trim())})[0];if(!hn)return;var n=hn;while(n){var nx=n.nextElementSibling;if(n!==hn&&n.tagName=="H2")break;n.style.display="none";n=nx}})();[].slice.call(app.querySelectorAll("[data-zkd]")).forEach(function(e){e.remove()});
 var nT=(S.del||[]).concat(OL()).filter(function(d){return today(d.t)}).reduce(function(a,d){return a+(+d.qty||0)},0),nS=allShops().filter(function(s){return!isZ(s)}).length,nZ=zk().length;
 var g=document.createElement("div");g.id="dkt";g.className="hg";g.style.marginBottom="12px";g.innerHTML='<button class="ht" onclick="dkShops()"><i>🏪</i><b>Do\'konlar</b><small>'+nS+' ta do\'kon · non berish</small></button><button class="ht" onclick="dkExcel()"><i>📥</i><b>Olma do\'koni</b><small>'+nZ+' ta do\'kon</small></button>';
@@ -2819,25 +2827,28 @@ function verdict(x){if(!x.fin&&!x.L.length)return'<div style="color:var(--mu)">B
 if(!x.fin){var left=x.ke-x.ol;return'<div style="font-size:15px">Kun hali yopilmagan. Hozir kassada <b>'+n0(left)+' so\'m</b> bo\'lishi kerak.</div><div style="color:var(--mu);font-size:13px;margin-top:4px">Kechqurun «🌙 Kechki olish» bilan qolgan pulni yozsangiz, kam yoki ko\'pligi chiqadi.</div>'}
 if(Math.abs(x.df)<1)return'<div style="font-size:20px;color:#16a34a"><b>✅ Kassa to\'g\'ri — farq yo\'q</b></div>';
 return x.df<0?'<div style="font-size:20px;color:#d33"><b>🔴 '+n0(-x.df)+' so\'m KAM</b></div>':'<div style="font-size:20px;color:#16a34a"><b>🟢 '+n0(x.df)+' so\'m ORTIQCHA</b></div>'}
-window.kasOpen=function(a){if(a!=null)KD=a;var x=day(KD,KF),Z=x.Z,isT=KD==d0(Date.now());
-var h='<div style="display:flex;gap:6px;align-items:center;margin-bottom:8px"><button style="width:auto;margin:0;padding:8px 14px" onclick="kasOpen('+(KD-864e5)+')">‹</button><b style="flex:1;text-align:center;font-size:17px">'+(isT?"Bugun · ":"")+dd(KD)+'</b><button style="width:auto;margin:0;padding:8px 14px" '+(isT?'disabled':'')+' onclick="kasOpen('+Math.min(d0(Date.now()),KD+864e5)+')">›</button></div>';
-if(br2())h+='<div style="display:flex;gap:6px;margin-bottom:8px">'+[["*","Hammasi"],["1",brn("1")],["2",brn("2")]].map(function(p){return'<button onclick="kasF(\''+p[0]+'\')" style="width:auto;margin:0;padding:7px 11px;font-size:14px;'+(KF==p[0]?"background:var(--ac);color:#fff;border-color:var(--ac)":"")+'">'+q(p[1])+'</button>'}).join("")+'</div>';
-h+='<div class="tile" style="border:2px solid var(--ac);margin-bottom:10px">'+verdict(x)+'</div>';
-h+='<div class="tile" style="margin-bottom:10px"><b>💸 Kassadan olingan pullar</b>';
-h+=x.L.length?x.L.map(function(o,i){return'<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--bd)"><span style="flex:1">'+(o.fin?'🌙 ':'')+(i+1)+') <b>'+n0(o.amt)+' so\'m</b><small style="display:block;color:var(--mu)">'+hm(o.t)+(o.d&&!(o.fin&&o.d=="Kechki olish")?' · '+q(o.d):'')+(o.w?' · 👷 '+q(o.w):'')+(o.fin?' · kechki olish':'')+'</small></span><button class="x" style="width:auto;margin:0;padding:6px 10px" onclick="kasDel(\''+o.i+'\')">✕</button></div>'}).join(""):'<div class="empty" style="padding:8px 0">Hali yo\'q.</div>';
-h+='<div style="display:flex;justify-content:space-between;padding:10px 0 2px;border-top:2px solid var(--bd);font-size:18px"><b>Jami olingan</b><b style="color:var(--ac)">'+n0(x.ol)+' so\'m</b></div></div>';
-h+='<div class="tile" style="margin-bottom:10px"><b>➕ Kassadan pul olindi</b><input id="ka_a" type="number" inputmode="numeric" placeholder="Qancha olindi (so\'m)"><input id="ka_d" placeholder="Nima uchun / kim oldi (ixtiyoriy)"><button class="b" style="padding:14px" onclick="kasAdd(0)">💸 Yozish</button><button class="b" style="padding:14px;margin-top:6px;background:#1e3a8a;border-color:#1e3a8a" onclick="kasAdd(1)">🌙 Kechki olish — kunni yopish</button><div class="hint" style="margin-top:4px">Kechqurun kassadagi hamma pulni olib, shu tugma bilan yozing — ilova kam yoki ko\'pligini o\'zi hisoblaydi.</div></div>';
-h+='<div class="tile" style="margin-bottom:10px"><b>🧮 Hisob-kitob</b>'+(Z?rw("💵 Do'kondan naqd","+"+n0(Z.shopN))+rw("🛒 Sotuvdan naqd","+"+n0(Z.selN))+rw("🧾 Xarajat (kassadan)","−"+n0(Z.exC),"#e08a4a")+rw("👷 Hodimlarga berilgan","−"+n0(Z.ads),"#e08a4a"):"")+rw("<b>Kassada bo'lishi kerak</b>",n0(x.ke)+" so'm")+rw("<b>Jami olingan</b>",n0(x.ol)+" so'm","var(--ac)")+(x.fin?rw("<b>Farq</b>",(x.df>0?"+":"")+n0(x.df)+" so'm",x.df<0?"#d33":"#16a34a"):rw("Hozir kassada qolishi kerak",n0(x.ke-x.ol)+" so'm"))+'</div>';
-var KA=(S.srv||[]).filter(function(y){return y.k=="kassa"&&d0(y.t)==KD&&(KF=="*"||String(y.f||"1")==KF)});if(KA.length)h+='<div class="tile" style="margin-bottom:10px"><b>🧾 Sotuvchi kunni yopgan</b>'+KA.map(function(y){var df=(+y.amt||0)-(+y.exp||0);return rw(q(y.w||"Sotuvchi")+" · "+hm(y.t),n0(y.amt)+" so'm",df<0?"#d33":"","hisob "+n0(y.exp)+" · farq "+(df>0?"+":"")+n0(df))}).join("")+'</div>';
-h+='<button onclick="kasDays()">📅 Kunlar bo\'yicha (oxirgi 30 kun)</button>';
+function tb(o,ic,n,v,c){return'<button onclick="'+o+'" style="margin:0;flex:1;min-width:0;padding:8px 4px;border:2px solid '+c+';text-align:center;line-height:1.25"><span style="font-size:13px">'+ic+' '+n+'</span><b style="display:block;font-size:'+(String(v).length>7?13:16)+'px;line-height:22px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:'+c+'">'+v+'</b></button>'}
+function fN(){return KF=="*"?"Hammasi":brn(KF)}
+window.kasOpen=function(a){if(a!=null)KD=a;var x=day(KD,KF),isT=KD==d0(Date.now());
+var h='<div data-re="kasOpen()"></div><div style="display:flex;gap:6px;margin-bottom:8px">'+tb("kasL()","💸","Olingan",n0(x.ol),"var(--ac)")+tb("kasH()","🧮","Hisob",n0(x.ke),"#16a34a")+tb("kasDays()","📅","Kunlar",isT?"Bugun":dd(KD).slice(0,5),"#3b82f6")+(br2()?tb("kasFV()","🏭","Filial",q(fN()).slice(0,9),"#a855f7"):"")+'</div>';
+h+='<div class="tile" style="border:2px solid var(--ac);margin-bottom:10px">'+(isT?"":'<small style="color:var(--mu)">📅 '+dd(KD)+'</small>')+verdict(x)+'</div>';
+h+='<div class="tile" style="margin-bottom:10px"><b>➕ Kassadan pul olindi</b>'+(br2()&&KF!="*"?' <small style="color:var(--mu)">'+q(fN())+'</small>':'')+'<input id="ka_a" type="number" inputmode="numeric" placeholder="Qancha olindi (so\'m)"><input id="ka_d" placeholder="Nima uchun / kim oldi (ixtiyoriy)"><button class="b" style="padding:14px" onclick="kasAdd(0)">💸 Yozish</button><button class="b" style="padding:14px;margin-top:6px;background:#1e3a8a;border-color:#1e3a8a" onclick="kasAdd(1)">🌙 Kechki olish — kunni yopish</button></div>';
 dSheet("💵 Kassa",h)};
-window.kasF=function(f){KF=f;kasOpen()};
+window.kasL=function(){var x=day(KD,KF),h='<div data-re="kasL()"></div><div class="hint" style="margin:0 0 6px">📅 '+dd(KD)+(br2()?' · '+q(fN()):'')+'</div>';
+h+=x.L.length?x.L.map(function(o,i){return'<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-top:1px solid var(--bd)"><span style="flex:1">'+(o.fin?'🌙 ':'')+(i+1)+') <b>'+n0(o.amt)+' so\'m</b><small style="display:block;color:var(--mu)">'+hm(o.t)+(o.d&&!(o.fin&&o.d=="Kechki olish")?' · '+q(o.d):'')+(o.w?' · 👷 '+q(o.w):'')+(o.fin?' · kechki olish':'')+'</small></span><button class="x" style="width:auto;margin:0;padding:6px 10px" onclick="kasDel(\''+o.i+'\')">✕</button></div>'}).join(""):'<div class="empty" style="padding:8px 0">Hali yo\'q.</div>';
+h+='<div style="display:flex;justify-content:space-between;padding:10px 0 2px;border-top:2px solid var(--bd);font-size:18px"><b>Jami olingan</b><b style="color:var(--ac)">'+n0(x.ol)+' so\'m</b></div>';dSheet("💸 Olingan pullar",h)};
+window.kasH=function(){var x=day(KD,KF),Z=x.Z,h='<div class="hint" style="margin:0 0 6px">📅 '+dd(KD)+(br2()?' · '+q(fN()):'')+'</div><div class="tile" style="margin-bottom:10px">'+(Z?rw("💵 Do'kondan naqd","+"+n0(Z.shopN))+rw("🛒 Sotuvdan naqd","+"+n0(Z.selN))+rw("🧾 Xarajat (kassadan)","−"+n0(Z.exC),"#e08a4a")+rw("👷 Hodimlarga berilgan","−"+n0(Z.ads),"#e08a4a"):"")+rw("<b>Kassada bo'lishi kerak</b>",n0(x.ke)+" so'm")+rw("<b>Jami olingan</b>",n0(x.ol)+" so'm","var(--ac)")+(x.fin?rw("<b>Farq</b>",(x.df>0?"+":"")+n0(x.df)+" so'm",x.df<0?"#d33":"#16a34a"):rw("Hozir kassada qolishi kerak",n0(x.ke-x.ol)+" so'm"))+'</div>';
+var KA=(S.srv||[]).filter(function(y){return y.k=="kassa"&&d0(y.t)==KD&&(KF=="*"||String(y.f||"1")==KF)});if(KA.length)h+='<div class="tile" style="margin-bottom:10px"><b>🧾 Sotuvchi kunni yopgan</b>'+KA.map(function(y){var df=(+y.amt||0)-(+y.exp||0);return rw(q(y.w||"Sotuvchi")+" · "+hm(y.t),n0(y.amt)+" so'm",df<0?"#d33":"","hisob "+n0(y.exp)+" · farq "+(df>0?"+":"")+n0(df))}).join("")+'</div>';
+dSheet("🧮 Hisob-kitob",h)};
+window.kasFV=function(){dSheet("🏭 Qaysi nonvoyxona",[["*","Hammasi"],["1",brn("1")],["2",brn("2")]].map(function(p){return'<button onclick="kasF(\''+p[0]+'\')" style="padding:14px;'+(KF==p[0]?"background:var(--ac);color:#fff;border-color:var(--ac)":"")+'">'+q(p[1])+'</button>'}).join(""))};
+window.kasF=function(f){KF=f;try{nvSheetBack()}catch(e){kasOpen()}};
 window.kasAdd=function(fin){var a=+((document.getElementById("ka_a")||{}).value)||0,d=((document.getElementById("ka_d")||{}).value||"").trim();if(!(a>0))return toast("Summani yozing");
 var now=Date.now(),t=KD==d0(now)?now:KD+20*36e5,it={i:uid(),k:"kout",amt:a,d:d||(fin?"Kechki olish":""),by:"r",t:t};if(fin)it.fin=1;if(KF!="*")it.f=KF;postItems([it]);toast(fin?"Kun yopildi ✓":"Yozildi ✓");setTimeout(function(){kasOpen()},150)};
-window.kasDel=function(id){var f=function(){postItems([{i:uid(),k:"del",x:id,t:Date.now()}]);toast("O'chirildi");setTimeout(function(){kasOpen()},150)};try{ask("Bu yozuv o'chirilsinmi?",0,f)}catch(e){f()}};
-window.kasDays=function(){var t0=d0(Date.now()),h='<button style="margin:0 0 8px" onclick="kasOpen()">← Kassa</button><div style="display:flex;gap:6px;color:var(--mu);font-size:12px;padding:4px 0"><span style="flex:1">Kun</span><span style="width:84px;text-align:right">Olingan</span><span style="width:84px;text-align:right">Kerak</span><span style="width:80px;text-align:right">Farq</span></div>',n=0;
-for(var i=0;i<30;i++){var a=t0-i*864e5,x=day(a,KF);if(!x.L.length&&!(x.ke))continue;n++;h+='<div onclick="kasOpen('+a+')" style="cursor:pointer;display:flex;gap:6px;align-items:center;padding:9px 0;border-top:1px solid var(--bd);font-size:14px"><span style="flex:1">'+dd(a)+(x.fin?'':' <small style="color:var(--mu)">ochiq</small>')+'</span><span style="width:84px;text-align:right">'+n0(x.ol)+'</span><span style="width:84px;text-align:right">'+n0(x.ke)+'</span><b style="width:80px;text-align:right;color:'+(!x.fin?'var(--mu)':x.df<0?'#d33':'#16a34a')+'">'+(x.fin?(x.df>0?"+":"")+n0(x.df):"—")+'</b></div>'}
+window.kasDel=function(id){var f=function(){postItems([{i:uid(),k:"del",x:id,t:Date.now()}]);toast("O'chirildi");setTimeout(function(){kasL()},150)};try{ask("Bu yozuv o'chirilsinmi?",0,f)}catch(e){f()}};
+window.kasDays=function(){var t0=d0(Date.now()),h='<div style="display:flex;gap:6px;color:var(--mu);font-size:12px;padding:4px 0"><span style="flex:1">Kun</span><span style="width:84px;text-align:right">Olingan</span><span style="width:84px;text-align:right">Kerak</span><span style="width:80px;text-align:right">Farq</span></div>',n=0;
+for(var i=0;i<30;i++){var a=t0-i*864e5,x=day(a,KF);if(!x.L.length&&!(x.ke))continue;n++;h+='<div onclick="kasDay('+a+')" style="cursor:pointer;display:flex;gap:6px;align-items:center;padding:9px 0;border-top:1px solid var(--bd);font-size:14px"><span style="flex:1">'+dd(a)+(x.fin?'':' <small style="color:var(--mu)">ochiq</small>')+'</span><span style="width:84px;text-align:right">'+n0(x.ol)+'</span><span style="width:84px;text-align:right">'+n0(x.ke)+'</span><b style="width:80px;text-align:right;color:'+(!x.fin?'var(--mu)':x.df<0?'#d33':'#16a34a')+'">'+(x.fin?(x.df>0?"+":"")+n0(x.df):"—")+'</b></div>'}
 if(!n)h+='<div class="empty">Hali yozuv yo\'q.</div>';dSheet("📅 Kassa — kunlar bo'yicha",h)};
+window.kasDay=function(a){KD=a;try{nvSheetBack()}catch(e){kasOpen()}};
 /* Bosh sahifada «Kassa» katakchasi */
 var r0=render;render=function(){var r=r0.apply(this,arguments);try{if(tab=="bosh"&&S.acc!==undefined&&!document.getElementById("kas_t")){var ht=document.querySelector('#app .ht[onclick*="nonlar"]')||document.querySelector('#app .ht');if(ht){var x=day(d0(Date.now()),"*"),b=document.createElement("button");b.className="ht";b.id="kas_t";b.setAttribute("onclick","kasOpen("+d0(Date.now())+")");b.innerHTML='<i>💵</i><b>Kassa</b><small>Olindi '+n0(x.ol)+(x.fin?(Math.abs(x.df)<1?' · ✅ to\'g\'ri':x.df<0?' · <span style="color:#d33">'+n0(-x.df)+' kam</span>':' · '+n0(x.df)+' ko\'p'):' · ochiq')+'</small>';ht.parentNode.appendChild(b)}}}catch(e){}return r};
 })();
@@ -2901,7 +2912,8 @@ function cur(){return document.getElementById("di_o")||document.getElementById("
 function ttl(o){var h=o&&o.querySelector("h2");return h?(h.textContent||"").trim():""}
 function bk(o){var L=o.querySelectorAll("button");for(var i=0;i<L.length;i++){var b=L[i],t=(b.textContent||"").trim();if(t.charAt(0)=="←"&&!/Bosh sahifa|Raqam/i.test(t)&&b.offsetParent!==null)return b}return null}
 window.nvSheetBack=function(){var o=cur();if(!o)return false;var b=bk(o);if(b){b.click();return true}
-o.remove();var p=ST.pop();if(p){document.body.appendChild(p.o);try{p.o.firstChild.scrollTop=p.y}catch(e){}hook(p.o)}return true};
+o.remove();var p=ST.pop();if(p){document.body.appendChild(p.o);try{p.o.firstChild.scrollTop=p.y}catch(e){}hook(p.o);var re=p.o.querySelector('[data-re]');if(re)try{(0,eval)(re.getAttribute('data-re'))}catch(e){}}return true};
+window.nvSheetClear=function(){ST=[]};
 function hook(o){if(!o||o.__nvh)return;o.__nvh=1;var h=o.querySelector("h2"),y=h&&h.nextElementSibling;
 if(y&&y.tagName=="BUTTON"&&/Yopish/.test(y.textContent)){y.removeAttribute("onclick");y.onclick=function(e){e.stopPropagation();nvSheetBack()}}
 o.addEventListener("click",function(e){if(e.target===o){e.stopImmediatePropagation();nvSheetBack()}},true)}
@@ -3216,6 +3228,31 @@ if(n&&u&&t)api(u,"put",{tok:t,items:S.q.slice()}).then(go,go);else go()})};
 }
 })();
 </script>
+<script id="tez">(function(){if(window.nvSub)return;
+/* 2026-11-24 (4.9): yozilgan narsa ekrandan yo'qolib-paydo bo'lmasin. Yuborilgan yozuv serverdan ko'ringuncha S.srv da turadi. */
+var OWN=typeof SEC!="undefined",PN={},NSG="";
+function add(L,st){(L||[]).forEach(function(x){if(x&&x.i)PN[x.i]={x:x,t:Date.now(),ok:st}})}
+function miss(a){var h={};a.forEach(function(x){if(x)h[x.i]=1});var o=[];Object.keys(PN).forEach(function(i){var p=PN[i];if(h[i])delete PN[i];else if(p.ok&&Date.now()-p.ok>120000)delete PN[i];else o.push(p.x)});return o}
+var A0=api;api=function(url,a,x){var r=A0.apply(this,arguments);if(url!==(OWN?SU:S.url))return r;
+if(a=="put"&&x&&x.items){var L=x.items.slice();add(L,0);return r.then(function(j){if(j&&j.ok&&!j.queued){L.forEach(function(y){if(PN[y.i])PN[y.i].ok=Date.now()});var h={};(S.srv||[]).forEach(function(y){if(y)h[y.i]=1});var m=L.filter(function(y){return!h[y.i]});if(m.length)S.srv=(S.srv||[]).concat(m)}else if(j&&j.err&&j.err!="auth")L.forEach(function(y){delete PN[y.i]});return j})}
+if(a=="get")return r.then(function(j){if(j&&j.ok&&Array.isArray(j.items)){var m=miss(j.items),n=j.items.length,l=n?j.items[n-1]:0,sg=n+"|"+(l&&l.i)+"|"+(n?j.items[0].i:"")+"|"+m.map(function(y){return y.i}).join();
+/* hech narsa o'zgarmagan — qayta hisoblab, ekranni qimirlatmaymiz */
+if(sg===NSG&&(S.srv||[]).length===n+m.length){j.items=S.srv;j.same=1}else{NSG=sg;j.items=m.length?j.items.concat(m):j.items}}return j});
+return r};
+/* ---- tepadagi kichik belgi: saqlanmoqda / joylandi ---- */
+var css=document.createElement("style");css.textContent="#tzp{position:fixed;left:50%;top:calc(3px + env(safe-area-inset-top,0px));transform:translate(-50%,-70px);z-index:2147481000;pointer-events:none;padding:5px 12px;border-radius:999px;font:600 13px/1.2 system-ui,sans-serif;color:#fff;background:#374151;box-shadow:0 2px 10px rgba(0,0,0,.3);transition:transform .18s;white-space:nowrap;max-width:50vw;overflow:hidden;text-overflow:ellipsis}#tzp.on{transform:translate(-50%,0)}#netb{display:none!important}#di_o>div,#w_o>div,#wk_o>div{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}";document.head.appendChild(css);
+var E=null,HT=0,was=0,sh="";
+function pill(t,bg,ms){if(!E){E=document.createElement("div");E.id="tzp";document.body.appendChild(E)}clearTimeout(HT);if(E.textContent!=t)E.textContent=t;E.style.background=bg;E.classList.add("on");sh=t;if(ms)HT=setTimeout(function(){E.classList.remove("on");sh=""},ms)}
+function hide(){if(E)E.classList.remove("on");sh=""}
+function pend(){var n=0,k;for(k in PN)if(!PN[k].ok)n++;try{n+=OWN?(S.outq||[]).length+(S.tdel||[]).length:(S.q||[]).length;if(OWN&&S.dirty)n++}catch(e){}return n}
+var since=0;function tick(){if(document.hidden)return;var on=navigator.onLine!==false,n=pend();try{if(OWN?!S.tok:!S.tok){hide();return}}catch(e){}
+if(n>0){if(!since)since=Date.now();was=1;if(!on){if(sh!="📡")pill("📡 Telefonda saqlandi","#b45309",0);sh="📡"}else if(Date.now()-since>500&&Date.now()-since<60000)pill("⏳ Joylanmoqda…","#1d4ed8",0);else if(Date.now()-since>=60000)hide()}
+else{since=0;if(was){was=0;pill("✅ Serverga joylandi","#15803d",1500)}else if(sh&&sh.charAt(0)!="✅")hide()}}
+setInterval(tick,400);
+/* ---- ochiq oynalarni yopish (⚙ bosilganda) ---- */
+window.nvCloseAll=function(){try{if(window.nvSheetClear)nvSheetClear()}catch(e){}["di_o","w_o","wk_o","ed_o"].forEach(function(i){var e=document.getElementById(i);if(e)e.remove()});[].slice.call(document.body.children).forEach(function(e){if(/position:\s*fixed;\s*inset:\s*0/.test(e.style.cssText||"")&&!/^(errbox|upd|yrd|ysp|wkw)$/.test(e.id))e.remove()});try{AIO=0;AIMODE=0;var ai=document.getElementById("ai_o");if(ai)ai.remove();speechSynthesis.cancel()}catch(e){}};
+})();
+</script>
 <script id="blk">(function(){var IDS=["AKfycbw3Uw8e", "AKfycbwQpzWc", "AKfycbwY5t8Z", "AKfycbwq1ByKF", "AKfycbwtRk3w", "AKfycbx1U7aG", "AKfycbx9K4Vq", "AKfycbxH4jg0", "AKfycbxJTINGy", "AKfycbxoOaWF", "AKfycbxqc4ucr", "AKfycby2e92Wkz", "AKfycbyOpRPhQ", "AKfycbzuZwMOj", "AKfycbwtRk3w", "AKfycbxkjaW-7KQ", "AKfycby2e92Wkz", "AKfycbwlOTXDGp"];function bad(s){s=String(s||"");return IDS.some(function(i){return s.indexOf(i)>=0})}
 var f0=window.fetch;window.fetch=function(u){if(bad(u&&u.url||u)){try{toast("Bu Premium nonvoyxona serveri. Namangan serveri linkini kiriting")}catch(e){}return Promise.reject(new Error("blocked"))}return f0.apply(this,arguments)};
 try{if(typeof S!="undefined"&&S&&bad(S.url))S.url=""}catch(e){}try{if(typeof SU!="undefined"&&bad(SU)){SU="";localStorage.removeItem("nv_url")}}catch(e){}})();
@@ -3270,7 +3307,7 @@ if(document.body)go();else addEventListener("DOMContentLoaded",go);
       { sel: '#dk_tg', h: '📞 Do\'kon telefoni', d: 'Har bir do\'kon oynasida, «Hammasini saqlash» tugmasi ustida. Raqamni yozasiz (masalan 90 123 45 67) — u botga yuboriladi. Keyin «✈️ Ulanish havolasini yuborish»ni bosib, do\'konchiga havolani jo\'nating: do\'konchi havolani ochib START, so\'ng «Raqamni ulashish»ni bir marta bosadi (Telegram qoidasi: bot birinchi yoza olmaydi). Shundan keyin non NASIYAGA berilganda do\'konchiga Telegramdan darhol xabar boradi: qaysi non nechta, jami summa va umumiy qarzi. Naqd yoki karta bilan to\'liq to\'langanda xabar bormaydi. ✅ — ulangan, ⏳ — hali ulanmagan, 🔕 — do\'konchi o\'chirib qo\'ygan.' },
       { x: 'Kun oxiri vaqti', h: '⏰ Kun oxiri vaqti', d: 'Xohlagan vaqtni qo\'ying: soat va daqiqa (masalan 21:35). Ilova ochiq turganda shu vaqtda kun oxiri eslatmasi chiqadi.' },
       { x: 'Tushirib qo\'yildi', h: '📥 Mashinadan tushirib qo\'yildi', d: 'Mashinadagi non nonvoyxonaga tushirilganda yozasiz: 1) qaysi nonvoyxonaga tushirildi; 2) non turi; 3) soni (faqat raqam). Tugmani bossangiz, o\'sha son «Mashinada»dan ayriladi va tepadagi «📥 Tushirilgan» ichida qaysi nonvoyxonaga tushirilgani vaqti bilan turadi. Mashinadagidan ko\'p yozsangiz, ilova avval so\'raydi. Xato bo\'lsa 🗑 bosing — non mashinaga qaytadi.' },
-      { x: 'Kassa', h: '💵 Kassa', d: 'Kun davomida kassadan olingan pullarni yozasiz. Kechqurun ilova kassa to\'g\'ri, kam yoki ortiqchaligini o\'zi hisoblaydi.' },
+      { x: 'Kassa', h: '💵 Kassa', d: 'Kun davomida kassadan olingan pullarni yozasiz. Kechqurun ilova kassa to\'g\'ri, kam yoki ortiqchaligini o\'zi hisoblaydi. Tepadagi kichik tugmalar: 💸 Olingan — har bir olingan pul va uni bekor qilish; 🧮 Hisob — kassada qancha bo‘lishi kerak; 📅 Kunlar — oxirgi 30 kun; 🏭 Filial — qaysi nonvoyxona.' },
       { x: 'Hodimlar', h: '👷 Hodimlar', d: 'Hodimlar ro\'yxati. Ismini bossangiz — lavozimi, haqi (qop / kunlik / oylik), topgani, olgani, qolgani va davomati chiqadi; shu yerda 💵 Pul berish, ✏️ Tahrirlash, 📋 Davomat yozish, O\'chirish.' },
       { sel: '#hd_add', h: '➕ Hodim qo\'shish', d: 'Ismi, lavozimi, nonvoyxonasi va haqini qanday olishi (🥣 Qopiga, 📅 Kunlik, 🗓 Oylik — bir nechtasini ham tanlash mumkin). Oylikda ertalab keladigan va kechqurun ketadigan vaqti yoziladi: kech kelsa yoki erta ketsa, kam ishlagan daqiqasi oyligidan o\'zi ayriladi (faqat rahbarda ko\'rinadi). Kirish kodi — hodim Sizning raqamingiz va shu kod bilan kiradi.' },
       { sel: '#om_bx', h: '📦 Ombordagi mahsulotlar', d: 'Har mahsulotning hozirgi qoldig\'i. Mahsulotni bossangiz — kun va soat bo\'yicha hamma tushirilganlari, kim tushirgani chiqadi. Kirimni bosib sonini to\'g\'rilash yoki o\'chirish, «✏️ Mahsulotni tahrirlash» bilan qoldiqni o\'zgartirish yoki mahsulotni o\'chirish mumkin. Hodim o\'chira olmaydi.' },
@@ -3506,13 +3543,59 @@ if(document.body)go();else addEventListener("DOMContentLoaded",go);
     if (document.getElementById('yrdb')) return;
     var st = document.createElement('style'); st.textContent = css + (C.hide ? C.hide + '{display:none!important}' : '') + (C.pad || ''); document.head.appendChild(st);
     var g = document.createElement('button'); g.id = 'yrdg'; g.type = 'button'; g.textContent = '⚙'; g.setAttribute('aria-label', 'Sozlamalar'); g.style.display = 'none';
-    g.addEventListener('click', function (ev) { ev.stopPropagation(); try { C.set(); } catch (e) {} }, true);
+    g.addEventListener('click', function (ev) { ev.stopPropagation(); goSet(); }, true);
     var b = document.createElement('button'); b.id = 'yrdb'; b.type = 'button'; b.textContent = '?'; b.setAttribute('aria-label', 'Yordam: bu ekran qanday ishlaydi');
     b.addEventListener('click', function (ev) { ev.stopPropagation(); start(); }, true);
     document.body.appendChild(g); document.body.appendChild(b);
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && O) close(); });
     tick(); setInterval(tick, 800);
   }
+  /* 2026-11-24: ⚙ — ochiq oynalar yopiladi, sozlamalar ustida hech narsa qolmaydi; sozlamalardan chiqilsa — asosiy ekran */
+  function closeAll() { close(); try { if (window.nvCloseAll) window.nvCloseAll(); } catch (e) {}
+    [].slice.call(document.querySelectorAll('dialog[open]')).forEach(function (d) { try { d.close(); } catch (e) {} });
+    for (var i = 0; i < 8; i++) { var sh = document.getElementById('sheet'); if ((K === 'em' || K === 'es') && sh && !sh.hidden) { try { closeSheet(); } catch (e) { sh.hidden = true; } continue; }
+      var ov = topOverlay(); if (!ov) break; var b = closeBtn(ov); if (b) b.click(); else if (/\bsh-bg\b|\bsheet\b|\bmodal\b|\bov\b/.test(ov.className || '')) ov.remove(); else break; } }
+  function goSet() { try { closeAll(); } catch (e) {}
+    if (NV) { try { var s = nvSnap(); s.tab = 'bosh'; ['SS', 'IW', 'ZKV', 'ZKE', 'EK', 'SS2'].forEach(function (k) { if (k in s) s[k] = ''; }); STK = []; window.SS = ''; if (typeof window.SS2 !== 'undefined') window.SS2 = ''; LAST = JSON.stringify(s); } catch (e) {} }
+    try { C.set(); } catch (e) {} }
+  /* ---------- Ochiq oynada orqa fon surilmasin (hamma ilova) ---------- */
+  (function () { var sy = 0, ov = null, sc = null;
+    document.addEventListener('touchstart', function (e) { ov = null; if (e.touches.length !== 1) return; sy = e.touches[0].clientY; sc = null;
+      for (var q = e.target; q && q !== document.body && q.nodeType === 1; q = q.parentElement) { if (q.closest && q.closest(OWN)) return; var tg = q.tagName; if (tg === 'CANVAS' || tg === 'IFRAME') return; var st = getComputedStyle(q);
+        if (!sc && /(auto|scroll)/.test(st.overflowY) && q.scrollHeight > q.clientHeight + 1) sc = q;
+        if (st.position === 'fixed' || q.tagName === 'DIALOG') { var r = q.getBoundingClientRect(); if (r.width >= innerWidth * 0.6 && r.height >= innerHeight * 0.3) { ov = q; return; } } } }, { passive: true });
+    document.addEventListener('touchmove', function (e) { if (!ov || e.touches.length !== 1) return; var dy = e.touches[0].clientY - sy; if (e.target && e.target.type === 'range') return;
+      if (!sc) { if (e.cancelable) e.preventDefault(); return; }
+      if ((dy > 0 && sc.scrollTop <= 0) || (dy < 0 && sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 1)) { if (e.cancelable) e.preventDefault(); } }, { passive: false });
+    document.addEventListener('wheel', function (e) { var sc = null; for (var q = e.target; q && q !== document.body && q.nodeType === 1; q = q.parentElement) { var st = getComputedStyle(q); if (!sc && /(auto|scroll)/.test(st.overflowY) && q.scrollHeight > q.clientHeight + 1) sc = q;
+        if (st.position === 'fixed' || q.tagName === 'DIALOG') { var r = q.getBoundingClientRect(); if (r.width >= innerWidth * 0.6 && r.height >= innerHeight * 0.3 && (!sc || (e.deltaY < 0 && sc.scrollTop <= 0) || (e.deltaY > 0 && sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 1))) e.preventDefault(); return; } } }, { passive: false }); })();
+  /* ---------- Sozlamalar bo'lim-bo'lim (hamma ilova): sarlavha bosilsa ochiladi ---------- */
+  (function () { var OPEN = {}, FC = document.createElement('style');
+    FC.textContent = '.yfh{cursor:pointer!important;display:flex!important;align-items:center;gap:8px;border:1px solid rgba(127,127,127,.35);border-radius:14px;padding:13px 14px!important;margin:0 0 8px!important;font-size:17px!important;font-weight:700!important;text-transform:none!important;letter-spacing:0!important;user-select:none;-webkit-user-select:none}.yfh:after{content:"›";margin-left:auto;font-size:22px;line-height:1;opacity:.6;transition:transform .15s}.yfh.yo:after{transform:rotate(90deg)}.yfx{display:none!important}.tile>.yfh,.fr>.yfh:first-child{border:0;padding:4px 2px!important;margin:0!important}';
+    document.head.appendChild(FC);
+    function roots() { try {
+      if (K === 'tr') return window.tab === 'set' && window.SS && !/^(acc|srv)$/.test(SS) ? [document.getElementById('app'), 'h2,h3', 1] : null;
+      if (K === 'th') return window.tab === 'yub' && window.SS2 ? [document.getElementById('app'), 'h2,h3', 1] : null;
+      if (K === 'hm') { var s = gS(); return s && s.tab === 'set' ? [document.getElementById('app'), 'h2', 0] : null; }
+      if (K === 'es') { var s2 = gS(); return s2 && s2.tab === 'settings' ? [(document.querySelector('main') || document.querySelector('.lbl') && document.querySelector('.lbl').parentElement), '.lbl', 0] : null; }
+      if (K === 'em') { var s3 = gS(); return s3 && s3.tab === 'profile' && !s3.view ? [document.querySelector('main'), '.lbl,h2.sec', 0] : null; } } catch (e) {} return null; }
+    function keep(n) { return /^(sup|out)$/.test(n.id) || /^(sup|logout)$/.test(n.getAttribute('data-act') || '') || (n.tagName === 'BUTTON' && /^(chiqish|standart holat)/i.test((n.textContent || '').trim())); }
+    function rest(h) { var L = [], n = h.nextElementSibling; while (n && !n.classList.contains('yfh') && !(n.classList.contains('fr') && n.querySelector('.yfh'))) { L.push(n); n = n.nextElementSibling; } return L; }
+    function fold() { var R = roots(); if (!R || !R[0]) return; var root = R[0]; if (root.querySelector('.yfh')) return; var H = [];
+      if (R[2]) { /* nonvoyxona: sarlavhalar sahifada ham, ramka (.fr) ichida ham; «.tile» ichidagi <b> ham sarlavha */
+        var ttl = root.querySelector('h2'); [root].concat([].slice.call(root.querySelectorAll('.fr'))).forEach(function (c) { [].slice.call(c.children).forEach(function (e) {
+          if (/^H[23]$/.test(e.tagName) && e !== ttl) H.push(e); else if (e.classList.contains('tile') && e.firstElementChild && e.firstElementChild.tagName === 'B' && e.children.length > 1 && e.firstElementChild === e.firstChild) H.push(e.firstElementChild); }); });
+        if ((window.SS || window.SS2) === 'ai') { var t1 = root.querySelector('.tile'); if (t1 && t1.querySelector('input') && !root.querySelector('.ykal')) { var nh = document.createElement('h3'); nh.className = 'ykal'; nh.textContent = '🔑 Kalit va model'; t1.parentNode.insertBefore(nh, t1); H.push(nh); }
+          [].slice.call(root.querySelectorAll('.fr > div:not(.tile), #app > div:not(.fr):not(.tile)')).forEach(function (c) { var B = [].slice.call(c.children).filter(function (e) { return e.tagName === 'B'; }); if (B.length > 1) { H = H.filter(function (h) { return h.parentElement !== c; }); H = H.concat(B); } }); }
+        if (H.length < 2) return; }
+      else { var lab = root.querySelector(R[1]); if (!lab) return; H = [].slice.call(lab.parentElement.children).filter(function (e) { return e.matches(R[1]); }); }
+      if (!H.length) return;
+      H.forEach(function (h) { h.classList.add('yfh'); h.__y = K + '|' + (window.SS || window.SS2 || '') + '|' + (h.textContent || '').trim(); });
+      H.forEach(function (h) { var on = !!OPEN[h.__y]; h.classList.toggle('yo', on); if (!on) rest(h).forEach(function (n) { if (!keep(n)) n.classList.add('yfx'); }); }); }
+    document.addEventListener('click', function (e) { var h = e.target && e.target.closest && e.target.closest('.yfh'); if (!h) return; e.stopPropagation(); var on = !h.classList.contains('yo'); OPEN[h.__y] = on; h.classList.toggle('yo', on);
+      rest(h).forEach(function (n) { if (on) n.classList.remove('yfx'); else if (!keep(n)) n.classList.add('yfx'); }); }, true);
+    function go() { fold(); new MutationObserver(function () { try { fold(); } catch (e) {} }).observe(document.body, { childList: true, subtree: true }); }
+    if (document.body) go(); else document.addEventListener('DOMContentLoaded', go); })();
   window.yordamStart = function () { start(); };
   /* 🆘 Yordam markazi: murojaat sahifasi (hisob/murojaat.html) → egasining Telegram botiga boradi */
   function appCode() { var a = window.YAPP || '', m = /[?&]prod=(nv|ed|em|rx)/.exec(location.search);
@@ -3701,4 +3784,10 @@ if(document.body)go();else addEventListener("DOMContentLoaded",go);
       bar('<b style="font-size:17px">📲 O\'rnatish</b><br>Yuqori o\'ngdagi <b>⋮</b> ni bosing → <b>«Ilovani o\'rnatish»</b> yoki <b>«Bosh ekranga qo\'shish»</b> → <b>O\'rnatish</b>.<br><small style="color:#6b7280">Ilova allaqachon o\'rnatilgan bo\'lsa, telefon ekranidagi belgisidan oching.</small>'); }, 4000);
   })();
 })();
-</script></body></html>
+</script><script id="ytez">(function(){var N=navigator.serviceWorker;if(!N||!(location.protocol=='https:'||location.hostname=='localhost'))return;var had=!!N.controller,tc=0,t0=Date.now(),up=0,hid=0,done=0;
+['pointerdown','keydown','touchstart'].forEach(function(e){addEventListener(e,function(){tc=1},{capture:true,passive:true})});
+function safe(){var a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return false;return !document.querySelector('dialog[open],#di_o,#w_o,#wk_o,#ed_o,.sh-bg,.sheet:not([hidden])')}
+function go(){if(done||!safe())return;done=1;location.reload()}
+N.register('sw.js',{updateViaCache:'none'}).then(function(r){var f=function(){if(!document.hidden)r.update().catch(function(){})};document.addEventListener('visibilitychange',f);setInterval(f,1800000)}).catch(function(){});
+N.addEventListener('controllerchange',function(){if(!had)return had=true;up=1;if(!tc&&Date.now()-t0<9000)go()});
+document.addEventListener('visibilitychange',function(){if(document.hidden)hid=Date.now();else if(up&&Date.now()-hid>60000)go()})})();</script></body></html>

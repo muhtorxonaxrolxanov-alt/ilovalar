@@ -10,4 +10,10 @@ if(l&&l.ok&&l.role==='shogird'){location.replace('shogird.html');return}
 var t='';try{t=localStorage.getItem('hk_taklif')||''}catch(e){}
 location.replace(t?'gate.html?taklif='+t:'gate.html?shogird=1')})();
 if("serviceWorker"in navigator&&location.protocol=="https:")navigator.serviceWorker.register("sw.js").catch(function(){});
-</script></body></html>
+</script><script id="ytez">(function(){var N=navigator.serviceWorker;if(!N||!(location.protocol=='https:'||location.hostname=='localhost'))return;var had=!!N.controller,tc=0,t0=Date.now(),up=0,hid=0,done=0;
+['pointerdown','keydown','touchstart'].forEach(function(e){addEventListener(e,function(){tc=1},{capture:true,passive:true})});
+function safe(){var a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return false;return !document.querySelector('dialog[open],#di_o,#w_o,#wk_o,#ed_o,.sh-bg,.sheet:not([hidden])')}
+function go(){if(done||!safe())return;done=1;location.reload()}
+N.register('sw.js',{updateViaCache:'none'}).then(function(r){var f=function(){if(!document.hidden)r.update().catch(function(){})};document.addEventListener('visibilitychange',f);setInterval(f,1800000)}).catch(function(){});
+N.addEventListener('controllerchange',function(){if(!had)return had=true;up=1;if(!tc&&Date.now()-t0<9000)go()});
+document.addEventListener('visibilitychange',function(){if(document.hidden)hid=Date.now();else if(up&&Date.now()-hid>60000)go()})})();</script></body></html>

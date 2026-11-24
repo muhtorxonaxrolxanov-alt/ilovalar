@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="uz"><head><meta charset="utf-8"><meta name="theme-color" content="#15803d"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Shogird"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" type="image/png" href="icon-192.png"><script src="https://telegram.org/js/telegram-web-app.js"></script><script>/* Hisob-kitob — veb-ilova (iPhone, kompyuter, Telegram Mini App) uchun AndroidBridge o'rnini bosuvchi.
+<html lang="uz"><head><meta charset="utf-8"><meta name="theme-color" content="#15803d"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="Shogird"><link rel="manifest" href="manifest.webmanifest"><link rel="apple-touch-icon" href="icon-192.png"><link rel="icon" type="image/png" href="icon-192.png"><script>(function(){var t=false;try{t=/tgWebApp/.test(location.hash+location.search)||!!window.TelegramWebviewProxy||!!sessionStorage.getItem("__telegram__initParams")}catch(e){}if(t)document.write('<script src="https://telegram.org/js/telegram-web-app.js"><\/script>')})();</script><script>/* Hisob-kitob — veb-ilova (iPhone, kompyuter, Telegram Mini App) uchun AndroidBridge o'rnini bosuvchi.
  * Faqat haqiqiy AndroidBridge YO'Q joyda ishlaydi. build_web.py har bir sahifaning eng boshiga qo'yadi. */
 (function () {
   if (window.AndroidBridge) return;
@@ -385,7 +385,7 @@ try{var l=HK.lic();if(l&&l.ok&&l.until<=Date.now()){err('Foydalanish muddatingiz
       { sel: '#dk_tg', h: '📞 Do\'kon telefoni', d: 'Har bir do\'kon oynasida, «Hammasini saqlash» tugmasi ustida. Raqamni yozasiz (masalan 90 123 45 67) — u botga yuboriladi. Keyin «✈️ Ulanish havolasini yuborish»ni bosib, do\'konchiga havolani jo\'nating: do\'konchi havolani ochib START, so\'ng «Raqamni ulashish»ni bir marta bosadi (Telegram qoidasi: bot birinchi yoza olmaydi). Shundan keyin non NASIYAGA berilganda do\'konchiga Telegramdan darhol xabar boradi: qaysi non nechta, jami summa va umumiy qarzi. Naqd yoki karta bilan to\'liq to\'langanda xabar bormaydi. ✅ — ulangan, ⏳ — hali ulanmagan, 🔕 — do\'konchi o\'chirib qo\'ygan.' },
       { x: 'Kun oxiri vaqti', h: '⏰ Kun oxiri vaqti', d: 'Xohlagan vaqtni qo\'ying: soat va daqiqa (masalan 21:35). Ilova ochiq turganda shu vaqtda kun oxiri eslatmasi chiqadi.' },
       { x: 'Tushirib qo\'yildi', h: '📥 Mashinadan tushirib qo\'yildi', d: 'Mashinadagi non nonvoyxonaga tushirilganda yozasiz: 1) qaysi nonvoyxonaga tushirildi; 2) non turi; 3) soni (faqat raqam). Tugmani bossangiz, o\'sha son «Mashinada»dan ayriladi va tepadagi «📥 Tushirilgan» ichida qaysi nonvoyxonaga tushirilgani vaqti bilan turadi. Mashinadagidan ko\'p yozsangiz, ilova avval so\'raydi. Xato bo\'lsa 🗑 bosing — non mashinaga qaytadi.' },
-      { x: 'Kassa', h: '💵 Kassa', d: 'Kun davomida kassadan olingan pullarni yozasiz. Kechqurun ilova kassa to\'g\'ri, kam yoki ortiqchaligini o\'zi hisoblaydi.' },
+      { x: 'Kassa', h: '💵 Kassa', d: 'Kun davomida kassadan olingan pullarni yozasiz. Kechqurun ilova kassa to\'g\'ri, kam yoki ortiqchaligini o\'zi hisoblaydi. Tepadagi kichik tugmalar: 💸 Olingan — har bir olingan pul va uni bekor qilish; 🧮 Hisob — kassada qancha bo‘lishi kerak; 📅 Kunlar — oxirgi 30 kun; 🏭 Filial — qaysi nonvoyxona.' },
       { x: 'Hodimlar', h: '👷 Hodimlar', d: 'Hodimlar ro\'yxati. Ismini bossangiz — lavozimi, haqi (qop / kunlik / oylik), topgani, olgani, qolgani va davomati chiqadi; shu yerda 💵 Pul berish, ✏️ Tahrirlash, 📋 Davomat yozish, O\'chirish.' },
       { sel: '#hd_add', h: '➕ Hodim qo\'shish', d: 'Ismi, lavozimi, nonvoyxonasi va haqini qanday olishi (🥣 Qopiga, 📅 Kunlik, 🗓 Oylik — bir nechtasini ham tanlash mumkin). Oylikda ertalab keladigan va kechqurun ketadigan vaqti yoziladi: kech kelsa yoki erta ketsa, kam ishlagan daqiqasi oyligidan o\'zi ayriladi (faqat rahbarda ko\'rinadi). Kirish kodi — hodim Sizning raqamingiz va shu kod bilan kiradi.' },
       { sel: '#om_bx', h: '📦 Ombordagi mahsulotlar', d: 'Har mahsulotning hozirgi qoldig\'i. Mahsulotni bossangiz — kun va soat bo\'yicha hamma tushirilganlari, kim tushirgani chiqadi. Kirimni bosib sonini to\'g\'rilash yoki o\'chirish, «✏️ Mahsulotni tahrirlash» bilan qoldiqni o\'zgartirish yoki mahsulotni o\'chirish mumkin. Hodim o\'chira olmaydi.' },
@@ -621,13 +621,59 @@ try{var l=HK.lic();if(l&&l.ok&&l.until<=Date.now()){err('Foydalanish muddatingiz
     if (document.getElementById('yrdb')) return;
     var st = document.createElement('style'); st.textContent = css + (C.hide ? C.hide + '{display:none!important}' : '') + (C.pad || ''); document.head.appendChild(st);
     var g = document.createElement('button'); g.id = 'yrdg'; g.type = 'button'; g.textContent = '⚙'; g.setAttribute('aria-label', 'Sozlamalar'); g.style.display = 'none';
-    g.addEventListener('click', function (ev) { ev.stopPropagation(); try { C.set(); } catch (e) {} }, true);
+    g.addEventListener('click', function (ev) { ev.stopPropagation(); goSet(); }, true);
     var b = document.createElement('button'); b.id = 'yrdb'; b.type = 'button'; b.textContent = '?'; b.setAttribute('aria-label', 'Yordam: bu ekran qanday ishlaydi');
     b.addEventListener('click', function (ev) { ev.stopPropagation(); start(); }, true);
     document.body.appendChild(g); document.body.appendChild(b);
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && O) close(); });
     tick(); setInterval(tick, 800);
   }
+  /* 2026-11-24: ⚙ — ochiq oynalar yopiladi, sozlamalar ustida hech narsa qolmaydi; sozlamalardan chiqilsa — asosiy ekran */
+  function closeAll() { close(); try { if (window.nvCloseAll) window.nvCloseAll(); } catch (e) {}
+    [].slice.call(document.querySelectorAll('dialog[open]')).forEach(function (d) { try { d.close(); } catch (e) {} });
+    for (var i = 0; i < 8; i++) { var sh = document.getElementById('sheet'); if ((K === 'em' || K === 'es') && sh && !sh.hidden) { try { closeSheet(); } catch (e) { sh.hidden = true; } continue; }
+      var ov = topOverlay(); if (!ov) break; var b = closeBtn(ov); if (b) b.click(); else if (/\bsh-bg\b|\bsheet\b|\bmodal\b|\bov\b/.test(ov.className || '')) ov.remove(); else break; } }
+  function goSet() { try { closeAll(); } catch (e) {}
+    if (NV) { try { var s = nvSnap(); s.tab = 'bosh'; ['SS', 'IW', 'ZKV', 'ZKE', 'EK', 'SS2'].forEach(function (k) { if (k in s) s[k] = ''; }); STK = []; window.SS = ''; if (typeof window.SS2 !== 'undefined') window.SS2 = ''; LAST = JSON.stringify(s); } catch (e) {} }
+    try { C.set(); } catch (e) {} }
+  /* ---------- Ochiq oynada orqa fon surilmasin (hamma ilova) ---------- */
+  (function () { var sy = 0, ov = null, sc = null;
+    document.addEventListener('touchstart', function (e) { ov = null; if (e.touches.length !== 1) return; sy = e.touches[0].clientY; sc = null;
+      for (var q = e.target; q && q !== document.body && q.nodeType === 1; q = q.parentElement) { if (q.closest && q.closest(OWN)) return; var tg = q.tagName; if (tg === 'CANVAS' || tg === 'IFRAME') return; var st = getComputedStyle(q);
+        if (!sc && /(auto|scroll)/.test(st.overflowY) && q.scrollHeight > q.clientHeight + 1) sc = q;
+        if (st.position === 'fixed' || q.tagName === 'DIALOG') { var r = q.getBoundingClientRect(); if (r.width >= innerWidth * 0.6 && r.height >= innerHeight * 0.3) { ov = q; return; } } } }, { passive: true });
+    document.addEventListener('touchmove', function (e) { if (!ov || e.touches.length !== 1) return; var dy = e.touches[0].clientY - sy; if (e.target && e.target.type === 'range') return;
+      if (!sc) { if (e.cancelable) e.preventDefault(); return; }
+      if ((dy > 0 && sc.scrollTop <= 0) || (dy < 0 && sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 1)) { if (e.cancelable) e.preventDefault(); } }, { passive: false });
+    document.addEventListener('wheel', function (e) { var sc = null; for (var q = e.target; q && q !== document.body && q.nodeType === 1; q = q.parentElement) { var st = getComputedStyle(q); if (!sc && /(auto|scroll)/.test(st.overflowY) && q.scrollHeight > q.clientHeight + 1) sc = q;
+        if (st.position === 'fixed' || q.tagName === 'DIALOG') { var r = q.getBoundingClientRect(); if (r.width >= innerWidth * 0.6 && r.height >= innerHeight * 0.3 && (!sc || (e.deltaY < 0 && sc.scrollTop <= 0) || (e.deltaY > 0 && sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 1))) e.preventDefault(); return; } } }, { passive: false }); })();
+  /* ---------- Sozlamalar bo'lim-bo'lim (hamma ilova): sarlavha bosilsa ochiladi ---------- */
+  (function () { var OPEN = {}, FC = document.createElement('style');
+    FC.textContent = '.yfh{cursor:pointer!important;display:flex!important;align-items:center;gap:8px;border:1px solid rgba(127,127,127,.35);border-radius:14px;padding:13px 14px!important;margin:0 0 8px!important;font-size:17px!important;font-weight:700!important;text-transform:none!important;letter-spacing:0!important;user-select:none;-webkit-user-select:none}.yfh:after{content:"›";margin-left:auto;font-size:22px;line-height:1;opacity:.6;transition:transform .15s}.yfh.yo:after{transform:rotate(90deg)}.yfx{display:none!important}.tile>.yfh,.fr>.yfh:first-child{border:0;padding:4px 2px!important;margin:0!important}';
+    document.head.appendChild(FC);
+    function roots() { try {
+      if (K === 'tr') return window.tab === 'set' && window.SS && !/^(acc|srv)$/.test(SS) ? [document.getElementById('app'), 'h2,h3', 1] : null;
+      if (K === 'th') return window.tab === 'yub' && window.SS2 ? [document.getElementById('app'), 'h2,h3', 1] : null;
+      if (K === 'hm') { var s = gS(); return s && s.tab === 'set' ? [document.getElementById('app'), 'h2', 0] : null; }
+      if (K === 'es') { var s2 = gS(); return s2 && s2.tab === 'settings' ? [(document.querySelector('main') || document.querySelector('.lbl') && document.querySelector('.lbl').parentElement), '.lbl', 0] : null; }
+      if (K === 'em') { var s3 = gS(); return s3 && s3.tab === 'profile' && !s3.view ? [document.querySelector('main'), '.lbl,h2.sec', 0] : null; } } catch (e) {} return null; }
+    function keep(n) { return /^(sup|out)$/.test(n.id) || /^(sup|logout)$/.test(n.getAttribute('data-act') || '') || (n.tagName === 'BUTTON' && /^(chiqish|standart holat)/i.test((n.textContent || '').trim())); }
+    function rest(h) { var L = [], n = h.nextElementSibling; while (n && !n.classList.contains('yfh') && !(n.classList.contains('fr') && n.querySelector('.yfh'))) { L.push(n); n = n.nextElementSibling; } return L; }
+    function fold() { var R = roots(); if (!R || !R[0]) return; var root = R[0]; if (root.querySelector('.yfh')) return; var H = [];
+      if (R[2]) { /* nonvoyxona: sarlavhalar sahifada ham, ramka (.fr) ichida ham; «.tile» ichidagi <b> ham sarlavha */
+        var ttl = root.querySelector('h2'); [root].concat([].slice.call(root.querySelectorAll('.fr'))).forEach(function (c) { [].slice.call(c.children).forEach(function (e) {
+          if (/^H[23]$/.test(e.tagName) && e !== ttl) H.push(e); else if (e.classList.contains('tile') && e.firstElementChild && e.firstElementChild.tagName === 'B' && e.children.length > 1 && e.firstElementChild === e.firstChild) H.push(e.firstElementChild); }); });
+        if ((window.SS || window.SS2) === 'ai') { var t1 = root.querySelector('.tile'); if (t1 && t1.querySelector('input') && !root.querySelector('.ykal')) { var nh = document.createElement('h3'); nh.className = 'ykal'; nh.textContent = '🔑 Kalit va model'; t1.parentNode.insertBefore(nh, t1); H.push(nh); }
+          [].slice.call(root.querySelectorAll('.fr > div:not(.tile), #app > div:not(.fr):not(.tile)')).forEach(function (c) { var B = [].slice.call(c.children).filter(function (e) { return e.tagName === 'B'; }); if (B.length > 1) { H = H.filter(function (h) { return h.parentElement !== c; }); H = H.concat(B); } }); }
+        if (H.length < 2) return; }
+      else { var lab = root.querySelector(R[1]); if (!lab) return; H = [].slice.call(lab.parentElement.children).filter(function (e) { return e.matches(R[1]); }); }
+      if (!H.length) return;
+      H.forEach(function (h) { h.classList.add('yfh'); h.__y = K + '|' + (window.SS || window.SS2 || '') + '|' + (h.textContent || '').trim(); });
+      H.forEach(function (h) { var on = !!OPEN[h.__y]; h.classList.toggle('yo', on); if (!on) rest(h).forEach(function (n) { if (!keep(n)) n.classList.add('yfx'); }); }); }
+    document.addEventListener('click', function (e) { var h = e.target && e.target.closest && e.target.closest('.yfh'); if (!h) return; e.stopPropagation(); var on = !h.classList.contains('yo'); OPEN[h.__y] = on; h.classList.toggle('yo', on);
+      rest(h).forEach(function (n) { if (on) n.classList.remove('yfx'); else if (!keep(n)) n.classList.add('yfx'); }); }, true);
+    function go() { fold(); new MutationObserver(function () { try { fold(); } catch (e) {} }).observe(document.body, { childList: true, subtree: true }); }
+    if (document.body) go(); else document.addEventListener('DOMContentLoaded', go); })();
   window.yordamStart = function () { start(); };
   /* 🆘 Yordam markazi: murojaat sahifasi (hisob/murojaat.html) → egasining Telegram botiga boradi */
   function appCode() { var a = window.YAPP || '', m = /[?&]prod=(nv|ed|em|rx)/.exec(location.search);
@@ -816,4 +862,10 @@ try{var l=HK.lic();if(l&&l.ok&&l.until<=Date.now()){err('Foydalanish muddatingiz
       bar('<b style="font-size:17px">📲 O\'rnatish</b><br>Yuqori o\'ngdagi <b>⋮</b> ni bosing → <b>«Ilovani o\'rnatish»</b> yoki <b>«Bosh ekranga qo\'shish»</b> → <b>O\'rnatish</b>.<br><small style="color:#6b7280">Ilova allaqachon o\'rnatilgan bo\'lsa, telefon ekranidagi belgisidan oching.</small>'); }, 4000);
   })();
 })();
-</script></body></html>
+</script><script id="ytez">(function(){var N=navigator.serviceWorker;if(!N||!(location.protocol=='https:'||location.hostname=='localhost'))return;var had=!!N.controller,tc=0,t0=Date.now(),up=0,hid=0,done=0;
+['pointerdown','keydown','touchstart'].forEach(function(e){addEventListener(e,function(){tc=1},{capture:true,passive:true})});
+function safe(){var a=document.activeElement;if(a&&/^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))return false;return !document.querySelector('dialog[open],#di_o,#w_o,#wk_o,#ed_o,.sh-bg,.sheet:not([hidden])')}
+function go(){if(done||!safe())return;done=1;location.reload()}
+N.register('sw.js',{updateViaCache:'none'}).then(function(r){var f=function(){if(!document.hidden)r.update().catch(function(){})};document.addEventListener('visibilitychange',f);setInterval(f,1800000)}).catch(function(){});
+N.addEventListener('controllerchange',function(){if(!had)return had=true;up=1;if(!tc&&Date.now()-t0<9000)go()});
+document.addEventListener('visibilitychange',function(){if(document.hidden)hid=Date.now();else if(up&&Date.now()-hid>60000)go()})})();</script></body></html>
