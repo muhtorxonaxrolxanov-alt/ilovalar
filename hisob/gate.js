@@ -31,11 +31,12 @@
           return S.encrypt({name:'AES-GCM',iv:iv,additionalData:new Uint8Array(a[1])},key,new TextEncoder().encode(JSON.stringify(obj))).then(function(ct){return{v:2,nonce:obj.nonce,epk:b64(a[1]),iv:b64(iv),ct:b64(ct)}})})})}).catch(function(){return obj})}
   function decRes(r){if(!r||!r.e)return Promise.resolve(r);var key=EK[r.nonce];if(!key)return Promise.resolve(null);
     return crypto.subtle.decrypt({name:'AES-GCM',iv:ub(r.e.iv)},key,ub(r.e.ct)).then(function(p){return JSON.parse(new TextDecoder().decode(p))}).catch(function(){return null})}
-  window.HK.poll=function(phone,n,maxMs,skipWait){var t0=Date.now();maxMs=maxMs||25000;
-    return new Promise(function(ok,no){(function tick(){if(stopF)return no(new Error('stop'));
+  window.HK.poll=function(phone,n,maxMs,skipWait){var t0=Date.now(),wk=Date.now();maxMs=maxMs||40000;
+    return new Promise(function(ok,no){(function tick(){if(stopF)return no(new Error('stop'));if(Date.now()-wk>5000&&Date.now()-t0<60000){wk=Date.now();wake()}
       gtok().then(function(t){return jf(dU(phone),{headers:{Authorization:'Bearer '+t}})}).then(function(j){var f=j.fields||{},r=null;try{r=JSON.parse((f.res||{}).stringValue)}catch(e){}
         return(r&&r.nonce===n?decRes(r):Promise.resolve(null)).then(function(x){return{f:f,r:x}})}).then(function(o){var r=o.r;
         if(r&&r.nonce===n&&!(skipWait&&r.st==='wait'))return ok(r);if(Date.now()-t0>maxMs)return no(new Error('Javob kelmadi. Bot ishlayotganini tekshiring.'));setTimeout(tick,Date.now()-t0>30000?4000:1500)}).catch(function(e){if(e.code===404){if(Date.now()-t0>maxMs)return no(new Error('Javob kelmadi'));return setTimeout(tick,Date.now()-t0>30000?4000:1500)}no(e)})})()})};
+  function wake(){try{fetch('https://script.google.com/macros/s/AKfycbw_Gy-DwwIU98V1WrA1e-dP5oDWX2748vyuXBJihUFpKu4UXXt0mLhODlSr1prvfCw/exec?darvoza=1',{mode:'no-cors',cache:'no-store'}).catch(function(){})}catch(e){}}
   window.HK.call=function(phone,obj,maxMs){stopF=false;var n=nn();obj.nonce=n;if(PROD!=='hk')obj.prod=PROD;
     /* req bilan birga server vaqti (t) yoziladi: bot faqat yangi so'rovlarni so'raydi (bepul limit tejaladi) */
     var base='projects/'+CFG.projectId+'/databases/(default)/documents';
