@@ -150,7 +150,7 @@ if(!(k in M))M[k]=f();return M[k]}})();
 var EX=/^nv_(aicfg|aimods|aislow|aifh|vdone|prof|profs|dataurl|aio|rem|zkm|url)$/;ks.forEach(function(k){if(/^nv_/.test(k)&&k.indexOf("@")<0&&!EX.test(k)&&!(k in o))ls.removeItem(k)});
 Object.keys(o).forEach(function(k){ls.setItem(k,o[k])});ls.removeItem("nvx_snap")}catch(e){}})();
 
-window.NVBUILD=1795577464593;window.nvNorm=function(v){return String(v==null?"":v).replace(/,/g,".").replace(/[^\d.]/g,"").replace(/\.{2,}/g,".").replace(/^\.+|\.+$/g,"")};window.nvNewer=function(x){if(!x)return false;var a=nvNorm(x.v),b=nvNorm(typeof APPV!="undefined"?APPV:"");if(!a||a==b)return false;try{return newer(a,b)}catch(e){return false}};
+window.NVBUILD=1795577959291;window.nvNorm=function(v){return String(v==null?"":v).replace(/,/g,".").replace(/[^\d.]/g,"").replace(/\.{2,}/g,".").replace(/^\.+|\.+$/g,"")};window.nvNewer=function(x){if(!x)return false;var a=nvNorm(x.v),b=nvNorm(typeof APPV!="undefined"?APPV:"");if(!a||a==b)return false;try{return newer(a,b)}catch(e){return false}};
 </script><script id="prof">(function(){
 var DEFNAME="Premium nonvoyxona",OTHER="Namangan nonvoyxona",OTHERU="https://script.google.com/macros/s/AKfycbyzm5FmYVoDOUFnIVbMTQ10-RF7PS6Ktri-datAEjQgLpoanXvBh6pqdiMFiwg_oaw_/exec";
 var LS=window.localStorage,SP=Storage.prototype,gI=SP.getItem,sI=SP.setItem,rI=SP.removeItem;
@@ -3330,8 +3330,8 @@ function url(v){var m=String(v||"").match(/https?:\/\/[^\s<>"']+/i);return m?m[0
 function raw(s){var r="",L=S.zkL||[];for(var i=L.length-1;i>=0&&!r;i--)(L[i].O||[]).forEach(function(o){if(!r&&o.shop&&(K(o.shop)==K(s)||K(DK.zkName0(o.shop))==K(s)))r=o.shop});return r||s}
 function olmQ(s){var r=String(raw(s)).replace(/^\s*(Склад|Sklad)\s*/i,"").replace(/["«»]/g,""),nm=/^\s*N[mм]-/i.test(r)||/наманган|namangan/i.test(r),t=r.replace(/^\s*[A-Za-zА-Яа-я]{1,3}\s*-?\s*\d+\s*/,"").trim()||r.trim(),c=nm?"Наманган":"Ташкент",ad=/ул\.|улица|кўча|ko.?cha|\d|мсг|msg|\bmfy\b/i.test(t)||nm&&/,/.test(t);
 t=t.replace(/(Наманган|Namangan)\s*,?\s*/i,"").replace(/(^|\s)(МСГ|Msg|MFY)(?=\s)/ig,"$1").replace(/\s+/g," ").trim();return(ad?"":"Olma ")+t+", "+c}
-function target(s){var v=get(s);if(v){var c=P(v);return{c:c,u:url(v),t:v,own:1}}return isZ(s)?{c:null,u:"",t:olmQ(s),own:0}:null}
-function gl(x){return"https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(x.c?x.c.join(","):x.t)}
+function target(s){var v=get(s);if(v){var c=P(v);return{c:c,u:url(v),t:v,own:1}}return isZ(s)?{c:null,u:"",t:olmQ(s),own:0,sr:/^Olma /.test(olmQ(s))}:null}
+function gl(x){if(x.sr)return show(x);return"https://www.google.com/maps/dir/?api=1&destination="+encodeURIComponent(x.c?x.c.join(","):x.t)}
 function ya(x){return x.c?"https://yandex.uz/maps/?rtext=~"+x.c.join("%2C")+"&rtt=auto":"https://yandex.uz/maps/?text="+encodeURIComponent(x.t)}
 function show(x){return x.c?"https://maps.google.com/?q="+x.c.join(","):x.u||"https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(x.t)}
 function op(u){try{if(window.Android&&Android.open){Android.open(u);return}}catch(e){}window.open(u,"_blank")}
@@ -3346,7 +3346,7 @@ setInterval(function(){try{pull()}catch(e){}},2500);
 /* hozir turgan joy */
 function here(cb){if(!navigator.geolocation)return toast("Bu telefonda joylashuv ishlamadi — havolani qo'ying");toast("📡 Joylashuv aniqlanmoqda…");
 navigator.geolocation.getCurrentPosition(function(p){cb(p.coords.latitude.toFixed(6)+", "+p.coords.longitude.toFixed(6),Math.round(p.coords.accuracy||0))},function(e){toast(e&&e.code==1?"Joylashuvga ruxsat berilmagan — telefon sozlamasidan ruxsat bering yoki havolani qo'ying":"Joylashuv topilmadi — GPS ni yoqing yoki havolani qo'ying")},{enableHighAccuracy:true,timeout:20000,maximumAge:0})}
-function stT(s){var x=target(s);if(!x)return'<span style="color:var(--mu)">Hali kiritilmagan</span>';if(!x.own)return'<span style="color:#d97706">≈ Ro\'yxatdagi yozuv bo\'yicha qidiriladi: '+q(x.t)+'</span>';return'<span style="color:#16a34a">✅ '+(x.c?"Aniq nuqta: "+x.c.join(", "):x.u?"Havola saqlangan":"Manzil: "+q(x.t))+'</span>'}
+function stT(s){var x=target(s);if(!x)return'<span style="color:var(--mu)">Hali kiritilmagan</span>';if(!x.own)return'<span style="color:#d97706">≈ '+(x.sr?"Ro'yxatda ko'cha yozilmagan, faqat nomi bo'yicha qidiriladi — aniq joyini kiriting: ":"Ro'yxatdagi yozuv bo'yicha: ")+q(x.t)+'</span>';return'<span style="color:#16a34a">✅ '+(x.c?"Aniq nuqta: "+x.c.join(", "):x.u?"Havola saqlangan":"Manzil: "+q(x.t))+'</span>'}
 /* kiritish joyi */
 function form(s,nog){return'<div style="display:flex;gap:6px;align-items:center"><input class="lc_i" type="text" placeholder="Xarita havolasi yoki manzil" value="'+q(get(s))+'" style="flex:1;min-width:0;margin:0"><button class="lc_h" title="Hozir shu yerdaman" style="flex:none;width:auto;margin:0;padding:11px 10px">📌 Shu yerdaman</button></div><div class="lc_s" style="font-size:13px;margin:4px 0 6px;word-break:break-word">'+stT(s)+'</div>'+(nog?'':'<button class="lc_g" style="margin:0">🧭 Borish / ulashish</button>')}
 function bind(o,s,aft){var i=o.querySelector(".lc_i"),st=o.querySelector(".lc_s"),g=o.querySelector(".lc_g");function p(){if(st)st.innerHTML=stT(s);if(g)g.style.display=target(s)?"":"none";if(aft)aft()}
@@ -3357,7 +3357,7 @@ if(g){g.onclick=function(){if(i.value.trim()!=get(s)&&!set(s,i.value))return;nvL
 window.nvLoc=function(s){var x=target(s);if(!x)return toast("Lokatsiya kiritilmagan");var B=function(id,t,c){return'<button id="'+id+'" class="'+(c||"")+'" style="padding:14px;margin:6px 0 0">'+t+'</button>'};
 dSheet("📍 "+q(s),'<div class="tile" id="lo_st" style="font-size:14px;word-break:break-word">'+stT(s)+'</div><div id="lo_b"></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+B("lo_s","✈️ Yuborish")+B("lo_c","📋 Nusxalash")+'</div>'+(isZ(s)?'<details id="lo_e" style="margin-top:10px"><summary style="padding:8px 0;font-weight:700">✏️ Aniq lokatsiyani kiritish</summary><div id="lo_f">'+form(s,1)+'</div></details>':""));
 var $=function(i){return document.getElementById(i)},on=function(i,f){if($(i))$(i).onclick=f},T=function(){return target(s)||x};
-function bt(){var y=T();$("lo_b").innerHTML=y.u&&!y.c?B("lo_l","🧭 Xaritada ochish","b"):B("lo_g","🧭 Google xaritada borish","b")+B("lo_y",y.c?"🧭 Yandex xaritada borish":"🧭 Yandex xaritada ko'rish");
+function bt(){var y=T();$("lo_b").innerHTML=y.u&&!y.c?B("lo_l","🧭 Xaritada ochish","b"):B("lo_g",y.sr?"🔍 Google xaritada qidirish":"🧭 Google xaritada borish","b")+B("lo_y",y.c?"🧭 Yandex xaritada borish":"🧭 Yandex xaritada ko'rish");
 on("lo_g",function(){op(gl(T()))});on("lo_y",function(){op(ya(T()))});on("lo_l",function(){op(T().u)})}bt();
 on("lo_s",function(){op("https://t.me/share/url?url="+encodeURIComponent(show(T()))+"&text="+encodeURIComponent("📍 "+s))});
 on("lo_c",function(){try{navigator.clipboard.writeText("📍 "+s+": "+show(T()));toast("Nusxalandi ✓")}catch(e){toast("Nusxalab bo'lmadi")}});
