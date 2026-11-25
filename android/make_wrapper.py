@@ -13,9 +13,9 @@ HOST = 'muhtorxonaxrolxanov-alt.github.io'
 ND = r'C:\Loyihalar\nonvoyxona\dist'
 APPS = [
     # nomi (apk), manba, internetdagi manzil, versionCode, versionName, Android ko'prigi nomi
-    ('toshkent-rahbar', ND + r'\premium-nonvoyxona.caproj', 'nonvoyxona/toshkent-rahbar/', 31, '4.1', 'Android'),
+    ('toshkent-rahbar', ND + r'\premium-nonvoyxona.caproj', 'nonvoyxona/toshkent-rahbar/', 32, '4.2', 'Android'),
     ('toshkent-hodim', ND + r'\premium-nonvoyxona-ishchi.caproj', 'nonvoyxona/toshkent-hodim/', 30, '4.0', 'Android'),
-    ('namangan-rahbar', ND + r'\namangan-nonvoyxona.caproj', 'nonvoyxona/namangan-rahbar/', 31, '4.1', 'Android'),
+    ('namangan-rahbar', ND + r'\namangan-nonvoyxona.caproj', 'nonvoyxona/namangan-rahbar/', 32, '4.2', 'Android'),
     ('namangan-hodim', ND + r'\namangan-nonvoyxona-ishchi.caproj', 'nonvoyxona/namangan-hodim/', 30, '4.0', 'Android'),
     ('hisob-kitob', r'C:\Users\user\Downloads\loyiha\cap', 'hisob/', 30, '30', 'AndroidBridge'),
     ('dokon-mijoz', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Elektr-Dokon-Mijoz.caproj', 'dokon/mijoz/', 32, '2.2', 'none'),
@@ -121,6 +121,49 @@ GEO_FIELDS = r"""
         if ((all || k.equals("ntf")) && Build.VERSION.SDK_INT >= 33 && !has("android.permission.POST_NOTIFICATIONS")) a.add("android.permission.POST_NOTIFICATIONS");
         if (a.size() > 0) requestPermissions(a.toArray(new String[0]), code); else js("window.onPerm&&onPerm()");
     }
+    // Yandex ustida turadigan oyna (2026-11-25): do'kon, non soni, ✓
+    private View ov; private android.widget.TextView ovT, ovS, ovL; private boolean ovSet = false;
+    private boolean canOv() { return android.provider.Settings.canDrawOverlays(this); }
+    private void ovRemove() {
+        if (ov == null) return;
+        try { ((android.view.WindowManager) getApplicationContext().getSystemService(WINDOW_SERVICE)).removeView(ov); } catch (Exception e) {}
+        ov = null;
+    }
+    private int dp(float v) { return (int) (v * getResources().getDisplayMetrics().density + .5f); }
+    private android.graphics.drawable.GradientDrawable bg(int c, int r) { android.graphics.drawable.GradientDrawable g = new android.graphics.drawable.GradientDrawable(); g.setColor(c); g.setCornerRadius(dp(r)); return g; }
+    private void ovMake(String t, String s, String l) {
+        if (!canOv()) return;
+        if (ov == null) {
+            final android.content.Context c = getApplicationContext();
+            final android.view.WindowManager wm = (android.view.WindowManager) c.getSystemService(WINDOW_SERVICE);
+            final android.view.WindowManager.LayoutParams lp = new android.view.WindowManager.LayoutParams(-1, -2, android.view.WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY, android.view.WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, android.graphics.PixelFormat.TRANSLUCENT);
+            lp.gravity = android.view.Gravity.TOP; lp.y = dp(96); lp.horizontalMargin = 0f;
+            FrameLayout out = new FrameLayout(c); out.setPadding(dp(8), 0, dp(8), 0);
+            android.widget.LinearLayout row = new android.widget.LinearLayout(c); row.setGravity(android.view.Gravity.CENTER_VERTICAL); row.setPadding(dp(12), dp(8), dp(8), dp(8)); row.setBackground(bg(0xF2111827, 16));
+            android.widget.LinearLayout col = new android.widget.LinearLayout(c); col.setOrientation(android.widget.LinearLayout.VERTICAL);
+            ovT = new android.widget.TextView(c); ovT.setTextColor(0xFFFFFFFF); ovT.setTextSize(18); ovT.setTypeface(null, android.graphics.Typeface.BOLD); ovT.setMaxLines(1); ovT.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            ovS = new android.widget.TextView(c); ovS.setTextColor(0xFFFBBF24); ovS.setTextSize(20); ovS.setTypeface(null, android.graphics.Typeface.BOLD); ovS.setMaxLines(2);
+            ovL = new android.widget.TextView(c); ovL.setTextColor(0xFFCBD5E1); ovL.setTextSize(12); ovL.setMaxLines(1); ovL.setEllipsize(android.text.TextUtils.TruncateAt.END);
+            col.addView(ovT); col.addView(ovS); col.addView(ovL);
+            row.addView(col, new android.widget.LinearLayout.LayoutParams(0, -2, 1f));
+            android.widget.TextView ok = new android.widget.TextView(c); ok.setText("\u2713 Berildi"); ok.setTextColor(0xFFFFFFFF); ok.setTextSize(17); ok.setTypeface(null, android.graphics.Typeface.BOLD); ok.setPadding(dp(14), dp(14), dp(14), dp(14)); ok.setBackground(bg(0xFF16A34A, 12));
+            ok.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { js("window.onOv&&onOv('done')"); } });
+            row.addView(ok);
+            android.widget.TextView x = new android.widget.TextView(c); x.setText("\u2715"); x.setTextColor(0xFFCBD5E1); x.setTextSize(18); x.setPadding(dp(12), dp(14), dp(6), dp(14));
+            x.setOnClickListener(new View.OnClickListener() { @Override public void onClick(View v) { ovRemove(); js("window.onOv&&onOv('x')"); } });
+            row.addView(x); out.addView(row);
+            // barmoq bilan tepaga-pastga surish
+            col.setOnTouchListener(new View.OnTouchListener() { float y0; int p0; boolean mv;
+                @Override public boolean onTouch(View v, android.view.MotionEvent e) {
+                    if (e.getAction() == android.view.MotionEvent.ACTION_DOWN) { y0 = e.getRawY(); p0 = lp.y; mv = false; return true; }
+                    if (e.getAction() == android.view.MotionEvent.ACTION_MOVE) { float d = e.getRawY() - y0; if (Math.abs(d) > dp(6)) mv = true; if (mv && ov != null) { lp.y = Math.max(0, p0 + (int) d); try { wm.updateViewLayout(ov, lp); } catch (Exception q) {} } return true; }
+                    if (e.getAction() == android.view.MotionEvent.ACTION_UP && !mv) { try { Intent i = new Intent(MainActivity.this, MainActivity.class); i.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_NEW_TASK); startActivity(i); } catch (Exception q) {} return true; }
+                    return true;
+                } });
+            try { wm.addView(out, lp); ov = out; } catch (Exception e) { ov = null; return; }
+        }
+        ovT.setText(t); ovS.setText(s); ovL.setText(l);
+    }
     private void openAppSet() {
         try { startActivity(new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:" + getPackageName()))); } catch (Exception e) {}
     }
@@ -128,7 +171,7 @@ GEO_FIELDS = r"""
 GEO_CHROME = r"""
             @Override public void onGeolocationPermissionsShowPrompt(String origin, android.webkit.GeolocationPermissions.Callback cb) {
                 String h = Uri.parse(origin).getHost();
-                if (!NV_HOST.equals(h)) { cb.invoke(origin, false, false); return; }
+                if (!NV_HOST.equals(h) && !(h != null && (h.equals("yandex.uz") || h.endsWith(".yandex.uz")))) { cb.invoke(origin, false, false); return; }
                 if (hasGeo()) { cb.invoke(origin, true, false); return; }
                 geoCb = cb; geoOr = origin; askPerms("geo", 21);
             }
@@ -146,6 +189,18 @@ GEO_BRIDGE = r"""    @JavascriptInterface
                     askPerms(k, 20);
                 } });
             }
+            @JavascriptInterface
+            public boolean ovOk() { return canOv(); }
+            @JavascriptInterface
+            public void ovPerm() { runOnUiThread(new Runnable() { @Override public void run() { ovSet = true; try { startActivity(new Intent(android.provider.Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()))); } catch (Exception e) { openAppSet(); } } }); }
+            @JavascriptInterface
+            public void ovShow(final String t, final String s, final String l) { runOnUiThread(new Runnable() { @Override public void run() { ovMake(t, s, l); } }); }
+            @JavascriptInterface
+            public void ovHide() { runOnUiThread(new Runnable() { @Override public void run() { ovRemove(); } }); }
+            @JavascriptInterface
+            public void openY(final String a, final String w) { runOnUiThread(new Runnable() { @Override public void run() {
+                try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(a))); } catch (Exception e) { try { startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(w))); } catch (Exception e2) {} }
+            } }); }
             @JavascriptInterface
             public void permSet() { runOnUiThread(new Runnable() { @Override public void run() { openAppSet(); } }); }
         """
@@ -168,11 +223,13 @@ def patch_geo(gdir):
     one('super.onRequestPermissionsResult(code, p, g);', """super.onRequestPermissionsResult(code, p, g);
         if (geoCb != null && (code == 20 || code == 21)) { try { geoCb.invoke(geoOr, hasGeo(), false); } catch (Exception e) {} geoCb = null; }
         if (code == 20 || code == 21) { js("window.onPerm&&onPerm()"); return; }""")
+    one('        RES = true;', '        RES = true;\n        ovRemove();\n        js("window.onPerm&&onPerm()");\n        if (ovSet) { ovSet = false; js("window.onOv&&onOv(\'perm\')"); }')
+    one('        if (ACT == this) ACT = null;', '        if (ACT == this) ACT = null;\n        ovRemove();')
     one('web.loadUrl(NV_START);', 'web.loadUrl(NV_START);\n        web.postDelayed(new Runnable() { @Override public void run() { try { if (!hasGeo() || !has(Manifest.permission.RECORD_AUDIO) || (Build.VERSION.SDK_INT >= 33 && !has("android.permission.POST_NOTIFICATIONS"))) askPerms("", 20); } catch (Exception e) {} } }, 1500);')
     open(main, 'w', encoding='utf-8').write(j)
     mf = os.path.join(gdir, 'app', 'src', 'main', 'AndroidManifest.xml')
     m = open(mf, encoding='utf-8').read()
-    m = m.replace('<uses-permission android:name="android.permission.INTERNET"/>', '<uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>\n    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>\n    <uses-feature android:name="android.hardware.location.gps" android:required="false"/>\n    <uses-feature android:name="android.hardware.microphone" android:required="false"/>', 1)
+    m = m.replace('<uses-permission android:name="android.permission.INTERNET"/>', '<uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>\n    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>\n    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>\n    <uses-feature android:name="android.hardware.location.gps" android:required="false"/>\n    <uses-feature android:name="android.hardware.microphone" android:required="false"/>', 1)
     open(mf, 'w', encoding='utf-8').write(m)
 
 
