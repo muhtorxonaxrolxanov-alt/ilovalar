@@ -97,9 +97,9 @@ function bargeIn(matn,my){const so=new Set(matn.toLowerCase().replace(/[^a-zа-�
   r.onresult=e=>{let s='';for(let i=e.resultIndex;i<e.results.length;i++){s+=e.results[i][0].transcript;if(e.results[i].isFinal)fin+=e.results[i][0].transcript+' '}
     const x=(fin||s).trim();if(!BOLDI){if(x.split(/\s+/).length>=2&&!ech(x)||/to'?xta|jarvis|джарвис|stop/i.test(x)){BOLDI=true;DAVOM=QOL.slice();stopSpeak();setMode('listen','💬 Eshityapman…');$('mic').classList.add('on')}}
     if(BOLDI)stEl.textContent='🎤 '+x};
-  r.onend=()=>{if(tugadi)return;tugadi=true;$('mic').classList.remove('on');if(BOLDI){const q=fin.trim().replace(/^(jarvis|джарвис)[,\s]*/i,'');if(q&&!/^to'?xta\b|^stop\b/i.test(q))cmd(q,false,true);else listen(false,true)}};
+  r.onend=()=>{recT=Date.now();if(tugadi)return;tugadi=true;$('mic').classList.remove('on');if(BOLDI){const q=fin.trim().replace(/^(jarvis|джарвис)[,\s]*/i,'');if(q&&!/^to'?xta\b|^stop\b/i.test(q))cmd(q,false,true);else listen(false,true)}};
   r.onerror=()=>{};try{r.start()}catch(e){return null}
-  return{stop(){if(!BOLDI){tugadi=true;try{r.abort()}catch(e){}}}}}
+  return{stop(){if(!BOLDI){tugadi=true;recT=Date.now();try{r.abort()}catch(e){}}}}}
 const FILL=['Hmm.','Xo\'p.'],HA='Labbay?';
 function prefetch(){if(MUTE||(!JV.LOCAL&&!PC&&uzVoice()))return;[...FILL,HA].forEach(x=>ttsGet(x,true))}
 setTimeout(prefetch,1500);
@@ -119,23 +119,37 @@ const joy=()=>JV.LOCAL?'pc':REJ==='tel'?'tel':REJ==='pc'?'pc':(PC?'pc':'tel');
 const XAYR=/^(rahmat|raxmat|bo'?ldi|xayr|yetarli|to'?xta|stop|hammasi shu)\b/i;
 async function cmd(t,yashir,ovoz){t=t.trim();if(!t)return;stopSpeak();if(!yashir)add(t,1);setMode('think',JV.LOCAL||joy()==='tel'?'O\'ylayapman…':'Kompyuterga yubordim…');
   const tl=t.toLowerCase().replace(/[’'`ʻʼ]/g,"'");
-  if(/^(davom (et|etaver|qil|ettir)|davom|qolganini ayt)\b/.test(tl)&&DAVOM.length){const d=DAVOM.join(' ');DAVOM=[];await say(d,ovoz);if(ovoz&&SUHBAT&&!WAKE&&SR&&!BOLDI){setMode('listen','💬 Eshityapman…');listen(false,true)}else if(!BOLDI)setMode('idle','Mikrofonni bosing yoki yozing');return}
+  if(/^(davom (et|etaver|qil|ettir)|davom|qolganini ayt)\b/.test(tl)&&DAVOM.length){const d=DAVOM.join(' ');DAVOM=[];await say(d,ovoz);if(ovoz&&SUHBAT&&SR&&!BOLDI){setMode('listen','💬 Eshityapman…');listen(false,true)}else if(!BOLDI)setMode('idle','Mikrofonni bosing yoki yozing');return}
   const tug=ovoz&&XAYR.test(tl);let fill=null,done=false;
   const ft=setTimeout(()=>{if(!done&&!MUTE&&!/^__/.test(t))fill=say(FILL[Math.floor(Math.random()*FILL.length)])},1600);
   try{let r=null;if(!JV.LOCAL&&joy()==='tel'&&!/^__/.test(t)){const z=tezTel(t);if(z)r={javob:z}}
     if(!r)r=await JV.buyruq(t,JV.LOCAL?'':REJ,HIST.slice(0,-1));done=true;clearTimeout(ft);if(fill)await fill;
     add(r.javob,0,r.img);if(r.login){$('kir').style.display='block'}await say(r.javob,ovoz&&!tug);if(BOLDI)return}catch(e){done=true;clearTimeout(ft);add(JV.LOCAL?'Server bilan aloqa yo\'q. Jarvis belgisini qayta bosing.':'Aloqa yo\'q. Internetni tekshiring.')}
-  if(ovoz&&SUHBAT&&!tug&&!WAKE&&SR){setMode('listen','💬 Eshityapman… (davom eting)');listen(false,true);return}
+  if(ovoz&&SUHBAT&&!tug&&SR){setMode('listen','💬 Eshityapman… (davom eting)');listen(false,true);return}
   setMode(WAKE?'listen':'idle',WAKE?'«Jarvis» deb chaqiring…':'Mikrofonni bosing yoki yozing');if(WAKE)listen(true)}
 $('f').onsubmit=e=>{e.preventDefault();const v=$('t').value;$('t').value='';cmd(v)};
 /* ---------- ovoz: eshitish (Chrome: uz-UZ) ---------- */
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null,WAKE=false,busy=false;
+const BC=('BroadcastChannel'in window)?new BroadcastChannel('jarvis'):null;let BANDT=0;
+function band(on){BANDT=on?Date.now():0;try{BC&&BC.postMessage({band:!!on})}catch(e){}}
+setInterval(()=>{if(MODE==='listen'&&!WAKE||MODE==='think'||MODE==='speak')band(true)},3000);
+let recT=0;
 function listen(wake,davom){if(!SR){add('Bu brauzerda ovozni tanish yo\'q — Chrome\'da oching.');return}if(rec)try{rec.abort()}catch(e){}
-  rec=new SR();rec.lang='uz-UZ';rec.interimResults=true;rec.continuous=!!wake;let fin='';$('mic').classList.add('on');setMode('listen',wake?'«Jarvis» deb chaqiring…':'Eshityapman…');
-  rec.onresult=e=>{LVL=1;let s='';for(let i=e.resultIndex;i<e.results.length;i++){s+=e.results[i][0].transcript;if(e.results[i].isFinal)fin+=e.results[i][0].transcript+' '}
-    stEl.textContent='🎤 '+s;if(wake&&fin){const m=fin.toLowerCase().match(/(?:jarvis|jarvi?s|джарвис|jar ?vis)[,\s]*(.*)/);if(m){const q=m[1].trim();fin='';if(q){rec.abort();cmd(q,false,true)}else{rec.abort();say(HA).then(()=>listen(false))}}else fin=''}};
-  rec.onend=()=>{$('mic').classList.remove('on');if(!wake&&fin.trim())cmd(fin,false,true);else if(davom&&!fin.trim()){setMode('idle','💬 Suhbat tugadi — mikrofonni bosing yoki yozing')}else if(wake&&WAKE&&MODE!=='think'&&MODE!=='speak')setTimeout(()=>listen(true),300);else if(!wake)setMode('idle','Mikrofonni bosing yoki yozing')};
-  rec.onerror=e=>{if(e.error==='not-allowed')add('Mikrofonga ruxsat bering (manzil satridagi 🔒 → Mikrofon → Ruxsat).')};rec.start()}
+  const kut=Math.max(0,350-(Date.now()-recT));if(kut){setTimeout(()=>listen(wake,davom),kut);return}
+  if(!wake)band(true);
+  const r=rec=new SR();r.lang='uz-UZ';r.interimResults=true;r.continuous=true;let fin='',jim=null,bitdi=false,gap=false;$('mic').classList.add('on');setMode('listen',wake?'«Jarvis» deb chaqiring…':'Eshityapman…');
+  const yop=()=>{if(bitdi)return;bitdi=true;clearTimeout(jim);try{r.stop()}catch(e){}};
+  if(!wake)jim=setTimeout(yop,davom?4000:6000); // gapirmasa — mikrofon yopiladi
+  r.onresult=e=>{LVL=1;let s='';for(let i=e.resultIndex;i<e.results.length;i++){s+=e.results[i][0].transcript;if(e.results[i].isFinal)fin+=e.results[i][0].transcript+' '}
+    stEl.textContent='🎤 '+(fin+s).trim();
+    if(wake){if(fin){const m=fin.toLowerCase().match(/(?:jarvis|jarvi?s|джарвис|jar ?vis)[,\s]*(.*)/);if(m){const q=m[1].trim();fin='';bitdi=true;try{r.abort()}catch(e){}if(q)cmd(q,false,true);else say(HA).then(()=>listen(false,true))}else fin=''}return}
+    gap=true;clearTimeout(jim);jim=setTimeout(yop,fin.trim()&&!/\S/.test(s.replace(fin,''))?1200:1800)}; // gap tugagach biroz jimlik — yuboradi
+  r.onend=()=>{recT=Date.now();if(rec===r)$('mic').classList.remove('on');clearTimeout(jim);if(rec!==r)return;
+    if(wake){if(WAKE&&MODE!=='think'&&MODE!=='speak')setTimeout(()=>listen(true),300);return}
+    if(fin.trim()){cmd(fin,false,true);return}
+    band(false);setMode('idle',davom?'«Hey Jarvis» deb chaqiring yoki mikrofonni bosing':'Mikrofonni bosing yoki yozing');if(WAKE)listen(true)};
+  r.onerror=e=>{if(e.error==='not-allowed')add('Mikrofonga ruxsat bering (manzil satridagi 🔒 → Mikrofon → Ruxsat).')};
+  try{r.start()}catch(e){setTimeout(()=>listen(wake,davom),400)}}
 $('mic').onclick=()=>{stopSpeak();ac();listen(false)};
 $('wake').onclick=()=>{WAKE=!WAKE;$('wake').textContent='👂 Doim tinglash: '+(WAKE?'yoqiq':'o\'chiq');if(WAKE)listen(true);else{try{rec.abort()}catch(e){}setMode('idle','Mikrofonni bosing yoki yozing')}};
 $('kirb').onclick=async()=>{const r=await JV.kirish();add(JV.LOCAL?'Brauzerda Claude kirish sahifasi ochildi. Kirib bo\'lgach, savolingizni qaytaring.':(r&&r.javob)||'Kompyuterda kirish sahifasi ochildi.');$('kir').style.display='none'};
