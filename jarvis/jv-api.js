@@ -61,6 +61,7 @@ window.JV = (function () {
   }
   var LAST = { matnlar: {} };
   return {
+    ulash: function () { return fetch(URL, { method: 'POST', headers: { 'content-type': 'text/plain' }, body: JSON.stringify({ jv: 'ulash' }) }).then(function (r) { return r.json(); }); },
     LOCAL: LOCAL, AGENTS: AGENTS, key: KEY, ulangan: function () { return LOCAL || !!KEY(); }, uzish: function () { LS.s('jv_key', null); },
     jarvisUrl: LOCAL ? '/' : './', jamoaUrl: LOCAL ? '/jamoa' : 'jamoa.html',
     holat: function () { return LOCAL ? get('/api/holat').then(function (j) { return { pc: true, kirgan: j.kirgan }; }) : rq({ jv: 'holat' }, 30000); },
