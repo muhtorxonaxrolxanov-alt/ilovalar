@@ -13,19 +13,19 @@ HOST = 'muhtorxonaxrolxanov-alt.github.io'
 ND = r'C:\Loyihalar\nonvoyxona\dist'
 APPS = [
     # nomi (apk), manba, internetdagi manzil, versionCode, versionName, Android ko'prigi nomi
-    ('toshkent-rahbar', ND + r'\premium-nonvoyxona.caproj', 'nonvoyxona/toshkent-rahbar/', 32, '4.2', 'Android'),
-    ('toshkent-hodim', ND + r'\premium-nonvoyxona-ishchi.caproj', 'nonvoyxona/toshkent-hodim/', 30, '4.0', 'Android'),
-    ('namangan-rahbar', ND + r'\namangan-nonvoyxona.caproj', 'nonvoyxona/namangan-rahbar/', 32, '4.2', 'Android'),
-    ('namangan-hodim', ND + r'\namangan-nonvoyxona-ishchi.caproj', 'nonvoyxona/namangan-hodim/', 30, '4.0', 'Android'),
+    ('toshkent-rahbar', ND + r'\premium-nonvoyxona.caproj', 'nonvoyxona/toshkent-rahbar/', 33, '4.3', 'Android'),
+    ('toshkent-hodim', ND + r'\premium-nonvoyxona-ishchi.caproj', 'nonvoyxona/toshkent-hodim/', 31, '4.1', 'Android'),
+    ('namangan-rahbar', ND + r'\namangan-nonvoyxona.caproj', 'nonvoyxona/namangan-rahbar/', 33, '4.3', 'Android'),
+    ('namangan-hodim', ND + r'\namangan-nonvoyxona-ishchi.caproj', 'nonvoyxona/namangan-hodim/', 31, '4.1', 'Android'),
     ('hisob-kitob', r'C:\Users\user\Downloads\loyiha\cap', 'hisob/', 30, '30', 'AndroidBridge'),
     ('dokon-mijoz', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Elektr-Dokon-Mijoz.caproj', 'dokon/mijoz/', 32, '2.2', 'none'),
-    ('dokon-sotuvchi', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Dokon-Sotuvchi.caproj', 'dokon/sotuvchi/', 32, '2.2', 'none'),
+    ('dokon-sotuvchi', r'C:\Loyihalar\premium-xizmat\caproj\tayyor\Dokon-Sotuvchi.caproj', 'dokon/sotuvchi/', 33, '2.3', 'none'),
     # Hamyon: ovozni telefonning o'zi taniydi (Android.listen) — shuning uchun nonvoyxona Java kodi asosida
-    ('hamyon', ND + r'\premium-nonvoyxona.caproj', 'hamyon/', 2, '1.1', 'Android'),
+    ('hamyon', ND + r'\premium-nonvoyxona.caproj', 'hamyon/', 3, '1.2', 'Android'),
     # Shogird (2026-11-18): Hisob-kitob Java kodi, lekin shogird/ sahifasini ochadi — alohida ilova
     ('shogird', r'C:\Users\user\Downloads\loyiha\cap', 'shogird/', 1, '1.0', 'AndroidBridge'),
     # Jarvis (2026-11-26): SHAXSIY — ichida ulanish kaliti bor, shuning uchun out/ ga emas, shaxsiy/ ga (saytga chiqmaydi)
-    ('jarvis', ND + r'\premium-nonvoyxona.caproj', 'jarvis/', 2, '1.1', 'Android'),
+    ('jarvis', ND + r'\premium-nonvoyxona.caproj', 'jarvis/', 3, '1.2', 'Android'),
 ]
 # Telefondagi nomi va belgisi (bo'lmasa — asl nomi + " (yangi)", asl belgi)
 LABEL = {'dokon-mijoz': '222 Aksessuar', 'dokon-sotuvchi': '222 Aksessuar Sotuvchi', 'hamyon': 'Hamyon', 'shogird': 'Shogird', 'jarvis': 'Jarvis'}
@@ -209,6 +209,25 @@ GEO_BRIDGE = r"""    @JavascriptInterface
         """
 
 
+def patch_perm(gdir, name):
+    """Ruxsat kerak bo'lganda so'ralsin: eslatma (POST_NOTIFICATIONS) — birinchi eslatma/bildirishnomada; 222 Sotuvchi — joylashuv manifestga."""
+    for r_, _, fs in os.walk(os.path.join(gdir, 'app', 'src', 'main')):
+        for f in fs:
+            fp = os.path.join(r_, f)
+            if f == 'AndroidManifest.xml' and name == 'dokon-sotuvchi':
+                m = open(fp, encoding='utf-8').read()
+                if 'ACCESS_FINE_LOCATION' not in m:
+                    m = m.replace('<uses-permission android:name="android.permission.INTERNET"/>', '<uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>\n    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>', 1)
+                    open(fp, 'w', encoding='utf-8').write(m)
+            if f == 'MainActivity.java':
+                j = open(fp, encoding='utf-8').read()
+                if 'nvNotifPerm' in j or 'public void notifyNow(' not in j: continue
+                j = re.sub(r'(public class MainActivity[^{]*\{)', r'\1\n    void nvNotifPerm() { try { if (android.os.Build.VERSION.SDK_INT >= 33 && checkSelfPermission("android.permission.POST_NOTIFICATIONS") != android.content.pm.PackageManager.PERMISSION_GRANTED) runOnUiThread(new Runnable() { public void run() { try { requestPermissions(new String[]{"android.permission.POST_NOTIFICATIONS"}, 73); } catch (Exception e) {} } }); } catch (Exception e) {} }\n', j, count=1)
+                j = re.sub(r'(public void notifyNow\([^)]*\)\s*\{)', r'\1 nvNotifPerm();', j, count=1)
+                j = re.sub(r'(public void remind\([^)]*\)\s*\{)', r'\1 nvNotifPerm();', j, count=1)
+                open(fp, 'w', encoding='utf-8').write(j)
+
+
 def patch_geo(gdir):
     """Joylashuv ruxsati + birinchi ochilishda hamma ruxsatlarni so'rash (2026-11-25)"""
     main = [os.path.join(r, f) for r, _, fs in os.walk(os.path.join(gdir, 'app', 'src', 'main', 'java')) for f in fs if f == 'MainActivity.java'][0]
@@ -264,6 +283,7 @@ def build(only=None):
                 _j = re.sub(r'(\w+)\.setJavaScriptEnabled\(true\);', r'\1.setJavaScriptEnabled(true); \1.setMediaPlaybackRequiresUserGesture(false);', _j, count=1)
                 open(_f, 'w', encoding='utf-8').write(_j)
         if name in ('toshkent-rahbar', 'namangan-rahbar'): patch_geo(gdir)
+        patch_perm(gdir, name)
         if name in LABEL:
             sx = os.path.join(gdir, 'app', 'src', 'main', 'res', 'values', 'strings.xml')
             s = open(sx, encoding='utf-8').read()
