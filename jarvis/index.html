@@ -55,7 +55,7 @@ function frame(){T+=0.016;const tg=COL[MODE];cur=cur.map((c,i)=>c+(tg[i]-c)*0.06
   LVL*=0.92;requestAnimationFrame(frame)}frame();
 const $=i=>document.getElementById(i),stEl=$('state'),log=$('log');
 function setMode(m,txt){MODE=m;stEl.textContent=txt}
-function add(t,u,img){const d=document.createElement('div');d.className='m'+(u?' u':'');d.textContent=t;if(img){const i=document.createElement('img');i.src='data:image/jpeg;base64,'+img;i.onclick=()=>{const w=open();if(w)w.document.write('<body style="margin:0;background:#000"><img src="'+i.src+'" style="width:100%">')};d.appendChild(i)}log.appendChild(d);log.scrollTop=1e9;HIST.push({u:!!u,t:String(t).slice(0,1500)});HIST=HIST.slice(-10)}
+function add(t,u,img){const d=document.createElement('div');d.className='m'+(u?' u':'');d.textContent=t;if(img){const i=document.createElement('img');i.src='data:image/jpeg;base64,'+img;i.onclick=()=>{const w=open();if(w)w.document.write('<body style="margin:0;background:#000"><img src="'+i.src+'" style="width:100%">')};d.appendChild(i)}log.appendChild(d);log.scrollTop=1e9;HIST.push({u:!!u,t:String(t).slice(0,1500)});HIST=HIST.slice(-16)}
 let HIST=[],MUTE=localStorage.getItem('jv_mute')==='1',REJ=localStorage.getItem('jv_rej')||'avto',PC=null,KIRGAN=null;
 /* ---------- ovoz: gapirish ---------- */
 let VO=null;function pickVoice(){const v=speechSynthesis.getVoices();VO=v.find(x=>/^uz/i.test(x.lang))||v.find(x=>/^tr/i.test(x.lang))||v.find(x=>/^ru/i.test(x.lang))||v[0]||null}
@@ -68,7 +68,7 @@ function ac(){if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(
 addEventListener('pointerdown',()=>ac(),{once:true});
 function b64ab(b){const s=atob(b),u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i);return u.buffer}
 async function decode(j){const c=ac();if(!c)return null;const ab=b64ab(j.pcm),h=new Uint8Array(ab,0,4);
-  if(String.fromCharCode(h[0],h[1],h[2],h[3])==='RIFF')return await c.decodeAudioData(ab);
+  if(j.fmt==='mp3'||String.fromCharCode(h[0],h[1],h[2],h[3])==='RIFF'||(h[0]===0x49&&h[1]===0x44)||h[0]===0xFF)return await c.decodeAudioData(ab);
   const dv=new DataView(ab),n=ab.byteLength>>1,buf=c.createBuffer(1,n,24000),ch=buf.getChannelData(0);for(let i=0;i<n;i++)ch[i]=dv.getInt16(i*2,true)/32768;return buf}
 function play(buf){return new Promise(ok=>{const c=ac(),s=c.createBufferSource(),an=c.createAnalyser();an.fftSize=256;s.buffer=buf;s.connect(an);an.connect(c.destination);SRC=s;const d=new Uint8Array(an.frequencyBinCount);let on=true;
   (function m(){if(!on)return;an.getByteTimeDomainData(d);let x=0;for(const v of d)x=Math.max(x,Math.abs(v-128));LVL=Math.min(1,x/45);requestAnimationFrame(m)})();s.onended=()=>{on=false;if(SRC===s)SRC=null;ok()};s.start()})}
@@ -76,8 +76,8 @@ function stopSpeak(){SPK++;LVL=0;try{SRC&&SRC.stop()}catch(e){}SRC=null;try{spee
 const TTSC={};
 function ttsGet(t,keep){const k=VOICE+'|'+t;if(TTSC[k])return TTSC[k];
   let p;const ls='jvf|'+k,old=keep&&localStorage.getItem(ls);
-  if(old)p=decode({pcm:old}).catch(()=>null);
-  else p=Promise.race([JV.tts(t,VOICE),new Promise(r=>setTimeout(()=>r(null),12000))]).then(j=>{if(!(j&&j.ok&&j.pcm))return null;if(keep)try{localStorage.setItem(ls,j.pcm)}catch(e){}return decode(j)}).catch(()=>null);
+  if(old)p=decode({pcm:old,fmt:localStorage.getItem(ls+'|f')||''}).catch(()=>null);
+  else p=Promise.race([JV.tts(t,VOICE),new Promise(r=>setTimeout(()=>r(null),12000))]).then(j=>{if(!(j&&j.ok&&j.pcm))return null;if(keep)try{localStorage.setItem(ls,j.pcm);localStorage.setItem(ls+'|f',j.fmt||'')}catch(e){}return decode(j)}).catch(()=>null);
   TTSC[k]=p;p.then(b=>{if(!b)delete TTSC[k]});return p}
 function parts(t){t=String(t||'').replace(/```[\s\S]*?```/g,' ').replace(/[*#`_>|]/g,'').replace(/https?:\/\/\S+/g,'havola').replace(/\s+/g,' ').trim().slice(0,900);const L=t.match(/[^.!?…]+[.!?…]*/g)||[t],o=[];
   for(const x of L){const y=x.trim();if(!y)continue;if(o.length&&o.length>1&&o[o.length-1].length+y.length<160)o[o.length-1]+=' '+y;else o.push(y)}return o.slice(0,7)}
@@ -85,10 +85,10 @@ function uzVoice(){if(!('speechSynthesis'in window))return null;const v=speechSy
 function sayQueue(P,v){return new Promise(ok=>{speechSynthesis.cancel();let left=P.length,dn=false,iv=setInterval(()=>{LVL=Math.min(1,LVL+0.45)},110);const end=()=>{if(dn)return;dn=true;clearInterval(iv);ok()};
   P.forEach(x=>{const u=new SpeechSynthesisUtterance(x);u.voice=v;u.lang=v.lang;u.rate=1.03;u.onend=u.onerror=()=>{if(--left<=0)end()};speechSynthesis.speak(u)});setTimeout(end,4000+P.join(' ').length*130)})}
 async function say(t){if(MUTE||!t)return;const my=++SPK,P=parts(t);if(!P.length)return;setMode('speak','Gapiryapman…');
-  const nv=uzVoice();if(nv){await sayQueue(P,nv);return}
+  const nv=JV.LOCAL?null:uzVoice();if(nv){await sayQueue(P,nv);return}
   const jobs=P.map(x=>ttsGet(x));for(let i=0;i<P.length;i++){const b=await jobs[i];if(my!==SPK)return;if(b)await play(b);else await sayBrowser(P[i]);if(my!==SPK)return}}
-const FILL=['Hmm, bir soniya.','Xo\'p, hozir.','Tushundim, qarab chiqaman.'],HA='Ha, eshityapman.';
-function prefetch(){if(MUTE||uzVoice())return;[...FILL,HA].forEach(x=>ttsGet(x,true))}
+const FILL=['Hmm, bir daqiqa, aka.','Xo\'p, hozir qarayman.','Tushundim, bir soniya.'],HA='Labbay, aka?';
+function prefetch(){if(MUTE||(!JV.LOCAL&&uzVoice()))return;[...FILL,HA].forEach(x=>ttsGet(x,true))}
 setTimeout(prefetch,1500);
 /* ---------- buyruq ---------- */
 /* telefonda bajariladigan tez buyruqlar (telefon rejimi yoki kompyuter o'chiq) */
@@ -157,6 +157,8 @@ document.querySelectorAll('[data-vo]').forEach(b=>b.onclick=()=>{VOICE=b.dataset
 $('sbt').onclick=()=>{SUHBAT=!SUHBAT;localStorage.setItem('jv_suhbat',SUHBAT?'1':'0');vosBtn()};vosBtn();
 holat();
 addEventListener('keydown',e=>{if(e.key===' '&&document.activeElement!==$('t')){e.preventDefault();$('mic').click()}});
+/* «Hey Jarvis»: fondagi tinglovchi chaqirsa — shu oyna buyruqni oladi */
+if(JV.LOCAL){const kim=async()=>{try{const j=await (await fetch('/api/kim')).json();if(j.q){if(j.q==='__salom'){await say(HA);if(SR)listen(false)}else cmd(j.q,false,true)}}catch(e){}};setInterval(kim,1500);kim()}
 add('Salom! Men Jarvisman. Gapiring yoki yozing. Masalan: «YouTube\'ni och», «soat nechchi», «eslatma yoz: ertaga 9 da uchrashuv», yoki istalgan savol va ish.');
 </script><script>window.YAPP="jv"</script><script>/* Yordam: o'ng tepada doimiy sozlamalar va ? tugmasi; ? har bir ekrandagi joylarni birma-bir ko'rsatib tushuntiradi.
  * Ilova yig'ilganda: window.YAPP="tr" + shu fayl. Tugmalar matni yoki selektori bo'yicha topiladi;
