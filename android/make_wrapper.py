@@ -24,14 +24,17 @@ APPS = [
     ('hamyon', ND + r'\premium-nonvoyxona.caproj', 'hamyon/', 2, '1.1', 'Android'),
     # Shogird (2026-11-18): Hisob-kitob Java kodi, lekin shogird/ sahifasini ochadi — alohida ilova
     ('shogird', r'C:\Users\user\Downloads\loyiha\cap', 'shogird/', 1, '1.0', 'AndroidBridge'),
+    # Jarvis (2026-11-26): SHAXSIY — ichida ulanish kaliti bor, shuning uchun out/ ga emas, shaxsiy/ ga (saytga chiqmaydi)
+    ('jarvis', ND + r'\premium-nonvoyxona.caproj', 'jarvis/', 1, '1.0', 'Android'),
 ]
 # Telefondagi nomi va belgisi (bo'lmasa — asl nomi + " (yangi)", asl belgi)
-LABEL = {'dokon-mijoz': '222 Aksessuar', 'dokon-sotuvchi': '222 Aksessuar Sotuvchi', 'hamyon': 'Hamyon', 'shogird': 'Shogird'}
+LABEL = {'dokon-mijoz': '222 Aksessuar', 'dokon-sotuvchi': '222 Aksessuar Sotuvchi', 'hamyon': 'Hamyon', 'shogird': 'Shogird', 'jarvis': 'Jarvis'}
 ICON = {'dokon-mijoz': os.path.join(HERE, '..', 'dokon', 'mijoz', 'icon-512.png'),
         'dokon-sotuvchi': os.path.join(HERE, '..', 'dokon', 'sotuvchi', 'icon-512.png'),
         'hamyon': os.path.join(HERE, '..', 'hamyon', 'icon-512.png'),
-        'shogird': os.path.join(HERE, '..', 'shogird', 'icon-512.png')}
-APPID = {'hamyon': 'uz.hamyon.xarajat', 'shogird': 'uz.hisobkitob.shogird'}  # boshqa ilova Java kodidan foydalansa ham, alohida ilova bo'lib o'rnatilsin
+        'shogird': os.path.join(HERE, '..', 'shogird', 'icon-512.png'),
+        'jarvis': os.path.join(HERE, '..', 'jarvis', 'icon-512.png')}
+APPID = {'hamyon': 'uz.hamyon.xarajat', 'shogird': 'uz.hisobkitob.shogird', 'jarvis': 'uz.muhtorxon.jarvis'}  # boshqa ilova Java kodidan foydalansa ham, alohida ilova bo'lib o'rnatilsin
 
 
 def set_icon(gdir, png):
@@ -251,6 +254,8 @@ def build(only=None):
         g = re.sub(r'versionCode \d+', 'versionCode %d' % vc, g); g = re.sub(r"versionName '[^']*'", "versionName '%s'" % vn, g)
         if name in APPID: g = re.sub(r"applicationId\s+'[^']*'", "applicationId '%s'" % APPID[name], g)
         open(bg, 'w', encoding='utf-8').write(g)
+        if name == 'jarvis':  # telefon darhol ulangan bo'lsin: kalit havolada (APK faqat egasiga yuboriladi)
+            import json; url = url + '#k=' + json.load(open(r'C:\Loyihalar\jarvis\koprik.json', encoding='utf-8'))['key']
         patch(gdir, url, bridge)
         if name in ('toshkent-rahbar', 'namangan-rahbar'): patch_geo(gdir)
         if name in LABEL:
@@ -263,7 +268,8 @@ def build(only=None):
         apk = os.path.join(gdir, 'app', 'build', 'outputs', 'apk', 'release', 'app-release.apk')
         if r.returncode or not os.path.exists(apk):
             print('XATO', name, (r.stdout + r.stderr)[-2500:]); sys.exit(1)
-        dst = os.path.join(out, '%s-%s.apk' % (name, vn)); shutil.copy(apk, dst)
+        od = os.path.join(HERE, 'shaxsiy') if name == 'jarvis' else out; os.makedirs(od, exist_ok=True)
+        dst = os.path.join(od, '%s-%s.apk' % (name, vn)); shutil.copy(apk, dst)
         print('OK', name, os.path.getsize(dst) // 1024, 'KB ->', dst)
 
 

@@ -60,7 +60,7 @@ let HIST=[],MUTE=localStorage.getItem('jv_mute')==='1',REJ=localStorage.getItem(
 /* ---------- ovoz: gapirish ---------- */
 let VO=null;function pickVoice(){const v=speechSynthesis.getVoices();VO=v.find(x=>/^uz/i.test(x.lang))||v.find(x=>/^tr/i.test(x.lang))||v.find(x=>/^ru/i.test(x.lang))||v[0]||null}
 if('speechSynthesis'in window){speechSynthesis.onvoiceschanged=pickVoice;pickVoice()}
-function sayBrowser(t){return new Promise(ok=>{if(!('speechSynthesis'in window)){ok();return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);if(VO){u.voice=VO;u.lang=VO.lang}u.rate=1.02;
+function sayBrowser(t){return new Promise(ok=>{if(!('speechSynthesis'in window)){if(window.Android&&Android.speak){try{Android.speak(t)}catch(e){}setTimeout(ok,700+t.length*75)}else ok();return}speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t);if(VO){u.voice=VO;u.lang=VO.lang}u.rate=1.02;
   let iv=setInterval(()=>{LVL=Math.min(1,LVL+0.5)},120),dn=false;const end=()=>{if(dn)return;dn=true;clearInterval(iv);ok()};u.onend=u.onerror=end;setTimeout(end,2500+t.length*110);speechSynthesis.speak(u)})} // ovoz yo'q brauzerda osilib qolmasin
 /* tirik ovoz: javob gaplarga bo'linadi, hammasi birdan so'raladi, birinchisi kelishi bilan gapira boshlaydi */
 let VOICE=localStorage.getItem('jv_voice')||'Charon',SUHBAT=localStorage.getItem('jv_suhbat')!=='0',AC=null,SRC=null,SPK=0;
@@ -89,7 +89,7 @@ let QOL=[],DAVOM=[],BOLDI=false,OXIRGI=new Set(),OXT=0;
 const sozlar=x=>String(x).toLowerCase().replace(/[’`ʻʼ]/g,"'").replace(/[^a-zа-яё'0-9\s]/gi,' ').split(/\s+/).filter(w=>w.length>1);
 const ozi=x=>{const w=sozlar(x);return w.length>0&&w.filter(z=>OXIRGI.has(z)).length/w.length>0.6}; // eshitilgan gap Jarvis'ning o'z gapimi?
 async function say(t,quloq){if(MUTE||!t)return;const my=++SPK,P=parts(t);if(!P.length)return;setMode('speak','Gapiryapman…');QOL=P.slice();BOLDI=false;OXIRGI=new Set(sozlar(P.join(' ')));
-  const B=quloq&&SR?bargeIn(P.join(' '),my):null;
+  const B=quloq&&SR&&!window.JV_ANDROID?bargeIn(P.join(' '),my):null;
   try{const nv=(JV.LOCAL||PC)?null:uzVoice();if(nv){await sayQueue(P,nv);QOL=[];return}
   const jobs=P.map(x=>ttsGet(x));for(let i=0;i<P.length;i++){const b=await jobs[i];if(my!==SPK)return;if(b)await play(b);else await sayBrowser(P[i]);if(my!==SPK)return;QOL.shift()}}
   finally{OXT=Date.now();if(B&&!BOLDI)B.stop()}}
@@ -135,6 +135,18 @@ async function cmd(t,yashir,ovoz){t=t.trim();if(!t)return;stopSpeak();if(!yashir
   setMode(WAKE?'listen':'idle',WAKE?'«Jarvis» deb chaqiring…':'Mikrofonni bosing yoki yozing');if(WAKE)listen(true)}
 $('f').onsubmit=e=>{e.preventDefault();const v=$('t').value;$('t').value='';cmd(v)};
 /* ---------- ovoz: eshitish (Chrome: uz-UZ) ---------- */
+/* Android ilovasi: telefonning ovoz tanuvchisini brauzerdagidek ishlatamiz (bir martalik tinglash, natija onVoice orqali) */
+if(!(window.SpeechRecognition||window.webkitSpeechRecognition)&&window.Android&&Android.listen){
+  let CUR=null;window.JV_ANDROID=true;
+  window.onVoice=a=>{const r=CUR;CUR=null;if(!r)return;const t=(a&&a[0])||'';r.onresult&&r.onresult({resultIndex:0,results:[{0:{transcript:t},isFinal:true,length:1}]});r._end()};
+  window.onVoiceErr=m=>{const r=CUR;CUR=null;if(!r)return;r.onerror&&r.onerror({error:/ruxsat/i.test(m||'')?'not-allowed':'no-speech'});r._end()};
+  const A=function(){this.on=false};
+  A.prototype.start=function(){if(CUR&&CUR!==this)CUR._end();CUR=this;this.on=true;try{Android.listen()}catch(e){setTimeout(()=>onVoiceErr(''),10)}};
+  A.prototype._end=function(){if(!this.on)return;this.on=false;const f=this.onend;setTimeout(()=>f&&f(),30)};
+  A.prototype.stop=function(){}; // telefon jimlikni o'zi aniqlaydi
+  A.prototype.abort=function(){if(CUR===this)CUR=null;this._end()};
+  window.SpeechRecognition=A;
+}
 const SR=window.SpeechRecognition||window.webkitSpeechRecognition;let rec=null,WAKE=false,busy=false;
 const BC=('BroadcastChannel'in window)?new BroadcastChannel('jarvis'):null;let BANDT=0;
 function band(on){BANDT=on?Date.now():0;try{BC&&BC.postMessage({band:!!on})}catch(e){}}
@@ -196,7 +208,7 @@ holat();
 addEventListener('keydown',e=>{if(e.key===' '&&document.activeElement!==$('t')){e.preventDefault();$('mic').click()}});
 /* «Hey Jarvis»: fondagi tinglovchi chaqirsa — shu oyna buyruqni oladi */
 if(JV.LOCAL){const kim=async()=>{try{const j=await (await fetch('/api/kim')).json();if(j.q){if(j.q==='__salom'){await say(HA);if(SR)listen(false)}else cmd(j.q,false,true)}}catch(e){}};setInterval(kim,1500);kim()}
-if(!JV.LOCAL&&SR&&localStorage.getItem('jv_wake')!=='0'){setTimeout(()=>{if(!WAKE)$('wake').click()},1200)}
+if(!JV.LOCAL&&SR&&!window.JV_ANDROID&&localStorage.getItem('jv_wake')!=='0'){setTimeout(()=>{if(!WAKE)$('wake').click()},1200)}
 add('Salom! Men Jarvisman. Gapiring yoki yozing. Masalan: «YouTube\'ni och», «soat nechchi», «eslatma yoz: ertaga 9 da uchrashuv», yoki istalgan savol va ish.');
 </script><script>window.YAPP="jv"</script><script>/* Yordam: o'ng tepada doimiy sozlamalar va ? tugmasi; ? har bir ekrandagi joylarni birma-bir ko'rsatib tushuntiradi.
  * Ilova yig'ilganda: window.YAPP="tr" + shu fayl. Tugmalar matni yoki selektori bo'yicha topiladi;
