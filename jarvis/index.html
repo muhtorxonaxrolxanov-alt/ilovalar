@@ -151,7 +151,7 @@ function listen(wake,davom){if(!SR){add('Bu brauzerda ovozni tanish yo\'q — Ch
   r.onerror=e=>{if(e.error==='not-allowed')add('Mikrofonga ruxsat bering (manzil satridagi 🔒 → Mikrofon → Ruxsat).')};
   try{r.start()}catch(e){setTimeout(()=>listen(wake,davom),400)}}
 $('mic').onclick=()=>{stopSpeak();ac();listen(false)};
-$('wake').onclick=()=>{WAKE=!WAKE;$('wake').textContent='👂 Doim tinglash: '+(WAKE?'yoqiq':'o\'chiq');if(WAKE)listen(true);else{try{rec.abort()}catch(e){}setMode('idle','Mikrofonni bosing yoki yozing')}};
+$('wake').onclick=()=>{WAKE=!WAKE;try{localStorage.setItem('jv_wake',WAKE?'1':'0')}catch(e){}$('wake').textContent='👂 Doim tinglash: '+(WAKE?'yoqiq':'o\'chiq');if(WAKE)listen(true);else{try{rec.abort()}catch(e){}setMode('idle','Mikrofonni bosing yoki yozing')}};
 $('kirb').onclick=async()=>{const r=await JV.kirish();add(JV.LOCAL?'Brauzerda Claude kirish sahifasi ochildi. Kirib bo\'lgach, savolingizni qaytaring.':(r&&r.javob)||'Kompyuterda kirish sahifasi ochildi.');$('kir').style.display='none'};
 $('agl').href=JV.jamoaUrl;
 const CTLN={__ekran:'📸 Ekranni ko\'rsat',__qulf:'🔒 Qulfla',__ochir:'⏻ Kompyuterni o\'chir',__bekor:'✋ O\'chirishni bekor qil'};
@@ -188,6 +188,7 @@ holat();
 addEventListener('keydown',e=>{if(e.key===' '&&document.activeElement!==$('t')){e.preventDefault();$('mic').click()}});
 /* «Hey Jarvis»: fondagi tinglovchi chaqirsa — shu oyna buyruqni oladi */
 if(JV.LOCAL){const kim=async()=>{try{const j=await (await fetch('/api/kim')).json();if(j.q){if(j.q==='__salom'){await say(HA);if(SR)listen(false)}else cmd(j.q,false,true)}}catch(e){}};setInterval(kim,1500);kim()}
+if(!JV.LOCAL&&SR&&localStorage.getItem('jv_wake')!=='0'){setTimeout(()=>{if(!WAKE)$('wake').click()},1200)}
 add('Salom! Men Jarvisman. Gapiring yoki yozing. Masalan: «YouTube\'ni och», «soat nechchi», «eslatma yoz: ertaga 9 da uchrashuv», yoki istalgan savol va ish.');
 </script><script>window.YAPP="jv"</script><script>/* Yordam: o'ng tepada doimiy sozlamalar va ? tugmasi; ? har bir ekrandagi joylarni birma-bir ko'rsatib tushuntiradi.
  * Ilova yig'ilganda: window.YAPP="tr" + shu fayl. Tugmalar matni yoki selektori bo'yicha topiladi;
