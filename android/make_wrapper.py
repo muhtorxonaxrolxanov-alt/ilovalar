@@ -25,7 +25,7 @@ APPS = [
     # Shogird (2026-11-18): Hisob-kitob Java kodi, lekin shogird/ sahifasini ochadi — alohida ilova
     ('shogird', r'C:\Users\user\Downloads\loyiha\cap', 'shogird/', 1, '1.0', 'AndroidBridge'),
     # Jarvis (2026-11-26): SHAXSIY — ichida ulanish kaliti bor, shuning uchun out/ ga emas, shaxsiy/ ga (saytga chiqmaydi)
-    ('jarvis', ND + r'\premium-nonvoyxona.caproj', 'jarvis/', 1, '1.0', 'Android'),
+    ('jarvis', ND + r'\premium-nonvoyxona.caproj', 'jarvis/', 2, '1.1', 'Android'),
 ]
 # Telefondagi nomi va belgisi (bo'lmasa — asl nomi + " (yangi)", asl belgi)
 LABEL = {'dokon-mijoz': '222 Aksessuar', 'dokon-sotuvchi': '222 Aksessuar Sotuvchi', 'hamyon': 'Hamyon', 'shogird': 'Shogird', 'jarvis': 'Jarvis'}
@@ -257,6 +257,12 @@ def build(only=None):
         if name == 'jarvis':  # telefon darhol ulangan bo'lsin: kalit havolada (APK faqat egasiga yuboriladi)
             import json; url = url + '#k=' + json.load(open(r'C:\Loyihalar\jarvis\koprik.json', encoding='utf-8'))['key']
         patch(gdir, url, bridge)
+        _ma = [os.path.join(r, f) for r, _, fs in os.walk(os.path.join(gdir, 'app', 'src')) for f in fs if f == 'MainActivity.java']
+        for _f in _ma:  # Jarvis va boshqalar: javob ovozi (Sardor) tugma bosilmasa ham chalinsin
+            _j = open(_f, encoding='utf-8').read()
+            if 'setMediaPlaybackRequiresUserGesture' not in _j:
+                _j = re.sub(r'(\w+)\.setJavaScriptEnabled\(true\);', r'\1.setJavaScriptEnabled(true); \1.setMediaPlaybackRequiresUserGesture(false);', _j, count=1)
+                open(_f, 'w', encoding='utf-8').write(_j)
         if name in ('toshkent-rahbar', 'namangan-rahbar'): patch_geo(gdir)
         if name in LABEL:
             sx = os.path.join(gdir, 'app', 'src', 'main', 'res', 'values', 'strings.xml')
