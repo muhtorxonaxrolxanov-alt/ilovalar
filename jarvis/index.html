@@ -94,14 +94,16 @@ async function say(t,quloq){if(MUTE||!t)return;const my=++SPK,P=parts(t);if(!P.l
   const jobs=P.map(x=>ttsGet(x));for(let i=0;i<P.length;i++){const b=await jobs[i];if(my!==SPK)return;if(b)await play(b);else await sayBrowser(P[i]);if(my!==SPK)return;QOL.shift()}}
   finally{OXT=Date.now();if(B&&!BOLDI)B.stop()}}
 /* gapirayotganda aka gapira boshlasa — to'xtaydi va eshitadi (o'z ovozini aka gapi deb o'ylamasligi uchun so'zlarni solishtiradi) */
-function bargeIn(matn,my){const so=new Set(matn.toLowerCase().replace(/[^a-zа-яё'0-9\s]/gi,' ').split(/\s+/).filter(Boolean));let fin='',r=new SR();r.lang='uz-UZ';r.interimResults=true;r.continuous=true;let tugadi=false,bt=null,bur=false;
+function bargeIn(matn,my){const so=new Set(matn.toLowerCase().replace(/[^a-zа-яё'0-9\s]/gi,' ').split(/\s+/).filter(Boolean));let fin='',r=new SR();r.lang='uz-UZ';r.interimResults=true;r.continuous=true;let tugadi=false,bt=null,bosh=0,old='';
   const ech=x=>{const w=x.toLowerCase().replace(/[^a-zа-яё'0-9\s]/gi,' ').split(/\s+/).filter(Boolean);if(!w.length)return true;return w.filter(z=>so.has(z)).length/w.length>0.5};
-  r.onresult=e=>{let s='';for(let i=e.resultIndex;i<e.results.length;i++){s+=e.results[i][0].transcript;if(e.results[i].isFinal)fin+=e.results[i][0].transcript+' '}
+  r.onresult=e=>{const F=[];let s='';for(let i=0;i<e.results.length;i++){const tr=e.results[i][0].transcript.trim();if(e.results[i].isFinal){if(tr&&F[F.length-1]!==tr)F.push(tr)}else s+=tr+' '}
     // FAQAT «Jarvis» yoki «to'xta» desa to'xtaydi: karnaydan chiqqan o'z ovozini mikrofon eshitib, o'zini o'zi to'xtatib qo'yardi (2026-11-26)
-    const x=(fin||s).trim();if(!BOLDI){const kal=x.toLowerCase().match(/to'?xta|jarvis|джарвис|жарвис|\bstop\b|\bbas\b/);if(kal&&!so.has(kal[0])){BOLDI=true;DAVOM=QOL.slice();stopSpeak();setMode('listen','💬 Eshityapman…');$('mic').classList.add('on');
-        const k=x.toLowerCase().indexOf(kal[0]);fin=e.results[e.results.length-1].isFinal?x.slice(k+kal[0].length).replace(/^[\s,.!]+/,'')+' ':'';bur=true}} // kalit so'zdan oldingi (karnay) gaplar tashlanadi
+    const x=(F.slice(bosh).join(' ')+' '+s).trim();
+    if(!BOLDI){const kal=x.toLowerCase().match(/to'?xta|jarvis|джарвис|жарвис|\bstop\b|\bbas\b/);if(kal&&!so.has(kal[0])){BOLDI=true;DAVOM=QOL.slice();stopSpeak();setMode('listen','💬 Eshityapman…');$('mic').classList.add('on');
+        const fx=F.slice(bosh).join(' '),k=fx.toLowerCase().indexOf(kal[0]);old=k>=0?fx.slice(k+kal[0].length).replace(/^[\s,.!]+/,''):'';bosh=F.length}} // kalit so'zdan oldingi (karnay) gaplar tashlanadi
+    if(BOLDI)fin=(old+' '+F.slice(bosh).join(' ')).trim()+' ';
     if(BOLDI){stEl.textContent='🎤 '+x;clearTimeout(bt);bt=setTimeout(()=>{try{r.stop()}catch(e){}},fin.trim()?1300:4000)}}; // jim tursa — yopiladi
-  r.onend=()=>{recT=Date.now();if(tugadi)return;tugadi=true;$('mic').classList.remove('on');if(BOLDI){const q=fin.trim().replace(/^(jarvis|джарвис)[,\s]*/i,'');if(q&&!/^to'?xta\b|^stop\b/i.test(q))cmd(q,false,true);else listen(false,true)}};
+  r.onend=()=>{recT=Date.now();if(tugadi)return;tugadi=true;$('mic').classList.remove('on');if(BOLDI){const q=fin.trim().replace(/^.*?(jarvis|джарвис|жарвис|to'?xta)[,\s.!]*/i,'');if(q&&!/^to'?xta\b|^stop\b/i.test(q))cmd(q,false,true);else listen(false,true)}};
   r.onerror=()=>{};try{r.start()}catch(e){return null}
   return{stop(){if(!BOLDI){tugadi=true;recT=Date.now();try{r.abort()}catch(e){}}}}}
 const FILL=['Hmm.','Xo\'p.'],HA='Labbay?';
@@ -141,12 +143,14 @@ let recT=0;
 function listen(wake,davom){if(!SR){add('Bu brauzerda ovozni tanish yo\'q — Chrome\'da oching.');return}if(rec)try{rec.abort()}catch(e){}
   const kut=Math.max(0,350-(Date.now()-recT),wake?0:700-(Date.now()-OXT)); // gapirib bo'lgach karnay jimishini kutadiif(kut){setTimeout(()=>listen(wake,davom),kut);return}
   if(!wake)band(true);
-  const r=rec=new SR();r.lang='uz-UZ';r.interimResults=true;r.continuous=true;let fin='',jim=null,bitdi=false,gap=false;$('mic').classList.add('on');setMode('listen',wake?'«Jarvis» deb chaqiring…':'Eshityapman…');
+  const r=rec=new SR();r.lang='uz-UZ';r.interimResults=true;r.continuous=true;let fin='',jim=null,bitdi=false,gap=false,bosh=0;$('mic').classList.add('on');setMode('listen',wake?'«Jarvis» deb chaqiring…':'Eshityapman…');
   const yop=()=>{if(bitdi)return;bitdi=true;clearTimeout(jim);try{r.stop()}catch(e){}};
   if(!wake)jim=setTimeout(yop,davom?4000:6000); // gapirmasa — mikrofon yopiladi
-  r.onresult=e=>{LVL=1;let s='';for(let i=e.resultIndex;i<e.results.length;i++){s+=e.results[i][0].transcript;if(e.results[i].isFinal)fin+=e.results[i][0].transcript+' '}
+  // har safar BUTUN natijadan yig'iladi: Edge ba'zan eski natijalarni qayta yuborib, so'zlar «yo'q yo'q yo'q…» bo'lib takrorlanardi (2026-11-26)
+  r.onresult=e=>{LVL=1;const F=[];let s='';for(let i=0;i<e.results.length;i++){const tr=e.results[i][0].transcript.trim();if(e.results[i].isFinal){if(tr&&F[F.length-1]!==tr)F.push(tr)}else s+=tr+' '}
+    fin=F.slice(bosh).join(' ')+(F.length>bosh?' ':'');s=s.trim();
     stEl.textContent='🎤 '+(fin+s).trim();
-    if(wake){if(fin){const m=fin.toLowerCase().match(/(?:jarvis|jarvi?s|джарвис|jar ?vis)[,\s]*(.*)/);if(m){const q=m[1].trim();fin='';bitdi=true;try{r.abort()}catch(e){}if(q)cmd(q,false,true);else say(HA).then(()=>listen(false,true))}else fin=''}return}
+    if(wake){if(fin){const m=fin.toLowerCase().match(/(?:jarvis|jarvi?s|джарвис|jar ?vis)[,\s]*(.*)/);bosh=F.length;if(m){const q=m[1].trim();fin='';bitdi=true;try{r.abort()}catch(e){}if(q)cmd(q,false,true);else say(HA).then(()=>listen(false,true))}else fin=''}return}
     gap=true;clearTimeout(jim);jim=setTimeout(yop,fin.trim()&&!/\S/.test(s.replace(fin,''))?1200:1800)}; // gap tugagach biroz jimlik — yuboradi
   r.onend=()=>{recT=Date.now();if(rec===r)$('mic').classList.remove('on');clearTimeout(jim);if(rec!==r)return;
     if(wake){if(WAKE&&MODE!=='think'&&MODE!=='speak')setTimeout(()=>listen(true),300);return}
