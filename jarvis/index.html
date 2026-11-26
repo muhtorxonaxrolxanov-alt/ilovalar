@@ -114,6 +114,13 @@ setTimeout(prefetch,1500);
 const OY=['yanvar','fevral','mart','aprel','may','iyun','iyul','avgust','sentabr','oktabr','noyabr','dekabr'];
 const SAYT='https://muhtorxonaxrolxanov-alt.github.io/ilovalar/';
 const TS=[[/you ?tube|yutub/,'https://www.youtube.com','YouTube'],[/telegram/,'tg://resolve','Telegram'],[/instagram|insta/,'https://www.instagram.com','Instagram'],[/google/,'https://www.google.com','Google'],[/gmail|pochta/,'https://mail.google.com','Pochta'],[/ilova(lar)?im|saytim/,SAYT,'Ilovalaringiz'],[/hisob[- ]?kitob/,SAYT+'hisob/','Hisob-kitob'],[/nonvoyxona/,SAYT+'nonvoyxona/toshkent-rahbar/','Nonvoyxona'],[/hamyon/,SAYT+'hamyon/','Hamyon'],[/agent|jamoa/,'jamoa.html','AI Agentlar jamoasi']];
+/* telefon ilovasida: «Telegramni och», «99890… ga qo'ng'iroq qil», «xaritada Chilonzor» — telefonning o'zida */
+const TAPP=[[/telegram/,'tg://resolve','Telegram'],[/you ?tube|yutub/,'https://www.youtube.com','YouTube'],[/instagram|insta/,'https://www.instagram.com','Instagram'],[/whats ?app|vatsap/,'https://wa.me/','WhatsApp'],[/gmail|pochta/,'https://mail.google.com','Pochta'],[/xarita|karta|yandex/,'geo:0,0?q=Toshkent','Xarita'],[/hamyon/,SAYT+'hamyon/','Hamyon'],[/hisob[- ]?kitob/,SAYT+'hisob/','Hisob-kitob']];
+function telefonda(t){if(!window.JV_ANDROID)return null;const s=t.toLowerCase().replace(/[’'`ʻʼ]/g,"'");
+  let m=s.replace(/[\s-]/g,'').match(/(\+?998\d{9}|\d{9})/);if(m&&/qo'?ng'?iroq|telefon qil|zvon/.test(s)){const n=m[1].length===9?'+998'+m[1]:m[1].replace(/^998/,'+998');Android.open('tel:'+n);return n+' raqamiga qo\'ng\'iroq oynasi ochildi.'}
+  m=s.match(/xaritada\s+(.+?)(ni)?\s*(top|ko'?rsat|och)?$/);if(m){Android.open('geo:0,0?q='+encodeURIComponent(m[1]));return m[1]+' xaritada ochildi.'}
+  if(/\b(och|ochib ber|ishga tushir)\b/.test(s)&&!/kompyuter/.test(s))for(const[re,u,n]of TAPP)if(re.test(s)){Android.open(u);return n+' telefonda ochilmoqda.'}
+  return null}
 function tezTel(t){const s=t.toLowerCase().replace(/[’'`ʻʼ]/g,"'").trim();
   if(/(soat|vaqt)\s*(ne?(ch)+[ai]|qancha|bo'?ldi)/.test(s)){const d=new Date();return'Soat '+d.getHours()+':'+String(d.getMinutes()).padStart(2,'0')}
   if(/bugun ne?chanchi|qaysi kun|sana/.test(s)){const d=new Date();return'Bugun '+d.getDate()+'-'+OY[d.getMonth()]+', '+['yakshanba','dushanba','seshanba','chorshanba','payshanba','juma','shanba'][d.getDay()]}
@@ -128,7 +135,7 @@ async function cmd(t,yashir,ovoz){t=t.trim();if(!t)return;stopSpeak();if(!yashir
   if(/^(davom (et|etaver|qil|ettir)|davom|qolganini ayt)\b/.test(tl)&&DAVOM.length){const d=DAVOM.join(' ');DAVOM=[];await say(d,ovoz);if(ovoz&&SUHBAT&&SR&&!BOLDI){setMode('listen','💬 Eshityapman…');listen(false,true)}else if(!BOLDI)setMode('idle','Mikrofonni bosing yoki yozing');return}
   const tug=ovoz&&XAYR.test(tl);let fill=null,done=false;
   const ft=setTimeout(()=>{if(!done&&!MUTE&&!/^__/.test(t))fill=say(FILL[Math.floor(Math.random()*FILL.length)])},1600);
-  try{let r=null;if(!JV.LOCAL&&joy()==='tel'&&!/^__/.test(t)){const z=tezTel(t);if(z)r={javob:z}}
+  try{let r=null;if(!/^__/.test(t)){const z=telefonda(t);if(z)r={javob:z}}if(!r&&!JV.LOCAL&&joy()==='tel'&&!/^__/.test(t)){const z=tezTel(t);if(z)r={javob:z}}
     if(!r)r=await JV.buyruq(t,JV.LOCAL?'':REJ,HIST.slice(0,-1));done=true;clearTimeout(ft);if(fill)await fill;
     add(r.javob,0,r.img);if(r.login){$('kir').style.display='block'}await say(r.javob,ovoz&&!tug);if(BOLDI)return}catch(e){done=true;clearTimeout(ft);add(JV.LOCAL?'Server bilan aloqa yo\'q. Jarvis belgisini qayta bosing.':'Aloqa yo\'q. Internetni tekshiring.')}
   if(ovoz&&SUHBAT&&!tug&&SR){setMode('listen','💬 Eshityapman… (davom eting)');listen(false,true);return}
@@ -136,8 +143,9 @@ async function cmd(t,yashir,ovoz){t=t.trim();if(!t)return;stopSpeak();if(!yashir
 $('f').onsubmit=e=>{e.preventDefault();const v=$('t').value;$('t').value='';cmd(v)};
 /* ---------- ovoz: eshitish (Chrome: uz-UZ) ---------- */
 /* Android ilovasi: telefonning ovoz tanuvchisini brauzerdagidek ishlatamiz (bir martalik tinglash, natija onVoice orqali) */
-if(!(window.SpeechRecognition||window.webkitSpeechRecognition)&&window.Android&&Android.listen){
-  let CUR=null;window.JV_ANDROID=true;
+// Diqqat: Android WebView'da webkitSpeechRecognition BOR, lekin mikrofonga kira olmaydi («not-allowed») — shuning uchun ilovada doim telefon tanuvchisi
+if(window.Android&&Android.listen){
+  let CUR=null;window.JV_ANDROID=true;try{delete window.webkitSpeechRecognition}catch(e){}
   window.onVoice=a=>{const r=CUR;CUR=null;if(!r)return;const t=(a&&a[0])||'';r.onresult&&r.onresult({resultIndex:0,results:[{0:{transcript:t},isFinal:true,length:1}]});r._end()};
   window.onVoiceErr=m=>{const r=CUR;CUR=null;if(!r)return;r.onerror&&r.onerror({error:/ruxsat/i.test(m||'')?'not-allowed':'no-speech'});r._end()};
   const A=function(){this.on=false};
