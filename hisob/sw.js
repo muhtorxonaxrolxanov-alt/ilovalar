@@ -1,5 +1,5 @@
 /* tez.py: avval saqlangan nusxa, yangisi orqada. Versiya — fayllar mazmuni xeshi. */
-const P='hk-',C=P+'4c16e75d97ee',FILES=["./3d.html", "./gate.html", "./gate.js", "./hisob.html", "./icon-192.png", "./icon-512.png", "./", "./manifest.webmanifest", "./murojaat.html", "./santex.html", "./shogird.html", "./sxema.html"];
+const P='hk-',C=P+'f09a94b400c4',FILES=["./3d.html", "./gate.html", "./gate.js", "./hisob.html", "./icon-192.png", "./icon-512.png", "./", "./manifest.webmanifest", "./murojaat.html", "./santex.html", "./shogird.html", "./sxema.html"];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>Promise.all(FILES.map(f=>fetch(new Request(f,{cache:'reload'})).then(r=>{if(!r.ok)throw 0;return c.put(new Request(new URL(f,self.registration.scope).href),r)})))).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k.startsWith(P)&&k!==C).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{const r=e.request;if(r.method!=='GET')return;const u=new URL(r.url);if(u.origin!==location.origin||!u.href.startsWith(self.registration.scope))return;
