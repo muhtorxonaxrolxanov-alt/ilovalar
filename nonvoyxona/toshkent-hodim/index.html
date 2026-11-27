@@ -149,7 +149,7 @@ if(!(k in M))M[k]=f();return M[k]}})();
 var EX=/^nv_(aicfg|aimods|aislow|aifh|vdone|prof|profs|dataurl|aio|rem|zkm|url)$/;ks.forEach(function(k){if(/^nv_/.test(k)&&k.indexOf("@")<0&&!EX.test(k)&&!(k in o))ls.removeItem(k)});
 Object.keys(o).forEach(function(k){ls.setItem(k,o[k])});ls.removeItem("nvx_snap")}catch(e){}})();
 
-window.NVBUILD=1795763399625;window.nvNorm=function(v){return String(v==null?"":v).replace(/,/g,".").replace(/[^\d.]/g,"").replace(/\.{2,}/g,".").replace(/^\.+|\.+$/g,"")};window.nvNewer=function(x){if(!x)return false;var a=nvNorm(x.v),b=nvNorm(typeof APPV!="undefined"?APPV:"");if(!a||a==b)return false;try{return newer(a,b)}catch(e){return false}};
+window.NVBUILD=1795764690436;window.nvNorm=function(v){return String(v==null?"":v).replace(/,/g,".").replace(/[^\d.]/g,"").replace(/\.{2,}/g,".").replace(/^\.+|\.+$/g,"")};window.nvNewer=function(x){if(!x)return false;var a=nvNorm(x.v),b=nvNorm(typeof APPV!="undefined"?APPV:"");if(!a||a==b)return false;try{return newer(a,b)}catch(e){return false}};
 
 /* 5.6: tez "bugunmi" tekshiruvi */
 (function(){var A=0,B=0;window.nvTd=function(t){if(typeof t!="number")return new Date(t).toDateString()==new Date().toDateString();var n=Date.now();if(n<A||n>=B){var d=new Date(n);A=new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();B=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1).getTime()}return t>=A&&t<B}})();

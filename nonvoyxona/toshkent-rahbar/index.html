@@ -150,7 +150,7 @@ if(!(k in M))M[k]=f();return M[k]}})();
 var EX=/^nv_(aicfg|aimods|aislow|aifh|vdone|prof|profs|dataurl|aio|rem|zkm|url)$/;ks.forEach(function(k){if(/^nv_/.test(k)&&k.indexOf("@")<0&&!EX.test(k)&&!(k in o))ls.removeItem(k)});
 Object.keys(o).forEach(function(k){ls.setItem(k,o[k])});ls.removeItem("nvx_snap")}catch(e){}})();
 
-window.NVBUILD=1795763399502;window.nvNorm=function(v){return String(v==null?"":v).replace(/,/g,".").replace(/[^\d.]/g,"").replace(/\.{2,}/g,".").replace(/^\.+|\.+$/g,"")};window.nvNewer=function(x){if(!x)return false;var a=nvNorm(x.v),b=nvNorm(typeof APPV!="undefined"?APPV:"");if(!a||a==b)return false;try{return newer(a,b)}catch(e){return false}};
+window.NVBUILD=1795764690312;window.nvNorm=function(v){return String(v==null?"":v).replace(/,/g,".").replace(/[^\d.]/g,"").replace(/\.{2,}/g,".").replace(/^\.+|\.+$/g,"")};window.nvNewer=function(x){if(!x)return false;var a=nvNorm(x.v),b=nvNorm(typeof APPV!="undefined"?APPV:"");if(!a||a==b)return false;try{return newer(a,b)}catch(e){return false}};
 
 /* 5.6: tez "bugunmi" tekshiruvi */
 (function(){var A=0,B=0;window.nvTd=function(t){if(typeof t!="number")return new Date(t).toDateString()==new Date().toDateString();var n=Date.now();if(n<A||n>=B){var d=new Date(n);A=new Date(d.getFullYear(),d.getMonth(),d.getDate()).getTime();B=new Date(d.getFullYear(),d.getMonth(),d.getDate()+1).getTime()}return t>=A&&t<B}})();
@@ -2254,7 +2254,8 @@ h+='<button class="b" style="padding:16px;font-size:18px;margin-top:10px" onclic
 h+='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px"><button style="margin:0" onclick="srShop(\''+js(s)+'\')">📊 Hisobot</button><button style="margin:0" onclick="delShopV(\''+js(s)+'\')">📋 Kunma-kun</button><button id="dk_fix" style="margin:0;grid-column:1/3" onclick="dkFix(\''+js(s)+'\')">✏️ Adashib yozilganni tuzatish / o\'chirish</button></div>';
 dSheet("🏪 "+q(s),h);dkSum()};
 /* 6.9: do'kon yozuvlarini (non, qaytgan, olingan pul) tuzatish — Ma'lumotlarni tahrirlash → Do'konlar → shu do'kon */
-window.dkFix=function(s){var o=document.getElementById("di_o");if(o)o.remove();try{go("tahr")}catch(e){tab="tahr"}EK="shp";if(window.thShop)thShop(s);else render()};
+window.dkFix=function(s){window.NVFX={s:s,tab:tab};/* 6.9: chiqishda shu do'konga qaytish */var o=document.getElementById("di_o");if(o)o.remove();try{go("tahr")}catch(e){tab="tahr"}EK="shp";if(window.thShop)thShop(s);else render()};
+window.dkFixBack=function(){var F=window.NVFX;window.NVFX=null;if(!F)return;var o=document.getElementById("di_o");if(o)o.remove();EK="";tab=F.tab||"home";render();try{dkShops();dkShop(F.s)}catch(e){}try{window.scrollTo(0,0)}catch(e){}};
 window.dkSum=function(){var B=breads(),g=0,r=0,gq=0,rq=0;B.forEach(function(n,k){var a=+((document.getElementById("dk_q"+k)||{}).value)||0,b=+((document.getElementById("dk_r"+k)||{}).value)||0;g+=a*pr(n);r+=b*pr(n);gq+=a;rq+=b});var e=document.getElementById("dk_tot");if(!e)return;var z=Math.max(0,g-r),db=debt(CUR);
 e.innerHTML='<div style="display:flex;justify-content:space-between"><span>Berilgan nonlar ('+n0(gq)+' ta)</span><b>'+n0(g)+' so\'m</b></div>'+(r?'<div style="display:flex;justify-content:space-between;color:#e08a4a"><span>Qaytgan ('+n0(rq)+' ta)</span><b>− '+n0(r)+' so\'m</b></div>':'')+'<div style="display:flex;justify-content:space-between;font-size:20px;margin-top:4px"><b>Jami summa</b><b style="color:var(--ac)">'+n0(z)+' so\'m</b></div>'+(db>0?'<div style="display:flex;justify-content:space-between;color:var(--mu);font-size:13px"><span>Oldingi qarz bilan</span><span>'+n0(db+z)+' so\'m</span></div>':'')+(z>0?'<button style="margin-top:8px" onclick="document.getElementById(\'dk_p\').value='+z+'">↓ '+n0(z)+' so\'m ni olingan pulga yozish</button>':'')};
 window.payApply=function(){return payApply.apply(this,arguments)};function payApply(s,a,pm,now){var left=a,paid=0,U=S.del.filter(function(d){return d.shop==s&&!d.paid}).sort(function(x,y){return x.t-y.t});
@@ -3152,7 +3153,7 @@ return E.sort(function(a,b){return b.t-a.t||(a.ty<b.ty?-1:1)})}
 function shopsL(){var M={};(S.shops||[]).forEach(function(s){if(s)M[s]=0});["del","ret","olm"].forEach(function(c){(S[c]||[]).forEach(function(d){if(d.shop)M[d.shop]=Math.max(M[d.shop]||0,d.t||0)})});return Object.keys(M).sort(function(a,b){return M[b]-M[a]||a.localeCompare(b)}).map(function(s){return[s,M[s]]})}
 var T0=tahrH;tahrH=function(){if(EK!="shp"){SH="";var h=T0.apply(this,arguments);if(!EK){h=h.replace(/<button class="ht" onclick="EK='(del|ret)'[\s\S]*?<\/button>/g,"").replace('<div class="hg">','<div class="hg"><button class="ht" onclick="EK=\'shp\';thShop(\'\')"><span style="font-size:26px">🏪</span><b>Do\'konlar</b><small>'+shopsL().length+' ta · berilgan non va pul</small></button>')}return h}
 if(!SH){var L=shopsL();return'<button style="margin:4px 0 8px" onclick="EK=\'\';render()">← Bo\'limlar</button><h2>🏪 Do\'konlar</h2><div class="hint" style="margin:0 0 6px">Do\'konni bosing — soat bo\'yicha berilgan non va olingan pullar chiqadi.</div>'+(L.length?L.map(function(x){var d=debt(x[0]);return'<div class="row thr" data-s="'+q(x[0])+'" style="cursor:pointer"><div><b>'+(isZ(x[0])?"📥":"🏪")+' '+q(x[0])+'</b><small>'+(x[1]?"oxirgi: "+dd(x[1])+" "+hm(x[1]):"yozuv yo\'q")+'</small></div><b'+(d>0?' class="bad"':'')+' style="white-space:nowrap">'+(d>0?"qarz "+n0(d):"")+' ›</b></div>'}).join(""):'<div class="empty">Do\'kon yo\'q</div>')}
-var E=evs(SH),h='<button style="margin:4px 0 8px" onclick="thShop(\'\')">← Do\'konlar</button><h2>'+(isZ(SH)?"📥":"🏪")+' '+q(SH)+'</h2>'+(isZ(SH)?'':'<div class="tile">Hozirgi qarz: <b class="'+(debt(SH)>0?"bad":"ok")+'">'+(debt(SH)>0?n0(debt(SH))+" so'm":"yo'q ✅")+'</b></div>'),days=[],D={};
+var FX=window.NVFX&&NVFX.s==SH,E=evs(SH),h=(FX?'<button style="margin:4px 0 8px" onclick="dkFixBack()">← 🏪 '+q(SH)+'</button>':'<button style="margin:4px 0 8px" onclick="thShop(\'\')">← Do\'konlar</button>')+'<h2>'+(isZ(SH)?"📥":"🏪")+' '+q(SH)+'</h2>'+(isZ(SH)?'':'<div class="tile">Hozirgi qarz: <b class="'+(debt(SH)>0?"bad":"ok")+'">'+(debt(SH)>0?n0(debt(SH))+" so'm":"yo'q ✅")+'</b></div>'),days=[],D={};
 E.forEach(function(e){var k=dd(e.t);if(!D[k]){D[k]=[];days.push(k)}D[k].push(e)});
 if(!days.length)h+='<div class="empty">Yozuv yo\'q</div>';
 days.slice(0,LIM).forEach(function(k){var A=D[k],gq=0,pa=0;A.forEach(function(e){if(e.ty=="g"||e.ty=="o")gq+=sm(e.R,"qty");if(e.ty=="p")pa+=sm(e.R,"amt")});
@@ -3164,7 +3165,7 @@ else if(e.ty=="r"){t="↩ Qaytdi: "+q(bnm(e.b))+" × "+n0(Q);v=""}
 else{t="💰 Olingan pul";v="<small>"+(e.pm=="k"?"💳 karta":"💵 naqd")+"</small>"}
 h+='<div class="row the" data-k="'+q(e.k)+'" style="cursor:pointer;padding:8px 0"><div><b>'+hm(e.t)+' · '+t+'</b>'+v+'</div><b style="white-space:nowrap">'+(e.ty=="o"?n0(Q)+" ta":n0(a)+" so\'m")+' ✏️</b></div>'});h+='</div>'});
 if(days.length>LIM)h+='<button onclick="thMore()">Yana ko\'rsatish ('+(days.length-LIM)+' kun)</button>';return h};
-window.thShop=function(s){SH=s;LIM=20;render();try{window.scrollTo(0,0)}catch(e){}};window.thMore=function(){LIM+=30;render()};
+window.thShop=function(s){if(window.NVFX&&NVFX.s!=s)window.NVFX=null;SH=s;LIM=20;render();try{window.scrollTo(0,0)}catch(e){}};window.thMore=function(){LIM+=30;render()};
 document.addEventListener("click",function(ev){var t=ev.target&&ev.target.closest&&ev.target.closest(".thr,.the");if(!t||tab!="tahr")return;if(t.classList.contains("thr"))return thShop(t.getAttribute("data-s"));edit(t.getAttribute("data-k"))});
 function find(k){return evs(SH).filter(function(e){return e.k==k})[0]}
 var CK="";
@@ -3197,7 +3198,7 @@ else if(a>pa+.5){/* to'langani joyida, farqi nasiyada */var pq=a?r2(Q*pa/a):0,L=
 else{/* summa to'langanidan kam: ortig'i olib tashlanadi */drop("del",un);var k=pa?a/pa:0,LQ=Q,LA=a;pd.forEach(function(d,i){var last=i==pd.length-1,na=last?LA:Math.round(d.amt*k),nq=last?r2(LQ):r2(pa?Q*d.amt/pa:0);d.amt=na;d.qty=nq;LA-=na;LQ-=nq})}
 unlink(e.R)}
 done()}
-var ob=window.onBack;window.onBack=function(){if(tab=="tahr"&&EK=="shp"&&!$("ask_n")&&!$("di_o")){if(SH)thShop("");else{EK="";render()}return true}return ob?ob.apply(this,arguments):false};
+var ob=window.onBack;window.onBack=function(){if(tab=="tahr"&&EK=="shp"&&!$("ask_n")&&!$("di_o")){if(SH&&window.NVFX&&NVFX.s==SH){dkFixBack();return true}if(SH)thShop("");else{EK="";render()}return true}return ob?ob.apply(this,arguments):false};
 })();
 </script>
 <script id="omb2">(function(){if(window.nvSub)return;
