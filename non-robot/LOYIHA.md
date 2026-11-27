@@ -12,7 +12,7 @@ Belgilar:
 ## 1. Zaryad stansiyasi
 
 🗣 Muallif:
-- Zaryad stansiyasi **do'kon yonida, tashqarida** turadi.
+- Zaryad stansiyasi **nonvoyxona oldida, tashqarida** turadi. *(Tuzatish: avval "do'kon yonida" deyilgan edi, muallif adashganini aytdi.)*
 - Stansiya bir joyga **qattiq qotirilgan** bo'ladi.
 - Robot stansiyaga kirganda **avtomatik qulflanadi**. Uni hech kim olib keta olmaydigan darajada mahkam bo'lishi kerak.
 - Robot stansiyada turadi va **faqat rahbar ilovasidan buyruq berilgandagina** yo'lga chiqadi.
@@ -22,9 +22,6 @@ Belgilar:
 - Zaryadlash kontaktlari (pogo-pin yoki kontakt plastinalar) robot pastida bo'lsa, yomg'ir va qordan himoyalangan bo'ladi.
 - Stansiyaga soyabon yoki tom qo'yish kerak, robot quyosh va yomg'irdan saqlanadi.
 - Stansiyada kamera bo'lsa, buzishga urinish bo'lganda rahbarga xabar boradi.
-
-❓ Ochiq savol:
-- Stansiya **do'kon** yonidami yoki **nonvoyxona** yonidami? Non nonvoyxonada solinadi, shuning uchun robotning "uyi" nonvoyxona oldida bo'lishi mantiqan to'g'riroq ko'rinadi. Aniqlashtirish kerak.
 
 ---
 
@@ -62,6 +59,12 @@ Belgilar:
 - Yo'lda **to'siqlar, chuqurlar, sun'iy to'siqlar, bordyurlarni** sensorlar orqali o'zi ko'rib, **aylanib o'tadi** yoki qandaydir yo'l bilan o'tadi.
 - Yo'lni kesib o'tish kerak bo'lganda **piyodalar o'tish joyidan** o'tadi.
 - **Svetoforni ko'radi**: **yashil** chiroqda o'tadi, **qizil** chiroqda to'xtab kutadi.
+- **Odamlar va mashinalar**: yo'lda odam chiqsa, robot uni **hech qachon urib yubormasligi** kerak. Odam yoki mashina o'tguncha **to'xtab turadi** yoki **aylanib o'tadi**.
+- **Svetofordan o'ta olmasa**:
+  - Robot avvalo **o'zi o'tishga harakat qiladi**. Rahbarni keraksiz bezovta qilmasligi kerak.
+  - Agar baribir o'ta olmasa, rahbar ilovasiga **bildirishnoma yoki qo'ng'iroq** keladi.
+  - Rahbar uni bosib, robotni **real vaqt rejimida o'zi boshqaradi** va svetofordan o'tkazib qo'yadi.
+  - Keyin **"Yo'lni davom ettirish"** tugmasini bosadi va robot qolgan yo'lni yana o'zi yuradi.
 
 💡 Claude fikri:
 - Sensorlar to'plami (taklif):
@@ -76,6 +79,16 @@ Belgilar:
   - svetoforni aniqlay olmasa, to'xtab **rahbarga signal** bersin.
 - Notekis yo'l va bordyurlar uchun **6 g'ildirakli** shassi tavsiya qilaman.
 - Piyodalar orasida tezlik past bo'lsin: taxminan 4–6 km/soat, odam yurishi tezligida.
+- **Odam xavfsizligi** (eng muhim qoida: robot doim yo'l beradi):
+  - odamdan kamida ~1 m masofa saqlasin, yaqinlashsa sekinlashsin va to'xtasin;
+  - korpus atrofida **yumshoq bamper va tegish sensori** bo'lsin: tegsa, darhol to'xtaydi;
+  - korpusda qizil **avariya to'xtatish tugmasi** bo'lsin;
+  - bola yoki hayvon kutilmaganda chiqib qolishi mumkin, shuning uchun tormoz masofasi qisqa bo'lsin.
+- **Rahbar boshqaruvi uchun**:
+  - robotda **4G/5G modem** va jonli video kerak, kechikish kam bo'lishi shart;
+  - aloqa uzilib qolsa, robot **darhol joyida to'xtaydi**, boshqaruvsiz yurmaydi;
+  - rahbarni qachon chaqirishni aniq qoida bilan belgilash kerak. Masalan: 2 ta to'liq svetofor siklida o'ta olmasa yoki svetoforni umuman taniy olmasa;
+  - rahbar boshqargan har bir holat yozib olinsin. Keyinchalik robotni shu joylardan o'zi o'tishga o'rgatish uchun kerak bo'ladi.
 
 ---
 
@@ -110,6 +123,9 @@ Belgilar:
 - Robot do'kon oldiga kelganda do'konchiga **signal beradi**. Do'konchi chiqadi.
 - Ekranda **"Siz uchun ajratilgan non: N ta"** deb ko'rsatadi.
 - Do'konchi rozi bo'lsa, **ptichkani (✓)** bosadi va **qopqoq ochiladi**.
+- **Kim ochishi mumkin**: qopqoq faqat shu do'konchi tasdiqlangandan keyin ochiladi.
+  - Robot do'konchini **yuzidan tanisa, avtomatik ochiladi**.
+  - Yuzini taniy olmasa, do'konchi **parol** teradi, keyin ochiladi.
 - Agar do'konchiga **kamroq non** kerak bo'lsa, ekranga kerakli sonni yozadi (masalan, "menga 30 ta kerak"), tasdiqlaydi va qopqoq ochiladi.
 - Do'konchi nonni oladi, keyin **qopqoq yopiladi va yana qulflanadi**.
 - **Tarozi** bo'lsa yaxshi bo'ladi. Nonlarning grammi deyarli bir xil, oz-moz farq qilishi mumkin. Robot nechta non olinganini **ham ko'rib, ham tarozida o'lchab** bilishi kerak.
@@ -117,7 +133,12 @@ Belgilar:
 
 💡 Claude fikri:
 - **Signal**: ovozli signal + chiroq, va do'konchi telefoniga **SMS yoki Telegram xabar** ("Robot keldi"). Do'konchi ichkarida bo'lsa ham bilib oladi.
-- **Kim ochishi mumkin**: ptichkani istalgan o'tkinchi ham bosishi mumkin. Shuning uchun har bir do'konchiga **PIN-kod yoki QR kod** berilsin. Shusiz qopqoq ochilmasin.
+- **Yuz tanish bo'yicha**:
+  - har bir do'konga **bir nechta odamning yuzi** ro'yxatga olinsin (do'konchi, sotuvchilar). Rahbar ularni ilovadan qo'shadi va o'chiradi;
+  - **rasm yoki telefondagi suratni ko'rsatib aldash** mumkin. Shuning uchun "tirik odam" tekshiruvi (liveness, chuqurlik kamerasi) kerak;
+  - kechqurun, quyosh qarshisida yoki qishda (sharf, shapka bilan) yuzni tanish qiyinlashadi. Shuning uchun parol zaxirasi to'g'ri qaror;
+  - yuz shaxsiy biometrik ma'lumot hisoblanadi. Do'konchilardan **rozilik** olish va ma'lumotni xavfsiz saqlash kerak;
+  - parol bir necha marta xato terilsa, vaqtincha bloklansin va rahbarga xabar borsin.
 - **Tarozi bilan hisoblash**: bitta non og'irligi, masalan, 250 g ± 15 g. Hisob: `olingan non = (oldingi og'irlik − hozirgi og'irlik) ÷ o'rtacha og'irlik`, eng yaqin butun songa yaxlitlanadi. 80 ta nongacha bu usul ishonchli ishlaydi. Har kuni birinchi partiyada o'rtacha og'irlikni qayta o'lchab, kalibrlash mumkin.
 - **Kamera** ichki bo'limda bo'lsa, tarozini tekshirib turadi (ikki usul solishtiriladi).
 - **Farq chiqsa**: masalan, 30 ta deyilgan, 32 ta olingan. Ekranda ogohlantirish chiqsin, rahbarga xabar borsin. Do'konchi tasdiqlagandan keyin haqiqiy son yozilsin.
@@ -158,7 +179,7 @@ Belgilar:
 ## 9. Hozircha aniqlanmagan masalalar
 
 ❓ Ochiq savollar:
-1. Zaryad stansiyasi nonvoyxona yonidami yoki do'kon yonidami? (1-bo'lim)
+1. ~~Zaryad stansiyasi qayerda?~~ **Hal bo'ldi: nonvoyxona oldida.**
 2. Robot bir safarda eng ko'pi bilan nechta non olishi kerak? 80 tami? Bitta non necha gramm?
 3. Nonni issiq saqlash kerakmi (isitgich, termoizolyatsiya)?
 4. Qish, qor, yomg'irda ham ishlashi kerakmi?
