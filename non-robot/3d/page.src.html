@@ -1,0 +1,225 @@
+<title>Non Robot chizmasi</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: muhandislik varag'i — chapda 3D ko'rinish, o'ngda raqamli qismlar ro'yxati; telefonda ustma-ust */
+:root{
+  --bg:#eef1f4; --panel:#ffffff; --ink:#16212c; --muted:#5b6b7a; --line:#d5dce3;
+  --accent:#b5651d; --accent-soft:#f6e7d8; --chip:#e7ecf1; --stage:#aeb7c1;
+  --sans:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#12171c; --panel:#1a2128; --ink:#e6ecf1; --muted:#93a3b2; --line:#2b353f;
+  --accent:#e2934b; --accent-soft:#3a2a1c; --chip:#232c35; --stage:#1b1f24; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#12171c; --panel:#1a2128; --ink:#e6ecf1; --muted:#93a3b2; --line:#2b353f;
+  --accent:#e2934b; --accent-soft:#3a2a1c; --chip:#232c35; --stage:#1b1f24; color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
+.wrap{max-width:1440px;margin:0 auto;padding-block:20px 40px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px;margin-bottom:16px}
+h1{margin:0;font-size:clamp(22px,3vw,30px);font-weight:700;letter-spacing:-.01em;text-wrap:balance}
+h1 span{color:var(--accent)}
+.sub{margin:2px 0 0;color:var(--muted)}
+.dims{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+.dims b{color:var(--ink);font-weight:600}
+.grid{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:980px){.grid{grid-template-columns:minmax(0,1fr)}}
+.viewer{position:sticky;top:max(12px,env(safe-area-inset-top,0px));background:var(--stage);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+@media (max-width:980px){.viewer{position:relative;top:0}}
+.stage{position:relative;height:min(72vh,680px);min-height:360px;touch-action:none;cursor:grab}
+.stage:active{cursor:grabbing}
+.stage canvas{display:block;width:100%;height:100%}
+.hs{position:absolute;left:0;top:0;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;border:0;padding:0;
+  background:rgba(22,33,44,.86);color:#fff;font:600 11px/22px var(--mono);text-align:center;cursor:pointer;transition:transform .15s,background .15s}
+.hs:hover,.hs.on{background:var(--accent);transform:scale(1.25)}
+.hs:focus-visible{outline:2px solid #fff;outline-offset:1px}
+.tools{z-index:2;position:absolute;left:10px;top:10px;right:10px;display:flex;flex-wrap:wrap;gap:6px;pointer-events:none}
+.tools>*{pointer-events:auto}
+.seg{display:inline-flex;background:rgba(255,255,255,.88);border-radius:8px;padding:3px;gap:2px}
+.btn{font:500 13px var(--sans);border:0;border-radius:6px;padding:6px 10px;background:rgba(255,255,255,.88);color:#16212c;cursor:pointer}
+.seg .btn{background:transparent}
+.btn[aria-pressed="true"]{background:#16212c;color:#fff}
+.btn.play{background:#b5651d;color:#fff}
+.btn:focus-visible{outline:2px solid #b5651d;outline-offset:2px}
+.stepcard{z-index:2;position:absolute;left:10px;bottom:10px;max-width:min(440px,calc(100% - 20px));background:rgba(14,22,30,.84);color:#fff;border-radius:10px;padding:12px 14px}
+.stepcard .k{font:600 11px var(--mono);letter-spacing:.22em;color:#f2b56b}
+.stepcard h3{margin:2px 0 4px;font-size:18px}
+.stepcard p{margin:0;font-size:13.5px;color:#d5dee6}
+.steps{display:flex;gap:6px;padding:10px;border-top:1px solid var(--line);background:var(--panel);overflow-x:auto}
+.steps button{flex:1 0 auto;font:600 12px var(--mono);border:1px solid var(--line);background:var(--panel);color:var(--muted);border-radius:6px;padding:7px 10px;cursor:pointer;white-space:nowrap}
+.steps button.done{color:var(--ink);border-color:var(--accent)}
+.steps button.cur{background:var(--accent);color:#fff;border-color:var(--accent)}
+.hint{font-size:12px;color:var(--muted);padding:0 10px 10px;background:var(--panel)}
+aside{background:var(--panel);border:1px solid var(--line);border-radius:10px;min-width:0}
+aside h2{margin:0;padding:14px 16px 4px;font-size:17px}
+aside .lead{margin:0;padding:0 16px 10px;color:var(--muted);font-size:13px}
+.tbl{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+td{padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:var(--chip)}
+tbody tr.on td{background:var(--accent-soft)}
+td.n{font:600 12px var(--mono);color:var(--accent);width:28px}
+td .nm{font-weight:600}
+td .nt{color:var(--muted);font-size:12.5px}
+td.q,td.p{white-space:nowrap;font-variant-numeric:tabular-nums}
+td.p{text-align:right;font-family:var(--mono);font-size:12.5px}
+th.p{text-align:right}
+.later{display:inline-block;font:600 10.5px var(--mono);background:var(--chip);color:var(--muted);border-radius:4px;padding:1px 5px;margin-left:4px;vertical-align:1px}
+.tot{padding:12px 16px 16px;display:grid;gap:6px;font-variant-numeric:tabular-nums}
+.tot div{display:flex;justify-content:space-between;gap:12px}
+.tot b{font-family:var(--mono)}
+.tot .big{font-size:16px;font-weight:700;border-top:1px solid var(--line);padding-top:8px}
+.tot .big b{color:var(--accent)}
+.note{color:var(--muted);font-size:12.5px;padding:0 16px 16px;margin:0}
+td .qm{display:none}
+@media (max-width:560px){th.qh,td.q{display:none}td .qm{display:inline}}
+@media (prefers-reduced-motion:reduce){.hs{transition:none}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <h1>Non tarqatuvchi robot <span>· fanera prototip</span></h1>
+      <p class="sub">3D chizma: aylantiring, qismlarga ajrating, raqamni bossangiz qism ro'yxatda belgilanadi.</p>
+    </div>
+    <div class="dims">
+      <span>Uzunligi <b>~100 sm</b></span><span>Eni <b>60 sm</b> (bamper bilan 63)</span>
+      <span>Balandligi <b>~1 m</b></span><span>Yuk bo'limi <b>55×56×56 sm</b></span><span>Sig'imi <b>64 ta non</b></span>
+    </div>
+  </header>
+  <div class="grid">
+    <section class="viewer" aria-label="3D ko'rinish">
+      <div class="stage" id="stage">
+        <div class="tools">
+          <div class="seg" role="group" aria-label="Ko'rinish">
+            <button class="btn" id="bAsm" aria-pressed="true">Yig'ilgan</button>
+            <button class="btn" id="bExp" aria-pressed="false">Qismlarga ajratilgan</button>
+          </div>
+          <button class="btn" id="bLid" aria-pressed="false">Qopqoqni ochish</button>
+          <button class="btn" id="bNum" aria-pressed="true">Raqamlar</button>
+          <button class="btn play" id="bPlay">▶ Yig'ilishini ko'rsatish</button>
+        </div>
+        <div class="stepcard" id="card" hidden><div class="k" id="ck"></div><h3 id="ch"></h3><p id="cp"></p></div>
+      </div>
+      <div class="steps" id="steps" aria-label="Yig'ish qadamlari"></div>
+      <div class="hint">Sichqoncha yoki barmoq bilan aylantiring, g'ildirakcha yoki ikki barmoq bilan yaqinlashtiring. Qadam tugmasi robotni o'sha qadamgacha yig'ilgan holda ko'rsatadi.</div>
+    </section>
+    <aside>
+      <h2>Kerakli qismlar</h2>
+      <p class="lead">Raqamlar chizmadagi belgilarga mos. Narxlar taxminiy, ishlatilgan (b/u) qismlar bilan arzonroq.</p>
+      <div class="tbl"><table>
+        <thead><tr><th>№</th><th>Qism</th><th class="qh">Soni</th><th class="p">Narx, $</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table></div>
+      <div class="tot" id="tot"></div>
+      <p class="note">Zaxira uchun yana ~15% qo'shing: biror qism kuyishi yoki almashishi mumkin. Zaryad stansiyasi bu ro'yxatga kirmagan (~$50–120). So'mda taxminan 12–24 mln so'm, dollar kursiga qarab.</p>
+    </aside>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>/*ROBOT_JS*/</script>
+<script>
+(function(){
+const {BOM,STEPS,makeRobot,makeStage}=NonRobot;
+const stage=document.getElementById('stage');
+const renderer=new THREE.WebGLRenderer({antialias:true});
+renderer.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+stage.prepend(renderer.domElement);
+const scene=new THREE.Scene();
+const isDark=()=>{const t=document.documentElement.dataset.theme;return t?t==='dark':matchMedia('(prefers-color-scheme: dark)').matches};
+const st=makeStage(THREE,renderer,scene,isDark());
+const R=makeRobot(THREE);scene.add(R.root);
+const camera=new THREE.PerspectiveCamera(34,1,0.05,50);
+new MutationObserver(()=>st.setDark(isDark())).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change',()=>st.setDark(isDark()));
+
+// --- kamera boshqaruvi ---
+let az=0.62,el=0.36,dist=3.0,distT=3.0,tgt=new THREE.Vector3(0,0.45,0),auto=true;
+const ptr=new Map();let pinch=0;
+stage.addEventListener('pointerdown',e=>{if(e.target.closest('button'))return;stage.setPointerCapture(e.pointerId);ptr.set(e.pointerId,[e.clientX,e.clientY]);auto=false;});
+stage.addEventListener('pointermove',e=>{if(!ptr.has(e.pointerId))return;const [x,y]=ptr.get(e.pointerId);
+  if(ptr.size===1){az+=(e.clientX-x)*0.008;el=Math.min(1.35,Math.max(0.05,el+(e.clientY-y)*0.006));}
+  ptr.set(e.pointerId,[e.clientX,e.clientY]);
+  if(ptr.size===2){const [a,b]=[...ptr.values()];const d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(pinch)distT=dist=Math.min(6,Math.max(1.2,dist*pinch/d));pinch=d;}});
+const up=e=>{ptr.delete(e.pointerId);if(ptr.size<2)pinch=0;};
+stage.addEventListener('pointerup',up);stage.addEventListener('pointercancel',up);
+stage.addEventListener('wheel',e=>{e.preventDefault();auto=false;distT=dist=Math.min(6,Math.max(1.2,dist*Math.exp(e.deltaY*0.001)));},{passive:false});
+
+// --- holat ---
+let explode=0,explodeT=0,lid=0,lidT=0,asm=8,asmT=8,playing=false,playT=0,showNums=true,sel=0;
+const $=id=>document.getElementById(id);
+const setPressed=(el,v)=>el.setAttribute('aria-pressed',v?'true':'false');
+$('bAsm').onclick=()=>{explodeT=0;distT=3.0;stopPlay();asmT=8;setPressed($('bAsm'),1);setPressed($('bExp'),0);};
+$('bExp').onclick=()=>{explodeT=1;distT=4.3;stopPlay();asmT=8;setPressed($('bAsm'),0);setPressed($('bExp'),1);};
+$('bLid').onclick=()=>{lidT=lidT?0:1.35;setPressed($('bLid'),!!lidT);$('bLid').textContent=lidT?'Qopqoqni yopish':'Qopqoqni ochish';};
+$('bNum').onclick=()=>{showNums=!showNums;setPressed($('bNum'),showNums);hs.forEach(h=>h.el.hidden=!showNums);};
+$('bPlay').onclick=()=>{playing=true;playT=0;explodeT=0;setPressed($('bAsm'),1);setPressed($('bExp'),0);$('bPlay').textContent='■ To\'xtatish';$('bPlay').onclick=stopAndFull;};
+function stopPlay(){playing=false;$('bPlay').textContent='▶ Yig\'ilishini ko\'rsatish';$('bPlay').onclick=startPlay;}
+function startPlay(){playing=true;playT=0;explodeT=0;$('bPlay').textContent='■ To\'xtatish';$('bPlay').onclick=stopAndFull;}
+function stopAndFull(){stopPlay();asmT=8;asm=8;card(-1);}
+$('bPlay').onclick=startPlay;
+
+// qadam tugmalari
+const stepsEl=$('steps');
+STEPS.forEach((s,i)=>{const b=document.createElement('button');b.textContent=s.n+'. '+s.title;b.onclick=()=>{stopPlay();explodeT=0;setPressed($('bAsm'),1);setPressed($('bExp'),0);asmT=s.n;asm=Math.min(asm,s.n-1);card(i);};stepsEl.appendChild(b);});
+function card(i){const c=$('card');if(i<0){c.hidden=true;return;}const s=STEPS[i];c.hidden=false;$('ck').textContent=s.n+'-QADAM';$('ch').textContent=s.title;$('cp').textContent=s.text;}
+
+// ro'yxat
+const rows=$('rows');
+BOM.forEach(b=>{const tr=document.createElement('tr');tr.id='r'+b.n;tr.tabIndex=0;
+  tr.innerHTML=`<td class="n">${b.n}</td><td><div class="nm">${b.name}${b.later?'<span class="later">keyin</span>':''}</div><div class="nt">${b.note}<span class="qm"> · ${b.qty}</span></div></td><td class="q">${b.qty}</td><td class="p">${b.p[1]?b.p[0]+'–'+b.p[1]:'giroskuterda'}</td>`;
+  tr.onclick=()=>select(b.n);tr.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();select(b.n);}};rows.appendChild(tr);});
+const sum=f=>BOM.filter(f).reduce((a,b)=>[a[0]+b.p[0],a[1]+b.p[1]],[0,0]);
+const base=sum(b=>!b.later),all=sum(()=>true);
+$('tot').innerHTML=`<div><span>Kassasiz (yuradi, sanaydi, ilova bilan ishlaydi)</span><b>$${base[0]}–${base[1]}</b></div>
+<div><span>Kupyura qabul qilgich va seyf</span><b>+$${all[0]-base[0]}–${all[1]-base[1]}</b></div>
+<div class="big"><span>Jami</span><b>$${all[0]}–${all[1]}</b></div>`;
+
+// raqamli belgilar
+const hs=R.anchors.map(a=>{const el=document.createElement('button');el.className='hs';el.textContent=a.n;el.setAttribute('aria-label',a.n+'-qism: '+BOM.find(b=>b.n===a.n).name);el.onclick=()=>select(a.n,true);stage.appendChild(el);return {a,el};});
+
+// belgilash
+const hl=new THREE.MeshStandardMaterial({color:0xff7a1a,emissive:0xff4d00,emissiveIntensity:0.7,roughness:0.5});
+let hlMeshes=[];
+function select(n,scroll){
+  hlMeshes.forEach(([m,orig])=>m.material=orig);hlMeshes=[];
+  document.querySelectorAll('tbody tr.on').forEach(r=>r.classList.remove('on'));hs.forEach(h=>h.el.classList.remove('on'));
+  if(sel===n){sel=0;return;}sel=n;
+  const row=$('r'+n);row.classList.add('on');if(scroll)row.scrollIntoView({block:'nearest',behavior:'smooth'});
+  hs.filter(h=>h.a.n===n).forEach(h=>{h.el.classList.add('on');h.a.part.group.traverse(o=>{if(o.isMesh){hlMeshes.push([o,o.material]);o.material=hl;}});});
+}
+
+// o'lcham
+function resize(){const w=stage.clientWidth,h=stage.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+new ResizeObserver(resize).observe(stage);resize();
+
+const v=new THREE.Vector3();let last=performance.now();
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function loop(now){
+  const dt=Math.min(0.05,(now-last)/1000);last=now;
+  if(auto&&!reduce)az+=dt*0.12;
+  const k=1-Math.exp(-dt*5);
+  explode+=(explodeT-explode)*k;dist+=(distT-dist)*k;lid+=(lidT-lid)*k;
+  if(playing){playT+=dt;asm=Math.min(8,playT/3);const si=Math.min(7,Math.floor(asm));card(si);
+    if(asm>=8){stopPlay();setTimeout(()=>card(-1),1500);} }
+  else asm+=(asmT-asm)*k*0.7;
+  if(explode>0.002) R.setExplode(explode); else R.setAssembly(asm);
+  const lidA=Math.max(lid,(playing&&asm>5.6)?1.35:0);R.setLid(lidA);R.setHandles(0);
+  [...stepsEl.children].forEach((b,i)=>{b.classList.toggle('done',asm>=i+1-0.01);b.classList.toggle('cur',(playing||asmT<8)&&Math.floor(Math.min(7.99,asm))===i);});
+  camera.position.set(tgt.x+dist*Math.cos(el)*Math.cos(az),tgt.y+dist*Math.sin(el),tgt.z+dist*Math.cos(el)*Math.sin(az));camera.lookAt(tgt);
+  renderer.render(scene,camera);
+  const w=stage.clientWidth,h=stage.clientHeight;
+  for(const {a,el} of hs){if(!showNums)continue;const g=a.part.group;
+    if(!g.visible){el.style.visibility='hidden';continue;}
+    v.copy(a.pos).add(g.position).project(camera);
+    if(v.z>1){el.style.visibility='hidden';continue;}
+    el.style.visibility='visible';el.style.left=((v.x*0.5+0.5)*w)+'px';el.style.top=((-v.y*0.5+0.5)*h)+'px';}
+  requestAnimationFrame(loop);
+}
+requestAnimationFrame(loop);
+})();
+</script>
