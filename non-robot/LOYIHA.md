@@ -30,7 +30,8 @@ Belgilar:
 🗣 Muallif:
 - Rahbar ilovasida **do'konlar joylashuvi belgilanadi**.
 - Rahbar har bir do'kon uchun **nechta non** kerakligini kiritadi va **"Non soling"** tugmasini bosadi.
-- Misol: 1-do'kon — 50 ta non, 2-do'kon — 20 ta non. Robot ichida esa 80 ta non bo'lishi mumkin.
+- Misol: 1-do'kon — 50 ta non, 2-do'kon — 20 ta non. Robot ichida esa 80 ta non bo'lishi mumkin. *(Keyinchalik aniqlandi: sig'im 64 ta non, 9-bo'limga qarang.)*
+- **Non katalogi** ilova ichida saqlanadi: har bir nonning **nomi, turi, grammi (og'irligi) va o'lchami**.
 
 💡 Claude fikri:
 - Ilova robot sig'imidan ortiq non buyurtma qilishga ruxsat bermasin (masalan, sig'im 80 ta bo'lsa, ogohlantirish chiqarsin).
@@ -144,7 +145,8 @@ Belgilar:
   - 🗣 Muallif qarori: robot yetib borgach, **do'konchining telefoniga qo'ng'iroq boradi**.
   - 🗣 Muallif qarori: do'konchi **chiqmasa**, robot rahbar ilovasiga xabar beradi va **rahbar do'konchiga telefon qiladi**.
   - 💡 Avtomatik qo'ng'iroq uchun telefon xizmati (SIM-modem yoki internet orqali qo'ng'iroq xizmati) kerak bo'ladi.
-  - 💡 Rahbarga xabar berishdan oldin necha daqiqa kutishni belgilash kerak, masalan 3–5 daqiqa. Shu vaqt ichida rahbar qo'ng'iroq qilmasa, robot nima qilishi ham aniq bo'lsin: kutishda davom etadimi yoki keyingi do'konga o'tadimi.
+  - 🗣 Muallif qarori: do'konchini **3–5 daqiqa** kutadi. Bu vaqt **rahbar ilovasida sozlanadi**.
+  - 💡 Rahbar qo'ng'iroq qilgandan keyin ham do'konchi chiqmasa, robot nima qilishi aniq bo'lsin: yana kutadimi yoki keyingi do'konga o'tadimi. Buni rahbar ilovadan tanlasa bo'ladi.
 - **Yuz tanish bo'yicha**:
   - har bir do'konga **bir nechta odamning yuzi** ro'yxatga olinsin (do'konchi, sotuvchilar). Rahbar ularni ilovadan qo'shadi va o'chiradi;
   - **rasm yoki telefondagi suratni ko'rsatib aldash** mumkin. Shuning uchun "tirik odam" tekshiruvi (liveness, chuqurlik kamerasi) kerak;
@@ -198,6 +200,9 @@ Belgilar:
   - **ekran tagida akkumulyator va "miya"** (boshqaruv elektronikasi);
   - **orqa tomonda yuk mashinasidek bagaj** (yuk bo'limi).
 - O'lcham: yuk bo'limiga **2 ta banan qutisi ustma-ust** sig'ishi va **tepasida ozgina zapas** qolishi kerak.
+- **Sig'im**: nonlar qirrasi bilan tik terilganda bitta qutiga **2 qator**, jami **32 ta non** sig'adi. 2 ta qutiga **64 ta non** sig'adi.
+- **Nima uchun savat**: do'konchi nonni qo'lda ko'tarib kirmaydi. U **savatni oladi**, do'koniga kirib nonni tushiradi, keyin **savatni olib chiqib joyiga qo'yadi**. Robot shundan keyin hisoblaydi.
+- Har bir savat ichida **alohida tarozi shart emas**.
 
 💡 Claude fikri:
 - **Banan qutisining odatiy o'lchami taxminan 50 × 40 × 24 sm.** Haqiqiy qutini o'lchab tasdiqlash kerak, chunki ba'zilari 52 × 39 sm bo'ladi.
@@ -206,29 +211,130 @@ Belgilar:
   - uzunligi **~95–100 sm**: yuk bo'limi + old qism (ekran va batareya) ~30 sm;
   - eni **~60 sm**: tor trotuar va eshiklardan o'tishi uchun 65 sm dan oshmasin;
   - balandligi **~90 sm**: g'ildirak va yerdan masofa ~15 sm + yuk bo'limi + qopqoq. Ekran do'konchiga qulay balandlikda bo'ladi.
-- ⚠️ **Sig'im bo'yicha muhim hisob.** Obi non diametri ~20–22 sm, qalinligi ~4–5 sm bo'lsa:
-  - yotqizib solinganda bitta qutiga ~10–12 ta sig'adi;
-  - qirrasi bilan tik terib qo'yilganda bitta qutiga ~20–24 ta sig'adi.
-  - Demak 2 ta qutiga **taxminan 20–45 ta non** sig'adi, avvalgi misoldagi 80 ta emas. 80 ta non kerak bo'lsa, quti kattaroq bo'lishi yoki robot 2 marta borishi kerak. Nonning aniq o'lchamini bilib, qayta hisoblaymiz.
-- **Tarozi**: har bir konteyner tagida **alohida tarozi** bo'lsin. Shunda qaysi savatdan nechta non olingani ham ma'lum bo'ladi.
-- **Savat butunlay ko'tarib olinsa**, tarozi buni "hamma non olindi" deb tushunishi mumkin. Shuning uchun:
-  - savatda **joyida turgani sensori** (konsevik) bo'lsin;
-  - qopqoq yopilishidan oldin savat joyiga qaytarilganini tekshirsin;
-  - savat qaytarilmasa, rahbarga xabar borsin.
+- **Sig'im 64 ta non** (2 × 32). Ilova bir reysga 64 tadan ortiq buyurtma berishga yo'l qo'ymasin. Ortig'i keyingi reysga o'tkazilsin.
+- **Bitta umumiy tarozi** yuk bo'limi tagida bo'ladi. Hisoblash tartibi:
+  1. savat olib ketilganda tarozi "savat yo'q" holatini ko'radi va kutadi;
+  2. savat qaytib joyiga qo'yilgach, og'irlikni o'lchaydi;
+  3. `olingan non = (avvalgi og'irlik − hozirgi og'irlik) ÷ bitta non og'irligi`;
+  4. bo'sh savat og'irligi (tara) oldindan ilovada saqlanadi.
+- Savat joyiga qo'yilganini **sensor** (konsevik) tekshirsin. Savat qaytarilmaguncha qopqoq yopilmasin. Belgilangan vaqtda qaytarilmasa, rahbarga xabar borsin.
+- ⚠️ **Ustma-ust joylashuvning muammosi**: pastki savatni olish uchun avval ustidagisini olish kerak. Do'konchi bitta savatni ichkariga olib kirganda, ikkinchisi ochiq qopqoq ostida, ko'chada qarovsiz qoladi.
+  - **Taklif: savatlarni uzunasiga yonma-yon** joylashtirish va **har biriga alohida qopqoq** qilish. Shunda faqat shu do'konga tegishli savat ochiladi, ikkinchisi qulflangan holda qoladi.
+  - Yuk bo'limi pastroq bo'ladi (~30 sm) va robot ag'darilishga chidamliroq bo'ladi. Uzunligi esa ~130 sm gacha uzayadi, eni ~55–60 sm qoladi.
+  - Ustma-ust joylashuv qolsa: **birinchi boradigan do'konning savati tepaga** qo'yilsin va qopqoq ochiq paytda kamera kuzatib tursin.
+- Bir xil reysda **turli xil non** bo'lsa, faqat og'irlik bo'yicha sanash chalkashadi. Taklif: **har bir savatga bir tur non** solinsin yoki kamera turini aniqlasin.
 - Savatlar robotga mahkam o'rnashsin, yo'lda silkinib ketmasin.
 
 ---
 
-## 10. Hozircha aniqlanmagan masalalar
+## 10. Ish tartibi, batareya va zaryad
+
+🗣 Muallif:
+- Masofalar har xil: **200 m, 300 m, 500 m, ~1 km** gacha.
+- Robot **ertalabdan kechgacha** qatnaydi. Orada to'xtaydi ham: **non tandirdan chiqquncha kutiladi**, shu paytda zaryad oladi.
+- Savol: har borib kelgandan keyin zaryadga qo'ygan yaxshimi yoki zaryad tugagandan keyinmi? Zaryad tugamasa bo'ldi, qolgani farqi yo'q.
+- Hozircha **bitta robot**, keyinchalik robotlar ko'paytiriladi.
+
+💡 Claude fikri — javob: **har reysdan keyin stansiyaga kirib zaryad olgani yaxshi.**
+- Litiy batareyalar to'liq tugatilsa tez eskiradi. Ular uchun eng yaxshisi **20–80% oralig'ida** ishlash va tez-tez qisqa zaryad olish.
+- **LiFePO4** turidagi batareyani tavsiya qilaman: xavfsiz, yonmaydi, 2000+ sikl chidaydi.
+- Taxminiy hisob: yuklangan robot ~60–80 kg, 1 km lik do'konga borib kelish 2 km. Bunga ~0,1 kVt·soat sarflanadi. **24 V 30–40 Ah** (~0,7–1 kVt·soat) batareya bir zaryadda bir necha reysga yetadi. Har reysdan keyin zaryad olsa, batareya hech qachon tugamaydi.
+- Batareya 20% dan kam qolsa, robot yangi reysni boshlamasin.
+- Kelajakda robotlar ko'payishini hisobga olib, ilova va server **bir nechta robotni** boshqarishga mo'ljallab yoziladi.
+
+---
+
+## 11. To'lov va kassa
+
+🗣 Muallif:
+- To'lov **naqd yoki karta** orqali, asosan **naqd**.
+- Do'konchi nonni olgach, ekranda **"Nasiya"** yoki **"Naqd"** tugmasini bosadi.
+  - **Nasiya** bo'lsa, qarz yozib qo'yiladi.
+  - **Naqd** bo'lsa, do'konchi pulni **maxsus joyga** qo'yadi va robot uni **sanab oladi**.
+- Sanalgan pul robotning **seyfiga** tushadi. Seyfni **faqat rahbar** ochadi.
+- Pul **hisoboti rahbar ilovasiga** yuborilib turadi.
+
+💡 Claude fikri:
+- Pulni sanash uchun **kupyura qabul qilgich** (bill acceptor) kerak. Bu to'lov terminallaridagi qurilma: pulni bittalab oladi, haqiqiyligini tekshiradi va **qulflanadigan kassetaga** (seyf) soladi. O'zbekistonda bunday terminallar ko'p, shuning uchun so'm kupyuralarini taniydigan qabul qilgichni topsa bo'ladi.
+- ⚠️ **Robot qaytim bera olmaydi.** Taklif:
+  - ortiqcha berilgan pul do'konning **avansi** (keyingi safarga oldindan to'lov) deb yoziladi;
+  - kam berilgan pul **nasiya** deb yoziladi;
+  - bitta to'lovda **bir qismi naqd, bir qismi nasiya** bo'lishi mumkin.
+- **Karta** uchun eng oddiy va arzon yo'l: ekranda **QR kod** chiqadi (Click, Payme yoki Uzum orqali to'lov) va to'lov ilovaga avtomatik tushadi. Alohida karta terminali keyinroq qo'shilishi mumkin.
+- Ilovada har bir do'kon uchun **qarz/avans balansi** va kunlik hisobot yuritiladi.
+- Nasiyani do'konchi yuz yoki parol bilan tasdiqlaydi. Shunda keyin "men olmaganman" degan bahs chiqmaydi.
+- ⚠️ **Pul tashiydigan robot o'g'rilar uchun nishonga aylanadi.** Shuning uchun:
+  - seyf korpusga ichkaridan murvat bilan mahkamlansin;
+  - robotni ko'tarish, ag'darish yoki buzishga urinilsa, **sirena** chalinsin va rahbarga xabar borsin;
+  - GPS doim kuzatib tursin;
+  - kamera hammasini yozib olsin.
+
+---
+
+## 12. Taxminiy byudjet (minimal prototip)
+
+🗣 Muallif: mablag' hali aniq emas, Claude minimal hisob qilsin. **Korpus avval oddiy yasaladi** (taxta yoki boshqa arzon materialdan), keyin yaxshirog'iga almashtiriladi.
+
+💡 Claude hisobi. Narxlar taxminiy va o'zgarib turadi. Ishlatilgan (b/u) qismlar bilan arzonlashadi.
+
+| Qism | Nima | Taxminiy narx ($) |
+|---|---|---|
+| G'ildirak va motorlar | 1–2 ta b/u giroskuter (hoverboard): motor-g'ildiraklar va kontroller | 80–150 |
+| Batareya | LiFePO4 24 V 30 Ah + zaryadlovchi | 180–280 |
+| "Miya" | Raspberry Pi 5 (8 GB) + ESP32 mikrokontroller | 100–120 |
+| Kameralar | 3 ta oddiy kamera (oldi, ichki, yuz uchun) | 60–120 |
+| LiDAR | RPLIDAR C1 yoki A1 | 70–100 |
+| Yaqin sensorlar | 6–8 ta ultratovush + 4 ta pastga qaragan masofa sensori | 40–60 |
+| Navigatsiya | GPS moduli + IMU | 30–60 |
+| Aloqa | 4G modem + SIM karta | 40–80 |
+| Ekran | 7–10" sensorli ekran | 60–100 |
+| Tarozi | 4 ta tenzodatchik + HX711 | 20–30 |
+| Qopqoq | elektr qulf + qopqoqni ochadigan aktuator | 50–90 |
+| Xavfsizlik | bamper, avariya tugmasi, chiroqlar, karnay, sirena | 30–50 |
+| Simlar va boshqalar | sug'urtagichlar, DC-DC, ulagichlar | 60–100 |
+| Korpus | fanera yoki taxta, ramka, bo'yoq, suvdan himoya | 50–120 |
+| Zaryad stansiyasi | oddiy ramka, kontaktlar, qulf | 50–120 |
+| **Jami (kassasiz)** | | **~$1 000 – 1 600** |
+| Kassa | kupyura qabul qilgich (b/u yoki yangi) + seyf | 150–400 |
+| **Jami (kassa bilan)** | | **~$1 200 – 2 000** |
+
+- So'mda taxminan **15–25 mln so'm** (dollar kursiga qarab).
+- Zaxira uchun yana **~15%** qo'shib qo'yish kerak: biror qism kuyishi, almashtirilishi yoki yetkazib berish narxi bo'lishi mumkin.
+- **Yaxshiroq variant (~$2 500 – 3 500)**: kuchli sun'iy intellekt plata (Jetson Orin Nano), chuqurlik kamerasi, santimetr aniqlikdagi RTK GPS. Avtonom yurish va svetoforni tanish ancha ishonchli bo'ladi.
+- Doimiy xarajatlar: SIM internet, server yoki hosting (oyiga taxminan $5–15), elektr.
+- Dasturiy qism (robot dasturi, rahbar ilovasi, do'konchi ekrani) Claude bilan birga yoziladi.
+
+---
+
+## 13. Bosqichlar (taklif)
+
+💡 Claude fikri. Hammasini birdaniga emas, bosqichma-bosqich qilamiz. Har bosqich oxirida ishlaydigan narsa bo'ladi.
+
+1. **Shassi** (~$400–500): giroskuter g'ildiraklari, batareya va fanera ramka. Robot telefondan pult kabi boshqariladi. *Natija: robot yuradi.*
+2. **Yuk bo'limi**: savatlar, tarozi, ekran va qopqoq qulfi. Non solish va topshirish stolda sinab ko'riladi. *Natija: non sanaladi va topshiriladi.*
+3. **Rahbar ilovasi**: xarita, holatlar, buyurtma, non katalogi va jonli kamera. *Natija: hammasi ilovada ko'rinadi.*
+4. **Yo'l o'rgatish va o'zi yurish**: o'rgatilgan yo'ldan yuradi, to'siqda to'xtaydi yoki aylanib o'tadi, qiyin joyda rahbarni chaqiradi. *Natija: robot o'zi qatnaydi.*
+5. **Svetofor va xavfsizlik**: svetoforni tanish, odamlardan qochish, avariya to'xtashi.
+6. **Kassa va yuz tanish**: kupyura qabul qilgich, seyf, nasiya va avans hisobi, yuz yoki parol bilan ochish.
+7. **Mustahkam korpus**: metall yoki plastik, suvdan himoyalangan.
+8. **Ko'paytirish**: ikkinchi robot va ko'p robotni boshqarish.
+
+---
+
+## 14. Hozircha aniqlanmagan masalalar
 
 ❓ Ochiq savollar:
 1. ~~Zaryad stansiyasi qayerda?~~ **Hal bo'ldi: nonvoyxona oldida.**
-2. ~~Sig'im~~ **Qisman hal bo'ldi: 2 ta banan qutisi hajmi (9-bo'lim).** Hali kerak: nonning aniq diametri, qalinligi va og'irligi, qanday turlari bor.
+2. ~~Sig'im~~ **Hal bo'ldi: 64 ta non (2 × 32). Non turlari, grammi va o'lchami ilovada saqlanadi.**
 3. Nonni issiq saqlash kerakmi (isitgich, termoizolyatsiya)?
 4. ~~Ob-havo~~ **Hal bo'ldi: yomg'ir, qor, har qanday sharoitda yuradi.**
-5. Eng uzoq do'kon qancha masofada? Bir zaryadda necha marta borib kelishi kerak?
-6. Pul hisobi ham bo'ladimi? Masalan, do'konchi non uchun qarzdor bo'lib qolsa, ilovada yozilib boradimi?
-7. Bir nechta robot bo'ladimi yoki bitta?
+5. ~~Masofa~~ **Hal bo'ldi: 200 m – 1 km, kun bo'yi qatnaydi, har reysdan keyin zaryad oladi (10-bo'lim).**
+6. ~~Pul hisobi~~ **Hal bo'ldi: naqd/karta, nasiya, seyf (11-bo'lim).**
+7. ~~Robotlar soni~~ **Hal bo'ldi: hozircha bitta, keyin ko'payadi.**
 8. Rahbar ilovasi mavjud `nonvoyxona`/`dokon` ilovalariga qo'shiladimi yoki alohida bo'ladimi?
 9. Robot ko'chada yurishi uchun qonuniy ruxsat kerakmi? Mahalliy qoidalarni aniqlash kerak.
-10. Byudjet va bosqich: avval kichik prototip qilamizmi?
+10. ~~Byudjet~~ **Qisman: korpus avval oddiy yasaladi; taxminiy hisob 12-bo'limda.** Bosqichlar rejasini (13-bo'lim) tasdiqlash kerak.
+11. Savatlar ustma-ustmi yoki yonma-yon (alohida qopqoq bilan)? (9-bo'lim)
+12. Nonni issiq saqlash kerakmi?
+13. Robot qorong'ida (erta tong, kechqurun) ham yuradimi?
+14. Ortiqcha to'langan pul avans, kam to'langani nasiya deb yozilsinmi? (11-bo'lim)
