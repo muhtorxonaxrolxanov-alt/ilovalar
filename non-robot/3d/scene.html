@@ -1,0 +1,96 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#c9d0d8;font-family:"Inter","Helvetica Neue",Arial,sans-serif}
+canvas{position:absolute;inset:0;width:100%;height:100%}
+.vig{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,transparent 55%,rgba(10,14,20,.38) 100%)}
+.brand{position:absolute;left:4.5%;top:5.5%;color:#14202c;font-weight:800;font-size:2.4vh;letter-spacing:.28em}
+.brand span{color:#b5651d}
+.steps{position:absolute;right:4.5%;top:5.5%;display:flex;gap:.7vh}
+.steps i{display:block;width:4.2vh;height:.7vh;border-radius:1vh;background:rgba(20,32,44,.18);overflow:hidden;position:relative}
+.steps i b{position:absolute;inset:0;background:#b5651d;transform-origin:left;transform:scaleX(0)}
+.card{position:absolute;left:4.5%;bottom:7%;width:44%;color:#fff;background:rgba(14,22,30,.78);border-radius:1.6vh;padding:2.6vh 3vh;opacity:0;backdrop-filter:blur(6px)}
+.card .k{font-size:1.9vh;letter-spacing:.3em;color:#f2b56b;font-weight:700}
+.card h2{margin:.6vh 0 1vh;font-size:4.6vh;font-weight:800;letter-spacing:-.02em}
+.card p{margin:0 0 1.6vh;font-size:2.3vh;line-height:1.4;color:#d5dee6}
+.chips{display:flex;flex-wrap:wrap;gap:.8vh}
+.chips span{font-size:1.8vh;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:.8vh;padding:.5vh 1vh}
+.chips span b{color:#f2b56b;margin-right:.6vh}
+.title{position:absolute;left:4.5%;bottom:10%;color:#14202c;opacity:0}
+.title h1{margin:0;font-size:9vh;font-weight:800;letter-spacing:-.03em;line-height:1}
+.title p{margin:1.4vh 0 0;font-size:2.6vh;color:#34475a;font-weight:600}
+.title .bar{height:.6vh;width:22vh;background:#b5651d;margin-top:2vh;transform-origin:left}
+.end{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;background:rgba(14,22,30,.86);color:#fff;opacity:0}
+.end h1{margin:0;font-size:8vh;font-weight:800;letter-spacing:-.03em}
+.end .row{display:flex;gap:5vh;margin-top:4vh}
+.end .row div{text-align:center}
+.end .row b{display:block;font-size:6vh;color:#f2b56b;font-weight:800}
+.end .row span{font-size:2.2vh;color:#c9d4dd}
+.fade{position:absolute;inset:0;background:#0e161e;opacity:0}
+</style></head><body>
+<canvas id="c"></canvas><div class="vig"></div>
+<div class="brand">NON <span>ROBOT</span> · YIG'ISH</div>
+<div class="steps" id="steps"></div>
+<div class="title" id="title"><h1>Non tarqatuvchi<br>robot</h1><p>Nonvoyxonadan do'konlarga · 64 ta non · fanera prototip</p><div class="bar" id="tbar"></div></div>
+<div class="card" id="card"><div class="k" id="ck"></div><h2 id="ch"></h2><p id="cp"></p><div class="chips" id="cc"></div></div>
+<div class="end" id="end"><h1>Prototip tayyor</h1><div class="row">
+<div><b>64</b><span>ta non sig'adi</span></div><div><b>~1 m</b><span>uzunligi, eni 60 sm</span></div><div><b id="endp"></b><span>taxminiy narxi</span></div></div></div>
+<div class="fade" id="fade"></div>
+<script src="three.min.js"></script>
+<script src="robot.js"></script>
+<script>
+const cv=document.getElementById('c');cv.width=innerWidth;cv.height=innerHeight;
+const renderer=new THREE.WebGLRenderer({canvas:cv,antialias:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(1);renderer.setSize(innerWidth,innerHeight,false);
+const scene=new THREE.Scene();
+NonRobot.makeStage(THREE,renderer,scene,false);
+const R=NonRobot.makeRobot(THREE);scene.add(R.root);
+const camera=new THREE.PerspectiveCamera(34,innerWidth/innerHeight,0.05,50);
+const {BOM,STEPS}=NonRobot;
+const lo=BOM.reduce((s,b)=>s+b.p[0],0),hi=BOM.reduce((s,b)=>s+b.p[1],0);
+const f=v=>String(Math.round(v/50)*50).replace(/\B(?=(\d{3})+$)/g,' ');document.getElementById('endp').textContent='$'+f(lo)+'–'+f(hi);
+const stepsEl=document.getElementById('steps');STEPS.forEach(()=>{const i=document.createElement('i');i.innerHTML='<b></b>';stepsEl.appendChild(i)});
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x)),seg=(t,a,b)=>clamp((t-a)/(b-a),0,1);
+const io=t=>t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2,eo=t=>1-Math.pow(1-t,3);
+const T0=5.5,SD=4.5,TEND=T0+8*SD; // 41.5
+window.DURATION=50;
+// kamera kalit kadrlari: t, az, el, masofa, nishon
+const K=[[0,32,16,3.1,[0,.45,0]],[4,58,20,2.9,[0,.45,0]],[5.5,48,30,3.3,[0,.35,0]],
+ [9,38,32,2.6,[0,.25,0]],[13,72,14,2.2,[-.05,.2,0]],[17.5,24,40,2.0,[.25,.45,0]],[22,52,24,2.8,[0,.5,0]],
+ [26.5,125,46,2.3,[-.2,.4,0]],[31,140,24,2.7,[-.1,.62,0]],[33,70,24,2.7,[.15,.62,0]],[36,24,20,2.5,[.25,.62,0]],[40,105,38,2.6,[-.2,.6,0]],
+ [43.5,70,22,3.0,[0,.5,0]],[49.5,18,14,3.0,[.45,.45,0]]];
+function cam(t){let i=0;while(i<K.length-2&&t>K[i+1][0])i++;const a=K[i],b=K[i+1],k=io(seg(t,a[0],b[0]));
+ const L=(x,y)=>x+(y-x)*k,az=L(a[1],b[1])*Math.PI/180,el=L(a[2],b[2])*Math.PI/180,d=L(a[3],b[3]);
+ const tg=a[4].map((v,j)=>L(v,b[4][j]));
+ camera.position.set(tg[0]+d*Math.cos(el)*Math.cos(az),tg[1]+d*Math.sin(el),tg[2]+d*Math.cos(el)*Math.sin(az));camera.lookAt(...tg);}
+const $=id=>document.getElementById(id);
+let shown=-1;
+function card(si){if(si===shown)return;shown=si;if(si<0)return;const s=STEPS[si];
+ $('ck').textContent=s.n+'-QADAM';$('ch').textContent=s.title;$('cp').textContent=s.text;
+ $('cc').innerHTML=s.bom.map(n=>{const b=BOM.find(x=>x.n===n);return '<span><b>'+n+'</b>'+b.name+'</span>'}).join('');}
+window.renderFrame=function(t){
+ cam(t);const off=0.11*(1-seg(t,44.5,45.5));camera.setViewOffset(innerWidth,innerHeight,-innerWidth*off,0,innerWidth,innerHeight);
+ // yig'ilish holati
+ let p=8;
+ if(t>=4&&t<T0)p=8*(1-io(seg(t,4,5.4)));
+ else if(t>=T0&&t<TEND){const s=Math.floor((t-T0)/SD),lt=t-T0-s*SD;p=s+io(seg(lt,.3,3.9));}
+ R.setAssembly(p);
+ // qopqoq: 6-qadam oxirida ochiladi, 8-qadamdan keyin yopiladi
+ const s6=T0+5*SD;let lid=0;
+ if(t>=s6+3.0&&t<TEND+.6)lid=1.35*io(seg(t,s6+3.0,s6+4.3));
+ if(t>=TEND+.6)lid=1.35*(1-io(seg(t,TEND+.6,TEND+2.2)));
+ R.setLid(lid);R.setHandles(0);
+ // oxirida robot oldinga yuradi
+ const drive=io(seg(t,44,49))*0.6;R.root.position.x=drive;R.spinWheels(drive/0.125);
+ R.M.beacon.emissiveIntensity=t>44?0.6+0.6*Math.max(0,Math.sin(t*9)):0.9;
+ renderer.render(scene,camera);
+ // matnlar
+ const ti=$('title'),tk=eo(seg(t,.4,1.4))*(1-seg(t,3.4,4));ti.style.opacity=tk;ti.style.transform=`translateY(${(1-eo(seg(t,.4,1.4)))*30}px)`;
+ $('tbar').style.transform=`scaleX(${io(seg(t,1,2.2))})`;
+ const si=t>=T0&&t<TEND?Math.floor((t-T0)/SD):-1;card(si);
+ const c=$('card');if(si>=0){const lt=t-T0-si*SD,k=eo(seg(lt,.15,.7))*(1-seg(lt,4.1,4.45));c.style.opacity=k;c.style.transform=`translateY(${(1-eo(seg(lt,.15,.7)))*24}px)`;}else c.style.opacity=0;
+ [...stepsEl.children].forEach((e,i)=>{e.firstChild.style.transform=`scaleX(${seg(t,T0+i*SD,T0+(i+1)*SD)})`});
+ const en=$('end'),ek=eo(seg(t,45.2,46.2));en.style.opacity=ek*0.97;en.style.transform=`scale(${1.04-0.04*ek})`;
+ $('fade').style.opacity=seg(t,49.3,50);
+};
+window.renderFrame(0);window.__ready=true;
+</script></body></html>
