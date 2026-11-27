@@ -65,6 +65,8 @@ Belgilar:
   - Agar baribir o'ta olmasa, rahbar ilovasiga **bildirishnoma yoki qo'ng'iroq** keladi.
   - Rahbar uni bosib, robotni **real vaqt rejimida o'zi boshqaradi** va svetofordan o'tkazib qo'yadi.
   - Keyin **"Yo'lni davom ettirish"** tugmasini bosadi va robot qolgan yo'lni yana o'zi yuradi.
+- **Faqat svetoforda emas**: yo'lda o'ta olmaydigan to'siq bo'lsa yoki **yo'l yopilgan** bo'lsa ham, robot rahbarga xabar beradi va rahbar uni boshqaradi.
+- **Ob-havo**: yomg'ir, qor, har qanday sharoitda yurishi kerak.
 
 💡 Claude fikri:
 - Sensorlar to'plami (taklif):
@@ -79,6 +81,12 @@ Belgilar:
   - svetoforni aniqlay olmasa, to'xtab **rahbarga signal** bersin.
 - Notekis yo'l va bordyurlar uchun **6 g'ildirakli** shassi tavsiya qilaman.
 - Piyodalar orasida tezlik past bo'lsin: taxminan 4–6 km/soat, odam yurishi tezligida.
+- **Har qanday ob-havo uchun**:
+  - korpus va elektronika **suv va changdan himoyalangan** bo'lsin (kamida IP65);
+  - qishda **litiy batareya 0°C dan past haroratda zaryadlanmaydi**. Batareya isitgichi kerak, stansiya ham isitiladigan bo'lsa yaxshi;
+  - kamera oynalari qor va bug'dan to'silmasligi uchun **isitiladigan** bo'lsin;
+  - g'ildiraklar chuqur protektorli bo'lsin.
+  - Ochig'ini aytsam, **chuqur qor va muz** kichik robotlar uchun eng og'ir sharoit. Bunday kunlarda robot rahbarni ko'proq chaqiradi.
 - **Odam xavfsizligi** (eng muhim qoida: robot doim yo'l beradi):
   - odamdan kamida ~1 m masofa saqlasin, yaqinlashsa sekinlashsin va to'xtasin;
   - korpus atrofida **yumshoq bamper va tegish sensori** bo'lsin: tegsa, darhol to'xtaydi;
@@ -132,7 +140,11 @@ Belgilar:
   - Misol: do'konchi 30 ta olmoqchi edi va 30 ta oldi. Tarozi o'lchaydi: "30 ta non olindi, to'g'ri." Qopqoq yopiladi va qulflanadi.
 
 💡 Claude fikri:
-- **Signal**: ovozli signal + chiroq, va do'konchi telefoniga **SMS yoki Telegram xabar** ("Robot keldi"). Do'konchi ichkarida bo'lsa ham bilib oladi.
+- **Signal**: ovozli signal va chiroq. Bundan tashqari do'konchi telefoniga **SMS yoki Telegram xabar** ("Robot keldi") borsin, shunda do'konchi ichkarida bo'lsa ham bilib oladi.
+  - 🗣 Muallif qarori: robot yetib borgach, **do'konchining telefoniga qo'ng'iroq boradi**.
+  - 🗣 Muallif qarori: do'konchi **chiqmasa**, robot rahbar ilovasiga xabar beradi va **rahbar do'konchiga telefon qiladi**.
+  - 💡 Avtomatik qo'ng'iroq uchun telefon xizmati (SIM-modem yoki internet orqali qo'ng'iroq xizmati) kerak bo'ladi.
+  - 💡 Rahbarga xabar berishdan oldin necha daqiqa kutishni belgilash kerak, masalan 3–5 daqiqa. Shu vaqt ichida rahbar qo'ng'iroq qilmasa, robot nima qilishi ham aniq bo'lsin: kutishda davom etadimi yoki keyingi do'konga o'tadimi.
 - **Yuz tanish bo'yicha**:
   - har bir do'konga **bir nechta odamning yuzi** ro'yxatga olinsin (do'konchi, sotuvchilar). Rahbar ularni ilovadan qo'shadi va o'chiradi;
   - **rasm yoki telefondagi suratni ko'rsatib aldash** mumkin. Shuning uchun "tirik odam" tekshiruvi (liveness, chuqurlik kamerasi) kerak;
@@ -176,13 +188,44 @@ Belgilar:
 
 ---
 
-## 9. Hozircha aniqlanmagan masalalar
+## 9. Robot tuzilishi va o'lchami
+
+🗣 Muallif:
+- Robot ichida **1 yoki 2 ta konteyner** bo'ladi: **ustma-ust** yoki **yonma-yon**.
+- Konteynerlar tepasida **ko'tarish uchun dastasi** bo'ladi, xuddi do'konlardagi **savatcha (korzinka)** kabi.
+- Tuzilishi:
+  - **old tomonda ekran**;
+  - **ekran tagida akkumulyator va "miya"** (boshqaruv elektronikasi);
+  - **orqa tomonda yuk mashinasidek bagaj** (yuk bo'limi).
+- O'lcham: yuk bo'limiga **2 ta banan qutisi ustma-ust** sig'ishi va **tepasida ozgina zapas** qolishi kerak.
+
+💡 Claude fikri:
+- **Banan qutisining odatiy o'lchami taxminan 50 × 40 × 24 sm.** Haqiqiy qutini o'lchab tasdiqlash kerak, chunki ba'zilari 52 × 39 sm bo'ladi.
+- Yuk bo'limining ichki o'lchami (taklif): **~54 × 44 × 56 sm** (U × E × B). Bu ikki quti ustma-ust (48 sm), tepada ~5 sm zapas va savatcha dastalari uchun joy degani.
+- Robotning taxminiy tashqi o'lchami:
+  - uzunligi **~95–100 sm**: yuk bo'limi + old qism (ekran va batareya) ~30 sm;
+  - eni **~60 sm**: tor trotuar va eshiklardan o'tishi uchun 65 sm dan oshmasin;
+  - balandligi **~90 sm**: g'ildirak va yerdan masofa ~15 sm + yuk bo'limi + qopqoq. Ekran do'konchiga qulay balandlikda bo'ladi.
+- ⚠️ **Sig'im bo'yicha muhim hisob.** Obi non diametri ~20–22 sm, qalinligi ~4–5 sm bo'lsa:
+  - yotqizib solinganda bitta qutiga ~10–12 ta sig'adi;
+  - qirrasi bilan tik terib qo'yilganda bitta qutiga ~20–24 ta sig'adi.
+  - Demak 2 ta qutiga **taxminan 20–45 ta non** sig'adi, avvalgi misoldagi 80 ta emas. 80 ta non kerak bo'lsa, quti kattaroq bo'lishi yoki robot 2 marta borishi kerak. Nonning aniq o'lchamini bilib, qayta hisoblaymiz.
+- **Tarozi**: har bir konteyner tagida **alohida tarozi** bo'lsin. Shunda qaysi savatdan nechta non olingani ham ma'lum bo'ladi.
+- **Savat butunlay ko'tarib olinsa**, tarozi buni "hamma non olindi" deb tushunishi mumkin. Shuning uchun:
+  - savatda **joyida turgani sensori** (konsevik) bo'lsin;
+  - qopqoq yopilishidan oldin savat joyiga qaytarilganini tekshirsin;
+  - savat qaytarilmasa, rahbarga xabar borsin.
+- Savatlar robotga mahkam o'rnashsin, yo'lda silkinib ketmasin.
+
+---
+
+## 10. Hozircha aniqlanmagan masalalar
 
 ❓ Ochiq savollar:
 1. ~~Zaryad stansiyasi qayerda?~~ **Hal bo'ldi: nonvoyxona oldida.**
-2. Robot bir safarda eng ko'pi bilan nechta non olishi kerak? 80 tami? Bitta non necha gramm?
+2. ~~Sig'im~~ **Qisman hal bo'ldi: 2 ta banan qutisi hajmi (9-bo'lim).** Hali kerak: nonning aniq diametri, qalinligi va og'irligi, qanday turlari bor.
 3. Nonni issiq saqlash kerakmi (isitgich, termoizolyatsiya)?
-4. Qish, qor, yomg'irda ham ishlashi kerakmi?
+4. ~~Ob-havo~~ **Hal bo'ldi: yomg'ir, qor, har qanday sharoitda yuradi.**
 5. Eng uzoq do'kon qancha masofada? Bir zaryadda necha marta borib kelishi kerak?
 6. Pul hisobi ham bo'ladimi? Masalan, do'konchi non uchun qarzdor bo'lib qolsa, ilovada yozilib boradimi?
 7. Bir nechta robot bo'ladimi yoki bitta?
