@@ -335,6 +335,5 @@ Belgilar:
 9. Robot ko'chada yurishi uchun qonuniy ruxsat kerakmi? Mahalliy qoidalarni aniqlash kerak.
 10. ~~Byudjet~~ **Qisman: korpus avval oddiy yasaladi; taxminiy hisob 12-bo'limda.** Bosqichlar rejasini (13-bo'lim) tasdiqlash kerak.
 11. Savatlar ustma-ustmi yoki yonma-yon (alohida qopqoq bilan)? (9-bo'lim)
-12. Nonni issiq saqlash kerakmi?
-13. Robot qorong'ida (erta tong, kechqurun) ham yuradimi?
-14. Ortiqcha to'langan pul avans, kam to'langani nasiya deb yozilsinmi? (11-bo'lim)
+12. Robot qorong'ida (erta tong, kechqurun) ham yuradimi?
+13. Ortiqcha to'langan pul avans, kam to'langani nasiya deb yozilsinmi? (11-bo'lim)
