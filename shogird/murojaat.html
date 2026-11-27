@@ -572,6 +572,17 @@ $('go').onclick=function(){
   var BACK_OK = { tr: 1, th: 1, 'hk-h': 1, 'hk-i': 1, 'hk-sg': 1, em: 1, es: 1 };
   if (BACK_OK[K]) {
     if (NV) setInterval(nvTrack, 250);
+    /* 2026-11-27 (egasi): «←» kelgan yo'l bilan qaytsin — masalan boshqa joydan kirilgan bo'lsa, «← Sozlamalar» Sozlamalarga EMAS, kelgan joyga olib boradi.
+       Tugma o'zi ishlaydi; natija tarixdagi oldingi joydan farq qilsa (boshqa bo'limga «sakrasa») — tarixdagi oldingi joy tiklanadi. */
+    if (NV) { var BK = null;
+      var isBk = function (b) { if (!b || (b.closest && b.closest(OWN))) return false; var t = (b.textContent || '').replace(/\s+/g, ' ').trim(); return /^(←|‹|⬅|◀|〈)/.test(t) && !/dkFixBack/.test(b.getAttribute('onclick') || '') && !inOv(b); };
+      document.addEventListener('click', function (ev) { BK = null; var b = ev.target && ev.target.closest && ev.target.closest('button,a,[onclick],[role=button]'); if (!isBk(b)) return; nvTrack(); BK = { before: LAST, prev: STK.length ? STK[STK.length - 1] : null }; }, true);
+      document.addEventListener('click', function () { var k = BK; BK = null; if (!k) return; setTimeout(function () {
+        var j = JSON.stringify(nvSnap()); if (j === k.before || !k.prev) return; /* ichki qadam yoki tarix yo'q */
+        if (j === k.prev) { STK.pop(); LAST = j; return; } /* to'g'ri joyga qaytdi */
+        var p = JSON.parse(STK.pop()); REST = true; NVV.forEach(function (x) { if (x in p) window[x] = p[x]; }); try { render(); } catch (e) {} LAST = JSON.stringify(nvSnap()); REST = false; try { window.scrollTo(0, 0); } catch (e) {}
+      }, 0); }, false);
+    }
     window.onBack = doBack; if (ORIGH) window.__back = doBack;
     /* Brauzer / o'rnatilgan veb-ilova: tarixga bitta "qo'riqchi" qadam qo'yiladi */
     var lastEx = 0;
